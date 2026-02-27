@@ -12,7 +12,7 @@ urlpatterns = [
     path('profile/', views.profile_page, name='profile'),
 
     path('question/', views.question_page, name='question'),
-    path('question/theme/', views.question_themes_page, name='questions'),
+    path('question/theme/<int:theme_num>/', views.question_themes_page, name='questions'),
     path('question/make/', views.question_make_page, name='make_question'),
 
     path('complaint/', views.complaint_page, name='complaint'),
