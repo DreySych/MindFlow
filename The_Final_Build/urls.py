@@ -1,4 +1,5 @@
 from django.contrib import admin
+import main.views as view
 from django.urls import path
 from main import views as main_views
 from users import views as users_views

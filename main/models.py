@@ -44,4 +44,3 @@ class Comment(models.Model):
     creation_date = models.DateTimeField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
-
