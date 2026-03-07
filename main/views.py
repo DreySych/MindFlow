@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 import datetime
-from main.forms import SignUpForm, LoginForm
-from main.models import User
+from users.models import User
 from django.contrib.auth.hashers import check_password, make_password
 
 

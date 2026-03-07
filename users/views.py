@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from users.forms import SignUpForm, LoginForm
+from users.models import User
+from django.contrib.auth.hashers import check_password, make_password
+import datetime
 
 # Create your views here.
 
@@ -21,7 +25,7 @@ def signup_page(request):
                 image=''
             )
             user.save()
-            return redirect('login')
+            return redirect('/account/login')
     else:
         form = SignUpForm()
     return render(request, template_name='signup.html', context={'form': form})
