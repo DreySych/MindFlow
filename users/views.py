@@ -3,6 +3,7 @@ from users.forms import SignUpForm, LoginForm
 from users.models import User
 from django.contrib.auth.hashers import check_password, make_password
 import datetime
+from django.contrib.auth import authenticate, login
 
 # Create your views here.
 
@@ -44,6 +45,7 @@ def login_page(request):
 
             if user and check_password(password, user.password):
                 request.session['user_id'] = user.id
+                login(request, user)
                 return redirect('index')
             else:
                 print("ОШИБКА. НЕВЕРНЫЙ ПАРОЛЬ")
