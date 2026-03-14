@@ -6,7 +6,7 @@ from users.models import User
 class Question(models.Model):
     title = models.TextField()
     description = models.TextField()
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.IntegerField()
     creation_date = models.DateTimeField()
     modified_date = models.DateTimeField(null=True)
