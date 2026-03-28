@@ -19,13 +19,21 @@ def question_make_page(request):
 			time = datetime.datetime.now()
 			title = form.data['title']
 			description = form.data['description']
-			tags = form.data['tags']
-			theme = form.data['theme']
+			tags = form.data['tags'].split()
 			images = form.data['images']
 
-			question = Question(title=title, description=description, tags=tags, theme=theme,
+			question = Question(title=title, description=description,
 								creation_date=time, views=0, images=images, author=request.user)
 			question.save()
+
+			for tag_title in tags:
+				if len(Tag.objects.filter(title=tag_title)) == 0:
+					tag = Tag(title=tag_title)
+					tag.save()
+
+				link = PostToTag(question=question, tag=tag)
+				link.save()
+
 		else:
 			form = QuestionForm()
 

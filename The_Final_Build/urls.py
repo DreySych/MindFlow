@@ -11,6 +11,7 @@ urlpatterns = [
 
     path('account/signup/', users_views.signup_page, name='signup'),
     path('account/login/', users_views.login_page, name='login'),
+    path('account/logout/', users_views.logout_page, name='logout'),
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/', users_views.profile_page, name='profile'),
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import CASCADE
 from users.models import User
 
 # Create your models here.
@@ -11,9 +12,8 @@ class Question(models.Model):
     creation_date = models.DateTimeField()
     modified_date = models.DateTimeField(null=True)
     close_date = models.DateTimeField(null=True)
-    tags = models.TextField()
     images = models.TextField()
-    theme = models.TextField()
+    #theme = models.TextField()
 
 class Answer(models.Model):
     answer = models.TextField()
@@ -30,3 +30,11 @@ class Comment(models.Model):
     creation_date = models.DateTimeField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+
+class Tag(models.Model):
+    title = models.TextField()
+
+class PostToTag(models.Model):
+    question = models.ForeignKey(Question, on_delete=CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=CASCADE)
+

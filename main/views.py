@@ -11,7 +11,16 @@ def index_page(request):
     context = {
         "username": username,
         "users": all_users,
+        "link1": "account/login/",
+        "page1": 'Логин',
+        "link2": "account/signup/",
+        "page2": 'Регистрация'
     }
+    if request.user.is_authenticated:
+        context['link1'] = "account/logout/"
+        context["page1"] = 'Выход'
+        context['link2'] = ""
+        context["page2"] = ''
     return render(request, template_name="index.html", context=context)
 
 

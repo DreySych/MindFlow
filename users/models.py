@@ -10,12 +10,12 @@ class User(AbstractBaseUser):
     name = models.TextField()
     surname = models.TextField()
     sex = models.IntegerField()
-    level = models.TextField()
+    #level = models.TextField()
     reputation = models.IntegerField()
     role = models.TextField()
     birth_date = models.DateField()
     registration_date = models.DateField()
-    image = models.TextField()
+    image = models.ImageField()
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = ["email", "name", "surname", "sex", "level", "role", "birth_date", "registration_date", "reputation"]
