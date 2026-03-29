@@ -15,6 +15,7 @@
         body {
             height: 100vh;
             background: linear-gradient(to bottom, #000000, #444360);
+            background-attachment: fixed;
             font-family: 'Manrope', sans-serif;
         }
 
@@ -23,12 +24,14 @@
             left: 0;
             top: 80px;
             height: calc(100vh - 80px);
-            width: 280px;
+            width: 25%;
+            max-width: 250px;
             background-color: #171717;
             border-right: 2px solid #858DB4;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            z-index: 100;
         }
 
         .sidebar-content {
@@ -187,6 +190,10 @@
             font-weight: 500;
             font-size: 14px;
             border-radius: 8px;
+        }
+
+        .friend-item:last-child {
+            margin-bottom: 1000px;
         }
 
         .avatar {
