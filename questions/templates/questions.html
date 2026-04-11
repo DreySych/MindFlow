@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+{% include 'header.html' %}
+{% include 'body.html' %}
+{% include 'footer.html' %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лента вопросов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+        }
+
+        .header-search-tags {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 0 30px;
+            pointer-events: none;
+        }
+
+        .header-search-tags > * {
+            pointer-events: auto;
+        }
+
+        .header-search {
+            display: flex;
+            gap: 8px;
+            background: rgba(23, 23, 23, 0.95);
+            border: 1px solid #858DB4;
+            border-radius: 40px;
+            padding: 5px 12px;
+            backdrop-filter: blur(4px);
+            flex: 0 1 auto;
+            min-width: 350px;
+            max-width: 500px;
+        }
+
+        .header-search input {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: #fff;
+            outline: none;
+            flex: 1;
+        }
+
+        .header-search input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .header-search button {
+            background: #6c8dff;
+            border: none;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .header-search button:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .ai-search-btn {
+            background: linear-gradient(135deg, #6c8dff, #9b59b6);
+            border: none;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .ai-search-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(108, 141, 255, 0.4);
+        }
+
+        .header-tags {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(23, 23, 23, 0.95);
+            border: 1px solid #858DB4;
+            border-radius: 40px;
+            padding: 5px 15px;
+            backdrop-filter: blur(4px);
+        }
+
+        .header-tags .tags-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .header-tags-container {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            max-width: 250px;
+        }
+
+        .header-user-tag {
+            padding: 4px 10px;
+            background: #6c8dff;
+            border: 1px solid #6c8dff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .header-user-tag:hover {
+            background: #5a7ae0;
+        }
+
+        .header-user-tag .delete-tag {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 11px;
+            padding: 0;
+            opacity: 0.8;
+        }
+
+        .header-user-tag .delete-tag:hover {
+            opacity: 1;
+        }
+
+        .add-tag-header {
+            padding: 4px 10px;
+            background: rgba(108, 141, 255, 0.2);
+            border: 1px solid #6c8dff;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #6c8dff;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .add-tag-header:hover {
+            background: rgba(108, 141, 255, 0.4);
+        }
+
+        .feed-content {
+            margin-left: 280px;
+            padding: 30px;
+            margin-top: 80px;
+            min-height: calc(100vh - 150px);
+        }
+
+        .feed-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        .questions-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .question-card {
+            background: rgba(23, 23, 23, 0.95);
+            border: 1px solid #858DB4;
+            border-radius: 16px;
+            padding: 20px;
+            transition: none;
+        }
+
+        .question-card:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #858DB4;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c6f8a, #858DB4);
+            flex-shrink: 0;
+        }
+
+        .author-info {
+            flex: 1;
+        }
+
+        .author-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .question-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .question-tag {
+            padding: 4px 10px;
+            background: rgba(108, 141, 255, 0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #6c8dff;
+        }
+
+        .placeholder-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .question-title {
+            font-weight: 700;
+            font-size: 22px;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 20px;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(133, 141, 180, 0.3);
+            flex-wrap: wrap;
+        }
+
+        .like-dislike {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .action-count {
+            font-weight: 600;
+        }
+
+        .report-btn, .discussion-btn {
+            background: transparent;
+            border: none;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .discussion-btn {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .discussion-btn:hover {
+            background: rgba(108, 141, 255, 0.2);
+            color: #6c8dff;
+        }
+
+        .report-btn:hover {
+            color: #ff9800;
+            background: rgba(255, 152, 0, 0.1);
+        }
+
+        @media (max-width: 1000px) {
+            .header-search-tags {
+                position: relative;
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+                gap: 10px;
+                background: #171717;
+                border-bottom: 1px solid #858DB4;
+            }
+            .header-search {
+                width: 100%;
+                min-width: auto;
+            }
+            .feed-content {
+                margin-left: 0;
+                margin-top: 0;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-search-tags">
+    <div class="header-search">
+        <input type="text" id="searchInput" placeholder="Поиск...">
+        <button id="searchBtn">🔍 Поиск</button>
+        <button id="aiSearchBtn" class="ai-search-btn">🧠✨ Умный поиск</button>
+    </div>
+    <div class="header-tags">
+        <span class="tags-label">🏷️</span>
+        <div class="header-tags-container" id="headerTagsContainer"></div>
+        <button id="addTagBtn" class="add-tag-header">+</button>
+    </div>
+</div>
+
+<div class="feed-content">
+    <h1 class="feed-title">Лента вопросов</h1>
+    <div class="questions-grid">
+        <div class="question-card">
+            <div class="card-header">
+                <div class="author-avatar"></div>
+                <div class="author-info"><div class="author-name">Алексей Смирнов</div></div>
+            </div>
+            <div class="placeholder-image">📷 Изображение вопроса</div>
+            <h3 class="question-title">Как начать изучать программирование с нуля?</h3>
+            <div class="question-tags"><span class="question-tag">#программирование</span><span class="question-tag">#образование</span></div>
+            <p class="question-text">Всем привет! Решил сменить профессию и начать изучать программирование. Подскажите, с какого языка лучше начать?</p>
+            <div class="card-actions">
+                <div class="like-dislike"><button class="action-btn like-btn">👍 <span class="action-count">24</span></button><button class="action-btn dislike-btn">👎 <span class="action-count">3</span></button></div>
+                <button class="report-btn">⚠️ Жалоба</button>
+                <button class="discussion-btn">💬 Обсуждение</button>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-header">
+                <div class="author-avatar"></div>
+                <div class="author-info"><div class="author-name">Елена Волкова</div></div>
+            </div>
+            <div class="placeholder-image">📷 Изображение вопроса</div>
+            <h3 class="question-title">Какой смартфон лучше выбрать в 2024 году?</h3>
+            <div class="question-tags"><span class="question-tag">#техника</span></div>
+            <p class="question-text">Планирую обновить телефон. Бюджет до 50 000 рублей. Что посоветуете?</p>
+            <div class="card-actions">
+                <div class="like-dislike"><button class="action-btn like-btn">👍 <span class="action-count">56</span></button><button class="action-btn dislike-btn">👎 <span class="action-count">8</span></button></div>
+                <button class="report-btn">⚠️ Жалоба</button>
+                <button class="discussion-btn">💬 Обсуждение</button>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-header">
+                <div class="author-avatar"></div>
+                <div class="author-info"><div class="author-name">Дмитрий Козлов</div></div>
+            </div>
+            <div class="placeholder-image">📷 Изображение вопроса</div>
+            <h3 class="question-title">Стоит ли переезжать в другой город ради работы?</h3>
+            <div class="question-tags"><span class="question-tag">#работа</span><span class="question-tag">#карьера</span></div>
+            <p class="question-text">Получил предложение о работе в Москве с зарплатой в 2 раза выше. Как принять решение?</p>
+            <div class="card-actions">
+                <div class="like-dislike"><button class="action-btn like-btn">👍 <span class="action-count">89</span></button><button class="action-btn dislike-btn">👎 <span class="action-count">12</span></button></div>
+                <button class="report-btn">⚠️ Жалоба</button>
+                <button class="discussion-btn">💬 Обсуждение</button>
+            </div>
+        </div>
+        <div class="question-card">
+            <div class="card-header">
+                <div class="author-avatar"></div>
+                <div class="author-info"><div class="author-name">Анна Морозова</div></div>
+            </div>
+            <div class="placeholder-image">📷 Изображение вопроса</div>
+            <h3 class="question-title">Как научиться управлять своими эмоциями?</h3>
+            <div class="question-tags"><span class="question-tag">#психология</span></div>
+            <p class="question-text">Часто срываюсь на близких из-за стресса. Есть ли техники?</p>
+            <div class="card-actions">
+                <div class="like-dislike"><button class="action-btn like-btn">👍 <span class="action-count">67</span></button><button class="action-btn dislike-btn">👎 <span class="action-count">5</span></button></div>
+                <button class="report-btn">⚠️ Жалоба</button>
+                <button class="discussion-btn">💬 Обсуждение</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const aiSearchBtn = document.getElementById('aiSearchBtn');
+    const addTagBtn = document.getElementById('addTagBtn');
+    const tagsContainer = document.getElementById('headerTagsContainer');
+
+    let userTags = JSON.parse(localStorage.getItem('userTags') || '["программирование", "техника", "работа"]');
+
+    function saveTags() {
+        localStorage.setItem('userTags', JSON.stringify(userTags));
+    }
+
+    function renderTags() {
+        tagsContainer.innerHTML = '';
+        userTags.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'header-user-tag';
+            span.innerHTML = `${tag} <button class="delete-tag">✕</button>`;
+
+            span.querySelector('.delete-tag').onclick = (e) => {
+                e.stopPropagation();
+                userTags = userTags.filter(t => t !== tag);
+                saveTags();
+                renderTags();
+            };
+
+            tagsContainer.appendChild(span);
+        });
+    }
+
+    function addUserTag() {
+        const tag = prompt('Введите новый тег:', '');
+        if (tag && tag.trim()) {
+            const newTag = tag.trim().toLowerCase();
+            if (!userTags.includes(newTag)) {
+                userTags.push(newTag);
+                saveTags();
+                renderTags();
+            } else {
+                alert('Такой тег уже существует');
+            }
+        }
+    }
+
+
+    renderTags();
+</script>
+</body>
+</html>
