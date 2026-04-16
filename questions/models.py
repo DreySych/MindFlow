@@ -38,3 +38,7 @@ class PostToTag(models.Model):
     question = models.ForeignKey(Question, on_delete=CASCADE)
     tag = models.ForeignKey(Tag, on_delete=CASCADE)
 
+class Complaint(models.Model):
+    description = models.TextField()
+    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=CASCADE)

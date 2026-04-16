@@ -45,7 +45,19 @@ def question_make_page(request):
 
 
 def complaint_page(request):
-    return render(request, template_name="complaint.html")
+	context = {}
+
+	question_id = request.GET.get('id')
+
+	if request.method == 'POST':
+		form = ComplaintForm(request.POST)
+		complaint_text = form.data['description']
+	else:
+		form = ComplaintForm()
+
+	context['form'] = form
+
+	return render(request, "complaint.html", context)
 
 def themes_page(request):
     return render(request, template_name="themes.html")

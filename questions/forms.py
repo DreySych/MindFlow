@@ -21,3 +21,6 @@ class QuestionForm(forms.Form):
 	#theme = forms.ChoiceField(choices=variants)
 	tags = forms.CharField(required=False)
 	images = forms.CharField(required=False)
+
+class ComplaintForm(forms.Form):
+	description = forms.CharField()
