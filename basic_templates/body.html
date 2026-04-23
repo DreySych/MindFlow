@@ -1,367 +1,169 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;500&display=swap" rel="stylesheet">
-    <title>Боковая панель</title>
-    <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            height: 100vh;
-            background: linear-gradient(to bottom, #000000, #444360);
-            background-attachment: fixed;
-            font-family: 'Manrope', sans-serif;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 80px;
-            height: calc(100vh - 80px);
-            width: 25%;
-            max-width: 250px;
-            background-color: #171717;
-            border-right: 2px solid #858DB4;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .sidebar-content {
-            padding: 10px 0 16px 0;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .bold-text {
-            font-weight: 700;
-            font-size: 24px;
-            color: #ffffff;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #858DB4;
-            width: 100%;
-        }
-
-        .buttons-container {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .transparent-btn {
-            background: transparent;
-            border: none;
-            padding: 14px 0;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 500;
-            font-size: 16px;
-            color: #ffffff;
-            cursor: pointer;
-            text-align: center;
-            transition: opacity 0.2s ease;
-            width: 100%;
-            text-decoration: none;
-        }
-
-        .transparent-btn:hover {
-            opacity: 0.7;
-        }
-
-        .profile-wrapper {
-            display: flex;
-            justify-content: center;
-            margin: 8px 0;
-        }
-
-        .profile-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            text-decoration: none;
-        }
-
-        .profile-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #6c6f8a;
-            flex-shrink: 0;
-        }
-
-        .profile-btn {
-            background: transparent;
-            border: none;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 500;
-            font-size: 16px;
-            color: #ffffff;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-            padding: 0;
-            text-align: left;
-            text-decoration: none;
-        }
-
-        .profile-btn:hover {
-            opacity: 0.7;
-        }
-
-        .registration-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            font-weight: 500;
-            text-align: center;
-            padding: 12px 16px;
-            margin: 8px 0;
-        }
-
-        .friends-section {
-            margin-top: 8px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .search-input {
-            width: calc(100% - 32px);
-            margin: 0 auto 16px auto;
-            padding: 10px 16px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #858DB4;
-            border-radius: 8px;
-            font-family: 'Manrope', sans-serif;
-            font-size: 14px;
-            color: #ffffff;
-            outline: none;
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .search-input:focus {
-            border-color: #a0a8cf;
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .friends-list-container {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .friends-list-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .friends-list-container::-webkit-scrollbar-track {
-            background: rgba(133, 141, 180, 0.3);
-            border-radius: 4px;
-        }
-
-        .friends-list-container::-webkit-scrollbar-thumb {
-            background: #858DB4;
-            border-radius: 4px;
-        }
-
-        .friends-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .friend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
-            color: #ffffff;
-            font-weight: 500;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-
-        .friend-item:last-child {
-            margin-bottom: 1000px;
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #6c6f8a;
-            flex-shrink: 0;
-        }
-
-        .friend-name {
-            flex: 1;
-        }
-
-        .theme-switch-container {
-            margin-top: auto;
-            margin-bottom: 16px;
-            padding: 16px 20px 12px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid rgba(133, 141, 180, 0.5);
-        }
-
-        .theme-label {
-            font-weight: 600;
-            font-size: 18px;
-            letter-spacing: 0.3px;
-            color: #ffffff;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 26px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-            position: absolute;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #3a3f5e;
-            transition: 0.3s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: 0.3s;
-            border-radius: 50%;
-        }
-
-        .switch input:checked + .slider {
-            background-color: #6c8dff;
-        }
-
-        .switch input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
-    </style>
-</head>
-<body>
-    <div class="sidebar">
-        <div class="sidebar-content">
-            <div class="bold-text">Страницы</div>
+<div class="sidebar">
+    <div class="sidebar-content">
+        <div class="bold-text">Страницы</div>
+        <div class="divider"></div>
+        <div class="buttons-container">
+            <a href="{% url 'make_question' %}" class="transparent-btn">Создать вопрос</a>
             <div class="divider"></div>
-            <div class="buttons-container">
-                <a href="{% url 'make_question' %}" class="transparent-btn">Создать вопрос</a>
-                <div class="divider"></div>
-                {% if user.is_authenticated %}
-                <div class="profile-wrapper">
-                    <div class="profile-row">
-                        <div class="profile-avatar"></div>
-                        <a href="{% url 'profile' %}" class="profile-btn">Профиль</a>
-                    </div>
+            {% if user.is_authenticated %}
+            <div class="profile-wrapper">
+                <div class="profile-row">
+                    <div class="profile-avatar"></div>
+                    <a href="{% url 'profile' %}" class="profile-btn">Профиль</a>
                 </div>
-                {% else %}
-                <a href="{% url 'login' %}" class="transparent-btn">Войти</a>
-                {% endif %}
-                <div class="divider"></div>
             </div>
-
-
-            <div class="bold-text">Друзья</div>
+            {% else %}
+            <a href="{% url 'login' %}" class="transparent-btn">Войти</a>
+            {% endif %}
             <div class="divider"></div>
+        </div>
 
-            <div class="friends-section">
-                {% if user.is_authenticated %}
-                <input type="text" class="search-input" placeholder="Поиск друзей...">
-                <div class="friends-list-container">
-                    <div class="friends-list">
-                        <div class="friend-item">
+        <div class="bold-text">Друзья</div>
+        <div class="divider"></div>
+
+        <div class="friends-section">
+            {% if not user.is_authenticated %}
+            <input type="text" class="search-input" placeholder="Поиск друзей..." id="friendSearch">
+            <div class="friends-list-container">
+                <div class="friends-list" id="friendsList">
+                    <div class="friend-item">
+                        <a href="/profile/1" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Александр</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Александр</span>
+                        </a>
+                        <a href="/messages/1" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/2" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Мария</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Мария</span>
+                        </a>
+                        <a href="/messages/2" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/3" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Дмитрий</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Дмитрий</span>
+                        </a>
+                        <a href="/messages/3" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/4" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Екатерина</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Екатерина</span>
+                        </a>
+                        <a href="/messages/4" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/5" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Артем</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Артем</span>
+                        </a>
+                        <a href="/messages/5" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/6" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Анна</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Анна</span>
+                        </a>
+                        <a href="/messages/6" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/7" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Иван</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Иван</span>
+                        </a>
+                        <a href="/messages/7" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/8" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Ольга</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Ольга</span>
+                        </a>
+                        <a href="/messages/8" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/9" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Максим</div>
-                        </div>
-                        <div class="friend-item">
+                            <span class="friend-name">Максим</span>
+                        </a>
+                        <a href="/messages/9" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                    <div class="friend-item">
+                        <a href="/profile/10" class="friend-profile-btn">
                             <div class="avatar"></div>
-                            <div class="friend-name">Наталья</div>
-                        </div>
+                            <span class="friend-name">Наталья</span>
+                        </a>
+                        <a href="/messages/10" class="message-btn">
+                            <i class="fas fa-comment"></i>
+                        </a>
                     </div>
                 </div>
-                {% else %}
-                <div class="registration-text">
-                    Зарегистрируйтесь, чтобы видеть своих друзей
-                </div>
-                {% endif %}
-                <div class="divider"></div>
-                <div class="theme-switch-container">
+            </div>
+            <div id="noResults" style="display: none; color: rgba(255, 255, 255, 0.5); text-align: center; padding: 20px; font-size: 14px;">
+                Друзья не найдены
+            </div>
+            {% else %}
+            <div class="registration-text">
+                Зарегистрируйтесь, чтобы видеть своих друзей
+            </div>
+            {% endif %}
+            <div class="divider"></div>
+            <div class="theme-switch-container">
                 <span class="theme-label">Тема</span>
                 <label class="switch">
                     <input type="checkbox">
                     <span class="slider"></span>
                 </label>
             </div>
-            </div>
-
-
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+    const searchInput = document.getElementById('friendSearch');
+    const friendsList = document.getElementById('friendsList');
+    const noResults = document.getElementById('noResults');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            const friendItems = friendsList.querySelectorAll('.friend-item');
+            let hasVisibleFriends = false;
+
+            friendItems.forEach(item => {
+                const friendName = item.querySelector('.friend-name').textContent.toLowerCase();
+                if (friendName.includes(searchTerm)) {
+                    item.classList.remove('hidden');
+                    hasVisibleFriends = true;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            if (!hasVisibleFriends && searchTerm !== '') {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+    }
+</script>
