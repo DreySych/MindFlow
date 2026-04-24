@@ -4,6 +4,9 @@ from django.urls import path
 from main import views as main_views
 from users import views as users_views
 from questions import views as question_views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,3 +26,6 @@ urlpatterns = [
 
     path('themes/', question_views.themes_page, name='themes'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
