@@ -52,6 +52,9 @@ def complaint_page(request):
 	if request.method == 'POST':
 		form = ComplaintForm(request.POST)
 		complaint_text = form.data['description']
+
+		complaint = Complaint(author=request.user, description=complaint_text, question=Question.objects.filter(id=question_id)[0])
+		complaint.save()
 	else:
 		form = ComplaintForm()
 
