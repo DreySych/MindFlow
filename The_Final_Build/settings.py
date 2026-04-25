@@ -58,7 +58,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            'main/templates'
+            'main/templates',
+            BASE_DIR/'basic_templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -120,5 +121,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 AUTH_USER_MODEL = 'users.User'
