@@ -32,7 +32,7 @@ def signup_page(request):
                     birth_date=form.cleaned_data['birth_date'],
                     registration_date=datetime.date.today(),
                     reputation=0,
-                    image=form.cleaned_data['image']
+                    image=form.cleaned_data['image'],
                 )
                 username = user.username
                 user.save()
