@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-<<<<<<< HEAD
-    <option name="sdkName" value="Python 3.14 (the-final-build)" />
+    <option name="sdkName" value="Python 3.11 (the-final-build)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.14 (the-final-build)" project-jdk-type="Python SDK" />
-=======
-    <option name="sdkName" value="Python 3.12 (the-final-build)" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (the-final-build)" project-jdk-type="Python SDK" />
->>>>>>> feature/reg-log
-  <component name="PyCharmProfessionalAdvertiser">
-    <option name="shown" value="true" />
-  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (the-final-build)" project-jdk-type="Python SDK" />
 </project>

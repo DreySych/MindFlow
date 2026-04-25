@@ -1,7 +1,12 @@
+import os
+import uuid
+from django.conf import settings
 from django.shortcuts import render, redirect
 from users.forms import *
 from users.models import User
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -16,26 +21,30 @@ def signup_page(request):
     context = {}
 
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = SignUpForm(request.POST, request.FILES)
         if form.is_valid():
             password1 = form.cleaned_data['password']
             password2 = form.cleaned_data['password_confirm']
             if password1==password2:
-                user = User(
-                    username=form.cleaned_data['username'],
-                    email=form.cleaned_data['email'],
-                    password=make_password(form.cleaned_data['password']),
-                    name=form.cleaned_data['name'],
-                    surname=form.cleaned_data['surname'],
-                    sex=form.cleaned_data['sex'],
-                    role='',
-                    birth_date=form.cleaned_data['birth_date'],
-                    registration_date=datetime.date.today(),
-                    reputation=0,
-                    image=form.cleaned_data['image'],
-                )
-                username = user.username
+                user = User()
+                user.username = form.cleaned_data['username']
+                user.email = form.cleaned_data['email']
+                user.password = make_password(form.cleaned_data['password'])
+                user.name = form.cleaned_data['name']
+                user.surname = form.cleaned_data['surname']
+                user.sex = form.cleaned_data['sex']
+                user.role = ''
+                user.birth_date = form.cleaned_data['birth_date']
+                user.registration_date = datetime.date.today()
+                user.reputation = 0
+                image_file = form.cleaned_data.get('image')
+                if image_file:
+                    ext = image_file.name.split('.')[-1]
+                    filename = f"avatars/{uuid.uuid4()}.{ext}"
+                    path = default_storage.save(filename, ContentFile(image_file.read()))
+                    user.image = path
                 user.save()
+                username = user.username
                 user = User.objects.get(username=username)
                 login(request, user)
                 return redirect('/')
