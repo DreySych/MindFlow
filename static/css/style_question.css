@@ -130,6 +130,8 @@ body {
     align-items: center;
     gap: 10px;
     padding: 5px 15px;
+    flex-wrap: wrap;
+    min-width: 200px;
 }
 
 .tags-label {
@@ -139,33 +141,30 @@ body {
 
 .header-tags-container {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
-    max-width: 250px;
+    align-items: center;
 }
 
-.header-user-tag,
-.add-tag-header {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
+/* Стиль для пользовательских тегов */
 .header-user-tag {
     background: var(--switch-checked);
     border: 1px solid var(--switch-checked);
     color: var(--text-primary);
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
 .header-user-tag:hover {
     background: #5a7ae0;
+    transform: translateY(-1px);
 }
 
 .delete-tag {
@@ -175,21 +174,94 @@ body {
     cursor: pointer;
     font-size: 11px;
     padding: 0;
-    opacity: 0.8;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    font-weight: bold;
 }
 
 .delete-tag:hover {
     opacity: 1;
 }
 
+/* Стиль для кнопки добавления тега */
 .add-tag-header {
     background: rgba(108, 141, 255, 0.2);
     border: 1px solid var(--switch-checked);
     color: var(--switch-checked);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
 }
 
 .add-tag-header:hover {
     background: rgba(108, 141, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* Контейнер для инпута добавления тега */
+.tag-input-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 2px 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.tag-input-wrapper input {
+    background: transparent;
+    border: none;
+    padding: 5px 8px;
+    font-size: 12px;
+    color: var(--text-primary);
+    outline: none;
+    width: 100px;
+    font-family: 'Manrope', sans-serif;
+}
+
+.tag-input-wrapper input::placeholder {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.confirm-tag {
+    background: var(--switch-checked);
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.confirm-tag:hover {
+    transform: scale(1.1);
+    background: #5a7ae0;
 }
 
 .questions-grid {
@@ -381,9 +453,26 @@ body {
         min-width: auto;
     }
 
+    .header-tags {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .header-tags-container {
+        max-width: none;
+    }
+
     .feed-content {
-        margin: 80px 0 0 0;
+        margin: 20px 0 0 0;
         padding: 10px;
         width: 100%;
+    }
+
+    .questions-grid {
+        gap: 16px;
+    }
+
+    .question-title {
+        font-size: 18px;
     }
 }
