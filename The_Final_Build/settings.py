@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'questions',
     'users',
     'complains',
+    'basic_templates'
 ]
 
 MIDDLEWARE = [
