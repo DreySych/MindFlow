@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Создание вопроса</title>
 </head>
 <body>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Создать</button>
-    </form>
+{% include 'header.html' %}
+{% include 'body.html' %}
+{% include 'footer.html' %}
 </body>
 </html>
