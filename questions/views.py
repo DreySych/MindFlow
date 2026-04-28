@@ -6,10 +6,10 @@ from questions.models import *
 # Create your views here.
 
 def question_themes_page(request):
-    return render(request, template_name="questions.html")
+	return render(request, template_name="questions.html")
 
 def question_page(request):
-    return render(request, template_name="question.html")
+	return render(request, template_name="question.html")
 
 def question_make_page(request):
 	context = {}
@@ -47,14 +47,18 @@ def question_make_page(request):
 def complaint_page(request):
 	context = {}
 
-	question_id = request.GET.get('id')
+	question_id = request.GET.get('question_id')
+	user_id = request.GET.get('user_id')
 
 	if request.method == 'POST':
 		form = ComplaintForm(request.POST)
 		complaint_text = form.data['description']
 
-		complaint = Complaint(author=request.user, description=complaint_text, question=Question.objects.filter(id=question_id)[0])
-		complaint.save()
+		if user_id and int(user_id) != int(request.user.id) or question_id:
+			complaint = Complaint(author=request.user, description=complaint_text,
+								  question=Question.objects.filter(id=question_id)[0] if "question_id" in request.GET else None,
+								  user=User.objects.filter(id=user_id)[0] if "user_id" in request.GET else None)
+			complaint.save()
 	else:
 		form = ComplaintForm()
 
@@ -63,4 +67,4 @@ def complaint_page(request):
 	return render(request, "complaint.html", context)
 
 def themes_page(request):
-    return render(request, template_name="themes.html")
+	return render(request, template_name="themes.html")
