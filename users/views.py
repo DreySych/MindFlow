@@ -2,6 +2,7 @@ import os
 import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
+from users.forms import ProfileForm
 from users.forms import *
 from users.models import User
 from django.contrib.auth.hashers import check_password, make_password
@@ -83,4 +84,34 @@ def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
 def profile_page(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if request.method == "POST":
+            form = ProfileForm(request.POST, request.FILES)
+            if form.is_valid():
+                user.username = form.cleaned_data['username']
+                user.email = form.cleaned_data['email']
+                user.birth_date = form.cleaned_data['birth_date']
+                user.role = ''
+                image_file = form.cleaned_data.get('image')
+                if image_file:
+                    ext = image_file.name.split('.')[-1]
+                    filename = f"avatars/{uuid.uuid4()}.{ext}"
+                    path = default_storage.save(filename, ContentFile(image_file.read()))
+                    user.image = path
+                user.save()
+                return redirect('profile')
+        else:
+            initial_data = {
+                'username': user.username,
+                'role': user.role,
+                'email': user.email,
+                'birth_date': user.birth_date,
+                'image_photo': user.image
+            }
+            form = ProfileForm(initial=initial_data)
+            return render(request, 'profile.html', {'form': form, 'user': user})
+
+    else:
+        return redirect('/account/login')
     return render(request, template_name="profile.html")
