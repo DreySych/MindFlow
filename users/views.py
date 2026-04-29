@@ -2,6 +2,8 @@ import os
 import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
+
+from questions.models import Question
 from users.forms import ProfileForm
 from users.forms import *
 from users.models import User
@@ -110,7 +112,13 @@ def profile_page(request):
                 'image_photo': user.image
             }
             form = ProfileForm(initial=initial_data)
-            return render(request, 'profile.html', {'form': form, 'user': user})
+            posts = Question.objects.filter(author=user)
+            context = {
+                'form': form,
+                'user': user,
+                'posts': posts,
+            }
+            return render(request, 'profile.html', context=context)
 
     else:
         return redirect('/account/login')

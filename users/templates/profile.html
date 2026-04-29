@@ -16,5 +16,13 @@
         <p><strong>Фото:</strong></p>
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
     {% endif %}
+    <hr>
+    {% if posts %}
+        {% for post in posts %}
+            <h2>{{post.title}}</h2>
+            <li>Название:<a href="/question/{{post.id}}"> sadfsdf</a></li>
+            <li>Просмотры: {{post.views}}</li>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
 
