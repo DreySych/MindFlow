@@ -10,8 +10,11 @@
     <p><strong>Просмотров:</strong> {{ question.views }}</p>
     <hr>
     <p><strong>Описание:</strong> {{ question.description }}</p>
-    {% if question.images %}
-        <p><strong>Изображения:</strong> {{ question.images }}</p>
+    <p><strong>Изображения:</strong></p>
+    {% if question_images %}
+        {% for image in question_images %}
+            <img src="{{MEDIA_URL}}{{image}}" width="200px" height="auto">
+        {% endfor %}
     {% endif %}
    {% if answers %}
         {% for answer in answers %}

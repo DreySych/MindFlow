@@ -17,8 +17,10 @@ def question_page(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     answers = Answer.objects.filter(question=question)
     comments = Comment.objects.filter(question=question)
+    question_images = list(question.images.split(","))
     context = {
         'question': question,
+        'question_images': question_images,
         'answers': answers,
         'comments': comments
     }
