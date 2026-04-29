@@ -1,0 +1,49 @@
+{% block content %}
+    <h1>{{ question.title }}</h1>
+    <p><strong>Автор:</strong> {{ question.author.username }}</p>
+    <p><strong>Дата создания:</strong> {{ question.creation_date|date:"d.m.Y H:i" }}</p>
+    {% if question.modified_date %}
+        <p><strong>Изменён:</strong> {{ question.modified_date|date:"d.m.Y H:i" }}</p>
+    {% endif %}
+    <p><strong>Тема:</strong> {{ question.theme }}</p>
+    <p><strong>Теги:</strong> {{ question.tags|default:"нет" }}</p>
+    <p><strong>Просмотров:</strong> {{ question.views }}</p>
+    <hr>
+    <p><strong>Описание:</strong> {{ question.description }}</p>
+    {% if question.images %}
+        <p><strong>Изображения:</strong> {{ question.images }}</p>
+    {% endif %}
+   {% if answers %}
+        {% for answer in answers %}
+            <div>
+                <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                <p>{{ answer.answer|linebreaks }}</p>
+                {% if answer.images %}
+                    <p><strong>Изображения:</strong> {{ answer.images }}</p>
+                {% endif %}
+                <p>Рейтинг: {{ answer.rating }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет ответов.</p>
+    {% endif %}
+    {% if comments %}
+        {% for comment in comments %}
+            <div>
+                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                <p>{{ comment.comment|linebreaks }}</p>
+                {% if comment.images %}
+                    <p><strong>Изображения:</strong> {{ comment.images }}</p>
+                {% endif %}
+                <p>Рейтинг: {{ comment.rating }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет комментариев.</p>
+    {% endif %}
+
+
+    <a href="{% url 'index' %}">На главную</a>
+{% endblock %}

@@ -18,7 +18,7 @@ urlpatterns = [
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/', users_views.profile_page, name='profile'),
 
-    path('question/', question_views.question_page, name='question'),
+    path('question/<int:question_id>/', question_views.question_page, name='question'),
     path('question/theme/<int:theme_num>/', question_views.question_themes_page, name='questions'),
     path('question/make/', question_views.question_make_page, name='make_question'),
 
