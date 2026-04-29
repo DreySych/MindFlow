@@ -39,9 +39,7 @@ def question_make_page(request):
                 tags = form.cleaned_data['tags'].split()
                 images = request.FILES.getlist('images')
                 image_paths = []
-                print("----------------------------", title)
                 for image in images:
-                    print("%%%%%%% GET IT %%%%%%%%%%", image)
                     ext = image.name.split('.')[-1]
                     filename = f"question_images/{uuid.uuid4()}.{ext}"
                     path = default_storage.save(filename, ContentFile(image.read()))
