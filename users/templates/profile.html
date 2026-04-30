@@ -19,9 +19,9 @@
     <a href="{% url 'index' %}">На главную</a>
     <hr>
     {% if posts %}
+        <h3>Посты:</h3>
         {% for post in posts %}
-            <h2>{{post.title}}</h2>
-            <li>Название:<a href="/question/{{post.id}}"> sadfsdf</a></li>
+            <li>Название:<a href="/question/{{post.id}}"> {{post.title}}</a></li>
             <li>Просмотры: {{post.views}}</li>
         {% endfor %}
     {% endif %}

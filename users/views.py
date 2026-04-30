@@ -94,7 +94,7 @@ def profile_page(request):
                 user.username = form.cleaned_data['username']
                 user.email = form.cleaned_data['email']
                 user.birth_date = form.cleaned_data['birth_date']
-                user.role = ''
+                user.role = form.cleaned_data['role']
                 image_file = form.cleaned_data.get('image')
                 if image_file:
                     ext = image_file.name.split('.')[-1]
