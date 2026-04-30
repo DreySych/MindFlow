@@ -23,6 +23,7 @@ urlpatterns = [
     path('question/make/', question_views.question_make_page, name='make_question'),
 
     path('complaint/', question_views.complaint_page, name='complaint'),
+    path('complaint/panel/', question_views.complaint_panel_page, name='complaint_panel'),
 
     path('themes/', question_views.themes_page, name='themes'),
 ]
