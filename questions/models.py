@@ -13,7 +13,6 @@ class Question(models.Model):
     modified_date = models.DateTimeField(null=True)
     close_date = models.DateTimeField(null=True)
     images = models.TextField()
-    #theme = models.TextField()
 
 class Answer(models.Model):
     answer = models.TextField()
@@ -37,9 +36,3 @@ class Tag(models.Model):
 class PostToTag(models.Model):
     question = models.ForeignKey(Question, on_delete=CASCADE)
     tag = models.ForeignKey(Tag, on_delete=CASCADE)
-
-class Complaint(models.Model):
-    description = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=CASCADE, null=True, related_name='question')
-    user = models.ForeignKey(User, on_delete=CASCADE, null=True, related_name='user')
