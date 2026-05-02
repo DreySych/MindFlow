@@ -1,0 +1,115 @@
+/* ===== профиль: оверлей ===== */
+.profile-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-trigger {
+  cursor: pointer;
+}
+
+.profile-overlay {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  padding: 8px 0;
+  display: none;
+  z-index: 20;
+}
+
+.profile-overlay.active {
+  display: block;
+}
+
+.overlay-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 15px;
+  color: #000000;
+  text-decoration: none;
+  transition: background 0.15s ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.overlay-item:hover {
+  background: #F6F6F6;
+}
+
+.overlay-item-exit {
+  color: #E53935;
+}
+
+.overlay-item-exit:hover {
+  background: #FFF0F0;
+}
+
+/* ===== поиск: оверлей ===== */
+.header-search {
+  position: relative;
+}
+
+.search-overlay {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #C6C6C6;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  display: none;
+  z-index: 20;
+  box-sizing: border-box;
+}
+
+.search-overlay.active {
+  display: block;
+}
+
+.search-overlay-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.search-suggestion:hover {
+  background: #F6F6F6;
+}
+
+.search-suggestion-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.search-suggestion-text {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
