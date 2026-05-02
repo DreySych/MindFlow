@@ -1,5 +1,6 @@
 {% load static %}
 <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/overlays_basic.css' %}">
 <header>
   <a href="{% url 'index' %}" class="header-logo">
     <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo-img">
@@ -7,8 +8,8 @@
   </a>
 
   <div class="header-search">
-    <div class="search-wrapper">
-      <input type="text" placeholder="Поиск...">
+    <div class="search-wrapper" onclick="toggleSearchOverlay(event)">
+      <input type="text" placeholder="Поиск..." id="searchInput">
       <span class="search-divider"></span>
       <button>
         <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
@@ -18,6 +19,8 @@
       <span class="ii-text">ИИ Поиск</span>
       <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
     </a>
+
+    {% include 'search_overlay.html' %}
   </div>
 
   <div class="header-right">
@@ -28,8 +31,49 @@
     <a href="{% url 'notifications' %}" class="icon-button">
       <img src="{% static 'images/notifications.png' %}" alt="Уведомления" class="icon-notify">
     </a>
-    <a href="{% url 'profile' %}" class="icon-button">
-      <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
-    </a>
+
+    <!-- Профиль с оверлеем -->
+    <div class="profile-dropdown">
+      <button class="icon-button profile-trigger" onclick="toggleProfileOverlay()">
+        <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
+      </button>
+
+      <div class="profile-overlay" id="profileOverlay">
+        <a href="{% url 'profile' %}" class="overlay-item">
+          <span>Профиль</span>
+        </a>
+        <a href="" class="overlay-item">
+          <span>Настройки</span>
+        </a>
+        <a href="{% url 'login' %}" class="overlay-item overlay-item-exit">
+          <span>Выйти</span>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
+
+<script>
+  function toggleProfileOverlay() {
+    document.getElementById('profileOverlay').classList.toggle('active');
+    document.getElementById('searchOverlay').classList.remove('active');
+  }
+
+  function toggleSearchOverlay(event) {
+    event.stopPropagation();
+    document.getElementById('searchOverlay').classList.toggle('active');
+    document.getElementById('profileOverlay').classList.remove('active');
+  }
+
+  document.addEventListener('click', function(event) {
+    const profileDropdown = document.querySelector('.profile-dropdown');
+    const headerSearch = document.querySelector('.header-search');
+
+    if (!profileDropdown.contains(event.target)) {
+      document.getElementById('profileOverlay').classList.remove('active');
+    }
+    if (!headerSearch.contains(event.target)) {
+      document.getElementById('searchOverlay').classList.remove('active');
+    }
+  });
+</script>
