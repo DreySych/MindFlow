@@ -1,7 +1,7 @@
 {% load static %}
 <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 <header>
-  <a href="/" class="header-logo">
+  <a href="{% url 'index' %}" class="header-logo">
     <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo-img">
     <span class="logo-text">MindFlow</span>
   </a>
@@ -14,22 +14,22 @@
         <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
       </button>
     </div>
-    <button class="ii-button">
-      <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
+    <a href="" class="ii-button">
       <span class="ii-text">ИИ Поиск</span>
-    </button>
+      <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
+    </a>
   </div>
 
   <div class="header-right">
-    <button class="create-button">
+    <a href="{% url 'make_question' %}" class="create-button">
       <span class="icon-plus">+</span>
       <span>Создать</span>
-    </button>
-    <button class="icon-button">
+    </a>
+    <a href="{% url 'notifications' %}" class="icon-button">
       <img src="{% static 'images/notifications.png' %}" alt="Уведомления" class="icon-notify">
-    </button>
-    <button class="icon-button">
+    </a>
+    <a href="{% url 'profile' %}" class="icon-button">
       <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
-    </button>
+    </a>
   </div>
 </header>

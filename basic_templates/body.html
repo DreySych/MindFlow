@@ -1,3 +1,92 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/basic.css' %}">
-<div class="body-sidebar"></div>
+
+<div class="body-sidebar">
+  <div class="sidebar-search">
+    <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input">
+  </div>
+
+  <div class="friends-list">
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Александр</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Мария</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Дмитрий</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Елена</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Сергей</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Анна</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Павел</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+
+    <div class="friend-item">
+      <a href="{% url 'profile_somelse' %}" class="friend-button">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
+        <span class="friend-nick">Ольга</span>
+      </a>
+      <a href="{% url 'PM' %}" class="chat-button">
+        <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
+      </a>
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+</div>
