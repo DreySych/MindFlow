@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% for i in complaints %}
+        Описание: {{i.description}}
+        <br>
+        От: {{i.author}}
+        <br>
+        На: <a href="/"> {{i.user.username}}</a>
+        <hr>
+    {% endfor %}
+</body>
+</html>

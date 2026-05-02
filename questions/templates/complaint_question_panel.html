@@ -10,7 +10,7 @@
         <br>
         От: {{i.author}}
         <br>
-        На: <a href="/"> {% if i.user %} {{i.user.username}} {% endif %}  {% if i.question %} {{i.question.title}} {% endif %} </a>
+        На: <a href="/question/?id={{i.question.id}}"> {{i.question.title}}</a>
         <hr>
     {% endfor %}
 </body>

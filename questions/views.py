@@ -66,15 +66,23 @@ def complaint_page(request):
 
 	return render(request, "complaint.html", context)
 
-def complaint_panel_page(request):
+def complaint_user_panel_page(request):
 	context = {}
 
-	complaints = Complaint.objects.all()
-	print(complaints)
+	complaints = Complaint.objects.filter(user__isnull=False)
 
 	context['complaints'] = complaints
 
-	return render(request, "complaint_panel.html", context)
+	return render(request, "complaint_user_panel.html", context)
+
+def complaint_question_panel_page(request):
+	context = {}
+
+	complaints = Complaint.objects.filter(question__isnull=False)
+
+	context['complaints'] = complaints
+
+	return render(request, "complaint_question_panel.html", context)
 
 def themes_page(request):
 	return render(request, template_name="themes.html")
