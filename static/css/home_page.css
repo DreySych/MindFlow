@@ -41,7 +41,7 @@ body {
 
 .user-info {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
     margin-bottom: 8px;
 }
@@ -60,11 +60,23 @@ body {
     color: #1a1a1a;
 }
 
+.user-name::after {
+    font-family: 'Sans', sans-serif;
+    content: "•";
+    color: #999;
+    font-size: 20px;
+    margin-left: 8px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
 .time-ago {
     font-size: 20px;
     font-family: 'Mallanna', sans-serif;
     color: #888;
-    margin-left: 8px;
+    margin-left: 0;
+    display: flex;
+    align-items: center;
 }
 
 .question-text {
@@ -90,11 +102,10 @@ body {
 .question-image-placeholder img {
     width: 100%;
     height: 100%;
-    object-fit: fill ;
+    object-fit: fill;
     border-radius: 16px;
     display: block;
 }
-
 
 .actions {
     display: flex;
@@ -104,77 +115,70 @@ body {
     margin-top: 6px;
 }
 
-.gradient-border {
-    position: relative;
-    background: transparent;
+.vote-group,
+.action-btn.comment,
+.action-btn.report {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
-    z-index: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-}
-
-.gradient-border::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to right, #1671FE 0%, #336A93 100%);
-    border-radius: 20px;
-    z-index: -1;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    padding: 1px;
+    border: 1px solid transparent;
 }
 
 .vote-group {
-    width: 106px;
+    width: auto;
     height: 44px;
-    gap: 4px;
-    padding: 0;
+    gap: 2px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .vote-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
+    gap: 0;
     border: none;
     background: transparent;
     cursor: pointer;
+    font-size: 20px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    padding: 8px;
     border-radius: 50%;
-    transition: background 0.2s;
-    padding: 0;
-    position: relative;
-    z-index: 1;
-}
-
-.vote-btn:hover {
-    background: #f0f0f0;
+    color: #1671FE;
 }
 
 .vote-btn.upvote:hover {
-    background: #FFF0ED;
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
 }
 
 .vote-btn.downvote:hover {
-    background: #EDF1FF;
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
 }
 
-.vote-btn:active img {
-    transform: scale(1.2);
+.vote-btn:active {
+    transform: none;
+    background: transparent;
+}
+
+.vote-btn.upvote:active {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+}
+
+.vote-btn.downvote:active {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
 }
 
 .vote-btn img {
-    width: 18px;
-    height: 18px;
-    transition: transform 0.1s;
+    width: 20px;
+    height: 20px;
+    opacity: 1;
 }
 
 .vote-count {
@@ -182,24 +186,46 @@ body {
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
     color: #1671FE;
-    min-width: 24px;
+    min-width: 30px;
     text-align: center;
     line-height: 1;
-    position: relative;
-    z-index: 1;
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .action-btn.comment {
     width: 78px;
     height: 44px;
-    gap: 6px;
+    gap: 8px;
     padding: 0;
-    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 20px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
 }
 
 .action-btn.comment:hover {
     background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.action-btn.comment:active {
+    transform: none;
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.action-btn.comment span {
+    font-size: 20px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
     color: #1671FE;
 }
 
@@ -208,44 +234,33 @@ body {
     height: 44px;
     margin-left: auto;
     padding: 0;
-    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #aaa;
 }
 
 .action-btn.report:hover {
     background: #ffebee;
+    border-color: #e53935;
     color: #e53935;
-    opacity: 1;
 }
 
-.action-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    font-family: 'Mallanna', sans-serif;
-    color: #1671FE;
-    transition: color 0.2s, opacity 0.2s, background 0.2s;
-    position: relative;
-    z-index: 1;
-}
-
-.action-btn.report {
-    color: #aaa;
-    opacity: 0.7;
+.action-btn.report:active {
+    transform: none;
+    background: #ffebee;
+    border-color: #e53935;
+    color: #e53935;
 }
 
 .action-btn img {
-    width: 18px;
-    height: 18px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
-
-.action-btn:hover img {
+    width: 20px;
+    height: 20px;
     opacity: 1;
 }
 
@@ -253,5 +268,30 @@ body {
     .content-wrapper {
         margin-left: 0;
         padding-top: 140px;
+    }
+
+    .vote-btn {
+        font-size: 18px;
+        padding: 6px;
+    }
+
+    .vote-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .vote-count {
+        font-size: 18px;
+    }
+
+    .action-btn.comment,
+    .action-btn.report {
+        height: 40px;
+        width: 70px;
+    }
+
+    .action-btn.comment span,
+    .action-btn.comment {
+        font-size: 18px;
     }
 }
