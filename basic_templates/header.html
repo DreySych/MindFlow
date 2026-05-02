@@ -1,3 +1,35 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/basic.css' %}">
-<header></header>
+<link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+<header>
+  <a href="/" class="header-logo">
+    <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo-img">
+    <span class="logo-text">MindFlow</span>
+  </a>
+
+  <div class="header-search">
+    <div class="search-wrapper">
+      <input type="text" placeholder="Поиск...">
+      <span class="search-divider"></span>
+      <button>
+        <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
+      </button>
+    </div>
+    <button class="ii-button">
+      <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
+      <span class="ii-text">ИИ Поиск</span>
+    </button>
+  </div>
+
+  <div class="header-right">
+    <button class="create-button">
+      <span class="icon-plus">+</span>
+      <span>Создать</span>
+    </button>
+    <button class="icon-button">
+      <img src="{% static 'images/notifications.png' %}" alt="Уведомления" class="icon-notify">
+    </button>
+    <button class="icon-button">
+      <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
+    </button>
+  </div>
+</header>
