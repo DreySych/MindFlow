@@ -1,5 +1,6 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+<link rel="stylesheet" href="{% static 'css/chat_overlay.css' %}">
 
 <div class="body-sidebar">
   <div class="sidebar-search">
@@ -12,7 +13,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Александр</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -22,7 +23,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Мария</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -32,7 +33,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Дмитрий</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -42,7 +43,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Елена</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -52,7 +53,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Сергей</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -62,7 +63,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Анна</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -72,7 +73,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Павел</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -82,7 +83,7 @@
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
         <span class="friend-nick">Ольга</span>
       </a>
-      <a href="{% url 'PM' %}" class="chat-button">
+      <a href="{% url 'PM' %}" class="chat-button" onclick="openChatOverlay(); return false;">
         <img src="{% static 'images/chat.png' %}" alt="ЛС" class="chat-icon">
       </a>
     </div>
@@ -90,3 +91,25 @@
 
   <div class="sidebar-divider"></div>
 </div>
+
+{% include 'PM.html' %}
+
+<script>
+  function openChatOverlay() {
+    document.getElementById('chatOverlay').classList.add('active');
+    document.body.style.overflow = '';
+    localStorage.setItem('chatOpen', 'true');
+  }
+
+  function closeChatOverlay() {
+    document.getElementById('chatOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+    localStorage.removeItem('chatOpen');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('chatOpen') === 'true') {
+      document.getElementById('chatOverlay').classList.add('active');
+    }
+  });
+</script>
