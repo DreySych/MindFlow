@@ -61,8 +61,8 @@ body {
 }
 
 .user-name::after {
-    font-family: 'Sans', sans-serif;
     content: "•";
+    font-family: sans-serif;
     color: #999;
     font-size: 20px;
     margin-left: 8px;
@@ -117,7 +117,8 @@ body {
 
 .vote-group,
 .action-btn.comment,
-.action-btn.report {
+.action-btn.report,
+.action-btn.cross {
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
@@ -232,7 +233,6 @@ body {
 .action-btn.report {
     width: 78px;
     height: 44px;
-    margin-left: auto;
     padding: 0;
     display: flex;
     align-items: center;
@@ -256,6 +256,39 @@ body {
     background: #ffebee;
     border-color: #e53935;
     color: #e53935;
+}
+
+.action-btn.cross {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #e53935;
+}
+
+.action-btn.cross:hover {
+    background: #ffebee;
+    border-color: #e53935;
+    color: #c62828;
+}
+
+.action-btn.cross:active {
+    transform: none;
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+.action-btn.cross img {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
 }
 
 .action-btn img {
@@ -293,5 +326,15 @@ body {
     .action-btn.comment span,
     .action-btn.comment {
         font-size: 18px;
+    }
+
+    .action-btn.cross {
+        width: 40px;
+        height: 40px;
+    }
+
+    .action-btn.cross img {
+        width: 16px;
+        height: 16px;
     }
 }
