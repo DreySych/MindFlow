@@ -36,7 +36,6 @@ def question_make_page(request):
                 time = datetime.datetime.now()
                 title = form.cleaned_data['title']
                 description = form.cleaned_data['description']
-                tags = form.cleaned_data['tags'].split()
                 images = request.FILES.getlist('images')
                 image_paths = []
                 for image in images:
@@ -47,15 +46,15 @@ def question_make_page(request):
                 images_str = ','.join(image_paths)
 
                 question = Question(title=title, description=description,
-                                    creation_date=time, views=0, images=images_str, author=request.user)
+                                    creation_date=time, images=images_str, author=request.user)
                 question.save()
 
-                for tag_title in tags:
-                    if len(Tag.objects.filter(title=tag_title)) == 0:
-                        tag = Tag(title=tag_title)
-                        tag.save()
-                        link = PostToTag(question=question, tag=tag)
-                        link.save()
+                # for tag_title in tags:
+                #     if len(Tag.objects.filter(title=tag_title)) == 0:
+                #         tag = Tag(title=tag_title)
+                #         tag.save()
+                #         link = PostToTag(question=question, tag=tag)
+                #         link.save()
 
 
 

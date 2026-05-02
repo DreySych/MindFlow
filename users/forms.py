@@ -17,11 +17,8 @@ class SignUpForm(forms.Form):
     email = forms.EmailField(label='Почта', widget=forms.EmailInput)
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
     password_confirm = forms.CharField(widget=forms.PasswordInput, label='Подтверждение пароля')
-    name = forms.CharField(max_length=255, label='Имя')
-    surname = forms.CharField(max_length=255, label='Фамилия')
-    sex = forms.ChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants)
-    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}))
-    image = ImageField(label='Изображение', required=False)
+    sex = forms.ChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False)
+    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
 
 
 class LoginForm(forms.Form):

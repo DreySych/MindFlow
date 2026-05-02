@@ -33,19 +33,9 @@ def signup_page(request):
                 user.username = form.cleaned_data['username']
                 user.email = form.cleaned_data['email']
                 user.password = make_password(form.cleaned_data['password'])
-                user.name = form.cleaned_data['name']
-                user.surname = form.cleaned_data['surname']
-                user.sex = form.cleaned_data['sex']
                 user.role = ''
-                user.birth_date = form.cleaned_data['birth_date']
                 user.registration_date = datetime.date.today()
                 user.reputation = 0
-                image_file = form.cleaned_data.get('image')
-                if image_file:
-                    ext = image_file.name.split('.')[-1]
-                    filename = f"avatars/{uuid.uuid4()}.{ext}"
-                    path = default_storage.save(filename, ContentFile(image_file.read()))
-                    user.image = path
                 user.save()
                 username = user.username
                 user = User.objects.get(username=username)

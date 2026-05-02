@@ -29,18 +29,19 @@ class User(AbstractBaseUser, PermissionsMixin ):
     username = models.TextField(unique=True)
     password = models.CharField(max_length=128)
     email = models.TextField()
-    name = models.TextField()
-    surname = models.TextField()
     sex = models.IntegerField()
-    #level = models.TextField()
     reputation = models.IntegerField()
     role = models.TextField()
     birth_date = models.DateField()
     registration_date = models.DateField()
-    image = models.ImageField()
+    image = models.ImageField(null=True)
     is_staff = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email", "name", "surname", "sex", "role", "birth_date", "registration_date", "reputation"]
+    REQUIRED_FIELDS = ["email", "sex", "role", "birth_date", "registration_date", "reputation"]
+
+class Subscription(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')

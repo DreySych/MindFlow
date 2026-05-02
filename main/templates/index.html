@@ -6,7 +6,6 @@
         {% for user in users %}
             <li>
                 {{ user.username }}
-                ({{ user.name }} {{ user.surname }})
                 {% if user.email %}- {{ user.email }}{% endif %}
             </li>
         {% endfor %}

@@ -20,5 +20,5 @@ class MultipleFileField(forms.FileField):
 class QuestionForm(forms.Form):
     title = forms.CharField()
     description = forms.CharField()
-    tags = forms.CharField(required=False)
+    #tags = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
