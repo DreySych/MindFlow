@@ -1,12 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Жалоба на вопрос</title>
-</head>
-<body>
-{% include 'header.html' %}
-{% include 'body.html' %}
-{% include 'footer.html' %}
-</body>
-</html>
+{% load static %}
+<div class="complain-overlay" id="complainQuestionOverlay">
+  <div class="complain-backdrop" onclick="closeComplainQuestionOverlay()"></div>
+  <div class="complain-modal">
+    <div class="complain-header">
+      <span class="complain-title">Пожаловаться на вопрос</span>
+    </div>
+
+    <div class="complain-body">
+      <p class="complain-subtitle">Укажите причину жалобы:</p>
+
+      <div class="complain-reasons">
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="spam">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Спам или реклама</span>
+        </label>
+
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="offensive">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Оскорбительный контент</span>
+        </label>
+
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="misinformation">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Ложная информация</span>
+        </label>
+
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="duplicate">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Повторяющийся вопрос</span>
+        </label>
+
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="inappropriate">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Неприемлемый контент (18+)</span>
+        </label>
+
+        <label class="complain-reason">
+          <input type="radio" name="complain_reason" value="other">
+          <span class="reason-radio"></span>
+          <span class="reason-text">Другое</span>
+        </label>
+      </div>
+
+      <textarea class="complain-textarea" placeholder="Опишите подробнее (необязательно)..."></textarea>
+    </div>
+
+    <div class="complain-footer">
+      <button class="complain-cancel-btn" onclick="closeComplainQuestionOverlay()">Отмена</button>
+      <button class="complain-submit-btn">Отправить жалобу</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openComplainQuestionOverlay() {
+    document.getElementById('complainQuestionOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeComplainQuestionOverlay() {
+    document.getElementById('complainQuestionOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+</script>

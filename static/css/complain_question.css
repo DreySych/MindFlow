@@ -1,0 +1,191 @@
+/* ===== оверлей жалобы на вопрос ===== */
+.complain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.complain-overlay.active {
+  display: flex;
+}
+
+.complain-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.complain-modal {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  font-family: 'Mallanna', sans-serif;
+}
+
+.complain-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.complain-title {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 18px;
+  color: #1a1a1a;
+  font-weight: 400;
+}
+
+/* ===== тело ===== */
+.complain-body {
+  padding: 20px;
+}
+
+.complain-subtitle {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 16px;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+.complain-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+/* ===== радиокнопки-причины ===== */
+.complain-reason {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.complain-reason:hover {
+  background: #F6F6F6;
+}
+
+.complain-reason input[type="radio"] {
+  display: none;
+}
+
+.reason-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #C6C6C6;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  position: relative;
+}
+
+.complain-reason input[type="radio"]:checked + .reason-radio {
+  border-color: #1671FE;
+  background: #1671FE;
+}
+
+.complain-reason input[type="radio"]:checked + .reason-radio::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.reason-text {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 15px;
+  color: #1a1a1a;
+}
+
+/* ===== текстовое поле ===== */
+.complain-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 10px 14px;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  border: 1px solid #C6C6C6;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  color: #1a1a1a;
+  transition: border-color 0.2s ease;
+}
+
+.complain-textarea:focus {
+  border-color: #1671FE;
+}
+
+.complain-textarea::placeholder {
+  color: #999;
+}
+
+/* ===== футер ===== */
+.complain-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid #E0E0E0;
+}
+
+.complain-cancel-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid #C6C6C6;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  color: #666;
+  transition: background 0.15s ease;
+}
+
+.complain-cancel-btn:hover {
+  background: #F6F6F6;
+}
+
+.complain-submit-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #1671FE;
+  cursor: pointer;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  transition: background 0.15s ease;
+}
+
+.complain-submit-btn:hover {
+  background: #0D5DD6;
+}

@@ -5,6 +5,7 @@
     <title>Главная страница (лента вопросов)</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_question.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -42,7 +43,7 @@
                                 <span>67</span>
                             </button>
                             <div style="flex: 1;"></div>
-                            <button class="action-btn report gradient-border" aria-label="Пожаловаться">
+                            <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
                         </div>
@@ -77,7 +78,7 @@
                                 <span>42</span>
                             </button>
                             <div style="flex: 1;"></div>
-                            <button class="action-btn report gradient-border" aria-label="Пожаловаться">
+                            <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
                         </div>
@@ -88,5 +89,6 @@
     </div>
 
     {% include 'footer.html' %}
+    {% include 'complain_question.html' %}
 </body>
 </html>
