@@ -38,10 +38,10 @@
                                     <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                 </button>
                             </div>
-                            <button class="action-btn comment gradient-border">
+                            <a href="{% url 'question' %}" class="action-btn comment gradient-border" style="text-decoration: none; display: inline-flex; align-items: center;">
                                 <img src="{% static 'images/comment.png' %}" alt="Комментарий">
                                 <span>67</span>
-                            </button>
+                            </a>
                             <div style="flex: 1;"></div>
                             <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
@@ -73,10 +73,10 @@
                                     <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                 </button>
                             </div>
-                            <button class="action-btn comment gradient-border">
+                            <a href="{% url 'question' %}" class="action-btn comment gradient-border" style="text-decoration: none; display: inline-flex; align-items: center;">
                                 <img src="{% static 'images/comment.png' %}" alt="Комментарий">
                                 <span>42</span>
-                            </button>
+                            </a>
                             <div style="flex: 1;"></div>
                             <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
