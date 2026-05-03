@@ -1,0 +1,52 @@
+{% load static %}
+<div class="notifications-overlay" id="notificationsOverlay">
+  <div class="notifications-header">
+    <span class="notifications-title">Уведомления</span>
+  </div>
+  <div class="notifications-list">
+    <a href="{% url 'notifications' %}" class="notification-item">
+      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+      <div class="notification-content">
+        <p class="notification-text">
+          <span class="notification-username">Анна К.</span> ответила на ваш комментарий
+        </p>
+      </div>
+    </a>
+
+    <a href="{% url 'notifications' %}" class="notification-item">
+      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+      <div class="notification-content">
+        <p class="notification-text">
+          <span class="notification-username">Максим П.</span> оценил ваш вопрос
+        </p>
+      </div>
+    </a>
+
+    <a href="{% url 'notifications' %}" class="notification-item">
+      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+      <div class="notification-content">
+        <p class="notification-text">
+          <span class="notification-username">Сергей Р.</span> подписался на вас
+        </p>
+      </div>
+    </a>
+
+    <a href="{% url 'notifications' %}" class="notification-item">
+      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+      <div class="notification-content">
+        <p class="notification-text">
+          <span class="notification-username">Елена В.</span> упомянула вас в комментарии
+        </p>
+      </div>
+    </a>
+
+    <a href="{% url 'notifications' %}" class="notification-item">
+      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+      <div class="notification-content">
+        <p class="notification-text">
+          <span class="notification-username">Дмитрий</span> оценил ваш комментарий
+        </p>
+      </div>
+    </a>
+  </div>
+</div>
