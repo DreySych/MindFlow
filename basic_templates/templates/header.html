@@ -1,6 +1,8 @@
 {% load static %}
 <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/basic.css' %}">
 <link rel="stylesheet" href="{% static 'css/overlays_basic.css' %}">
+<link rel="stylesheet" href="{% static 'css/notifications.css' %}">
 <header>
   <a href="{% url 'index' %}" class="header-logo">
     <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo-img">
@@ -28,11 +30,14 @@
       <span class="icon-plus">+</span>
       <span>Создать</span>
     </a>
-    <a href="{% url 'notifications' %}" class="icon-button">
-      <img src="{% static 'images/notifications.png' %}" alt="Уведомления" class="icon-notify">
-    </a>
 
-    <!-- Профиль с оверлеем -->
+    <div class="notifications-dropdown">
+      <button class="icon-button notifications-trigger" onclick="toggleNotificationsOverlay(event)">
+        <img src="{% static 'images/notifications.png' %}" alt="Уведомления" class="icon-notify">
+      </button>
+      {% include 'notifications_overlay.html' %}
+    </div>
+
     <div class="profile-dropdown">
       <button class="icon-button profile-trigger" onclick="toggleProfileOverlay()">
         <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
@@ -65,15 +70,21 @@
     document.getElementById('profileOverlay').classList.remove('active');
   }
 
+  function toggleNotificationsOverlay(event) {
+    event.stopPropagation();
+    document.getElementById('notificationsOverlay').classList.toggle('active');
+    document.getElementById('profileOverlay').classList.remove('active');
+  }
+
   document.addEventListener('click', function(event) {
     const profileDropdown = document.querySelector('.profile-dropdown');
-    const headerSearch = document.querySelector('.header-search');
+    const notificationsDropdown = document.querySelector('.notifications-dropdown');
 
     if (!profileDropdown.contains(event.target)) {
       document.getElementById('profileOverlay').classList.remove('active');
     }
-    if (!headerSearch.contains(event.target)) {
-      document.getElementById('searchOverlay').classList.remove('active');
+    if (!notificationsDropdown.contains(event.target)) {
+      document.getElementById('notificationsOverlay').classList.remove('active');
     }
   });
 </script>
