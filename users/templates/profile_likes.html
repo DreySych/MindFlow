@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;600;500;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+    <title>Нравится | MindFlow</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #F0F4F8;
+            min-height: 100vh;
+            color: #1a1a2e;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 150px 40px 40px 0px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, rgba(74,144,226,0.1) 0%, rgba(255,255,255,1) 100%);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 2px solid #D1D9E6;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-left: 0;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border: 4px solid #fff;
+            box-shadow: 0 4px 16px rgba(74,144,226,0.3);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .profile-username {
+            color: #9CA3AF;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-tabs {
+            display: flex;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-left: 0;
+        }
+
+        .tab-btn {
+            padding: 14px 32px;
+            background: #ffffff;
+            border: 2px solid #D1D9E6;
+            border-radius: 25px;
+            color: #6B7280;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+
+        .tab-btn.active {
+            background: #4A90E2;
+            border-color: #4A90E2;
+            color: #fff;
+        }
+
+        .post-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 2px solid #D1D9E6;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            overflow: hidden;
+        }
+
+        .post-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #1a1a2e;
+            font-size: 15px;
+        }
+
+        .post-time {
+            color: #9CA3AF;
+            font-size: 13px;
+        }
+
+        .post-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            max-height: 400px;
+            object-fit: cover;
+            background: #E0E6ED;
+        }
+
+        .post-text {
+            color: #4B5563;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid #E0E6ED;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #F0F4F8;
+            border: 2px solid #D1D9E6;
+            border-radius: 20px;
+            color: #6B7280;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            border-color: #4A90E2;
+            color: #4A90E2;
+        }
+
+        .action-btn.liked {
+            border-color: #EF4444;
+            color: #EF4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 100px 40px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 2px solid #D1D9E6;
+            margin-top: 20px;
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: #F0F4F8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .empty-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            color: #6B7280;
+            font-size: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .tab-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .profile-container {
+                padding: 40px 20px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <main class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar-large">
+                {% if profile_user.profile.avatar %}
+                    <img src="{{ profile_user.profile.avatar.url }}" alt="Аватар">
+                {% else %}
+                    <div style="width: 100%; height: 100%;"></div>
+                {% endif %}
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile_user.username }}</h1>
+                <p class="profile-username">@{{ profile_user.username }}</p>
+            </div>
+        </div>
+
+        <div class="profile-tabs">
+            <a href="{% url 'profile_posts' %}" class="tab-btn">Посты</a>
+            <a href="{% url 'profile_comments' %}" class="tab-btn">Комменты</a>
+            <a href="{% url 'profile_likes' %}" class="tab-btn active">Нравится</a>
+        </div>
+
+        {% if liked_posts %}
+            {% for post in liked_posts %}
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar">
+                        {% if post.author.profile.avatar %}
+                            <img src="{{ post.author.profile.avatar.url }}" alt="">
+                        {% endif %}
+                    </div>
+                    <div class="post-author-info">
+                        <span class="post-author">{{ post.author.username }}</span>
+                        <span class="post-time">{{ post.created_at|timesince }} назад</span>
+                    </div>
+                </div>
+
+                <h3 class="post-title">{{ post.title }}</h3>
+
+                {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
+                {% endif %}
+
+                <p class="post-text">{{ post.content|truncatewords:50 }}</p>
+
+                <div class="post-actions">
+                    <span class="action-btn liked">
+                        <span>❤️</span>
+                        <span>{{ post.votes|default:0 }}</span>
+                    </span>
+
+                    <a href="{{ post.get_absolute_url }}#comments" class="action-btn">
+                        <span>💬</span>
+                        <span>{{ post.comments_count|default:0 }}</span>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">❤️</div>
+            <h2 class="empty-title">Нет лайков</h2>
+            <p class="empty-text">
+                Пользователь пока не лайкнул ни одного поста.
+            </p>
+        </div>
+        {% endif %}
+    </main>
+
+    {% include 'footer.html' %}
+</body>
+</html>
