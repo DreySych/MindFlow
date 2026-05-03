@@ -17,29 +17,25 @@
 
         body {
             font-family: 'Manrope', sans-serif;
-            background: #F0F4F8;
+            background: #ffffff;
             min-height: 100vh;
             color: #1a1a2e;
         }
 
-        /* Profile Container */
         .profile-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 150px 40px 40px 0px;
+            max-width: 1200px;
+            margin: 40px 0 0 250px;
+            padding: 60px 40px 40px 0px
         }
 
-        /* Profile Header */
         .profile-header {
-            background: linear-gradient(135deg, rgba(74,144,226,0.1) 0%, rgba(255,255,255,1) 100%);
+            background: transparent;
             border-radius: 16px;
-            padding: 40px;
-            margin-bottom: 30px;
-            border: 2px solid #D1D9E6;
+            padding: 40px 0;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 24px;
-            margin-left: 0;
         }
 
         .profile-avatar-large {
@@ -47,8 +43,6 @@
             height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            border: 4px solid #fff;
-            box-shadow: 0 4px 16px rgba(74,144,226,0.3);
             flex-shrink: 0;
             overflow: hidden;
         }
@@ -76,7 +70,6 @@
             margin-bottom: 20px;
         }
 
-        /* Profile Tabs Navigation */
         .profile-tabs {
             display: flex;
             justify-content: flex-start;
@@ -88,7 +81,7 @@
         .tab-btn {
             padding: 14px 32px;
             background: #ffffff;
-            border: 2px solid #D1D9E6;
+            border: 2px solid transparent;
             border-radius: 25px;
             color: #6B7280;
             font-family: 'Manrope', sans-serif;
@@ -109,13 +102,13 @@
             color: #fff;
         }
 
-        /* Post Card */
         .post-card {
             background: #ffffff;
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 20px;
             border: 2px solid #D1D9E6;
+            max-width: 800px;  /* ← ограничил ширину постов */
         }
 
         .post-header {
@@ -212,16 +205,16 @@
             margin-left: auto;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 100px 40px;
             background: #ffffff;
             border-radius: 12px;
-            border: 2px solid #D1D9E6;
-            margin-top: 20px;
+            margin: auto !important;
+            max-width: 800px;
+            width: 100%;
+            display: block;
         }
-
         .empty-icon {
             width: 100px;
             height: 100px;
@@ -254,6 +247,7 @@
             .profile-header {
                 flex-direction: column;
                 text-align: center;
+                padding: 40px 20px;
             }
 
             .profile-tabs {
@@ -267,7 +261,9 @@
             }
 
             .profile-container {
-                padding: 40px 20px 20px 20px;
+                max-width: 1200px;
+                margin: 40px 0 0 250px;
+                padding: 60px 40px 40px 40px;  /* ← было 0px, стало 40px */
             }
         }
     </style>

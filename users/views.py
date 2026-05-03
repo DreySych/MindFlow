@@ -35,3 +35,6 @@ def profile_comments_view(request):
 
 def profile_likes_view(request):
     return render(request, template_name="profile_likes.html")
+
+def settings_page(request):
+    return render(request, template_name="settings.html")

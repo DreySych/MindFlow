@@ -17,27 +17,25 @@
 
         body {
             font-family: 'Manrope', sans-serif;
-            background: #F0F4F8;
+            background: #ffffff;
             min-height: 100vh;
             color: #1a1a2e;
         }
 
         .profile-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 150px 40px 40px 0px;
+            max-width: 1200px;
+            margin: 40px 0 0 250px;
+            padding: 60px 40px 40px 0px
         }
 
         .profile-header {
-            background: linear-gradient(135deg, rgba(74,144,226,0.1) 0%, rgba(255,255,255,1) 100%);
+            background: transparent;
             border-radius: 16px;
-            padding: 40px;
-            margin-bottom: 30px;
-            border: 2px solid #D1D9E6;
+            padding: 40px 0;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 24px;
-            margin-left: 0;
         }
 
         .profile-avatar-large {
@@ -45,8 +43,6 @@
             height: 100px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            border: 4px solid #fff;
-            box-shadow: 0 4px 16px rgba(74,144,226,0.3);
             flex-shrink: 0;
             overflow: hidden;
         }
@@ -85,7 +81,7 @@
         .tab-btn {
             padding: 14px 32px;
             background: #ffffff;
-            border: 2px solid #D1D9E6;
+            border: 2px solid transparent;
             border-radius: 25px;
             color: #6B7280;
             font-family: 'Manrope', sans-serif;
@@ -106,22 +102,23 @@
             color: #fff;
         }
 
-        .comment-card {
+        .post-card {
             background: #ffffff;
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 20px;
             border: 2px solid #D1D9E6;
+            max-width: 800px;  /* ← ограничил ширину постов */
         }
 
-        .comment-header {
+        .post-header {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 16px;
         }
 
-        .comment-avatar {
+        .post-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -129,43 +126,50 @@
             overflow: hidden;
         }
 
-        .comment-avatar img {
+        .post-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .comment-author-info {
+        .post-author-info {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
 
-        .comment-author {
+        .post-author {
             font-weight: 600;
             color: #1a1a2e;
             font-size: 15px;
         }
 
-        .comment-time {
+        .post-time {
             color: #9CA3AF;
             font-size: 13px;
         }
 
-        .comment-post-ref {
-            background: #F0F4F8;
-            padding: 12px;
-            border-radius: 8px;
+        .post-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
             margin-bottom: 12px;
-            font-size: 14px;
-            color: #4B5563;
         }
 
-        .comment-text {
+        .post-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            max-height: 400px;
+            object-fit: cover;
+            background: #E0E6ED;
+        }
+
+        .post-text {
             color: #4B5563;
             line-height: 1.7;
-            font-size: 15px;
             margin-bottom: 16px;
+            font-size: 15px;
         }
 
         .post-actions {
@@ -197,13 +201,16 @@
             color: #4A90E2;
         }
 
+        .flag-btn {
+            margin-left: auto;
+        }
+
         .empty-state {
             text-align: center;
             padding: 100px 40px;
             background: #ffffff;
             border-radius: 12px;
-            border: 2px solid #D1D9E6;
-            margin-top: 20px;
+            margin-top: 50px;
         }
 
         .empty-icon {
@@ -233,10 +240,12 @@
             line-height: 1.7;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .profile-header {
                 flex-direction: column;
                 text-align: center;
+                padding: 40px 20px;
             }
 
             .profile-tabs {
@@ -250,6 +259,7 @@
             }
 
             .profile-container {
+                margin: 0;
                 padding: 40px 20px 20px 20px;
             }
         }
