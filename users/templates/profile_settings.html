@@ -18,12 +18,4 @@
     {% endif %}
     <a href="{% url 'index' %}">На главную</a>
     <hr>
-    {% if posts %}
-        <h3>Посты:</h3>
-        {% for post in posts %}
-            <li>Название:<a href="/question/{{post.id}}"> {{post.title}}</a></li>
-            <li>Просмотры: {{post.views}}</li>
-        {% endfor %}
-    {% endif %}
 {% endblock %}
-

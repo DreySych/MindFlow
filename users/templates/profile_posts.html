@@ -1,0 +1,13 @@
+{% block content %}
+    <h2>Профиль пользователя {{ user.username }}</h2>
+    {% if posts %}
+        <h3>Посты:</h3>
+        {% for post in posts %}
+            <li>Название:<a href="/question/{{post.id}}"> {{post.title}}</a> | Рейтинг: {{post.rating}}</li>
+        {% endfor %}
+    {% else %}
+        <h3>Здесь пока ничего нет</h3>
+    {% endif %}
+
+
+{% endblock %}
