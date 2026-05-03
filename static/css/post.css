@@ -1,9 +1,7 @@
-.post-detail-main {
+.feed {
     max-width: 900px;
     margin: 0 auto;
-    padding: 120px 20px 40px;
-    min-height: 100vh;
-    box-sizing: border-box;
+    padding: 0 20px;
 }
 
 .post-detail-card {
@@ -178,13 +176,11 @@
     height: 20px;
 }
 
-@media (max-width: 1024px) {
-    .post-detail-main {
-        padding: 120px 16px 40px;
-    }
-}
-
 @media (max-width: 768px) {
+    .feed {
+        padding: 0 16px;
+    }
+
     .post-detail-card {
         padding: 16px;
     }
