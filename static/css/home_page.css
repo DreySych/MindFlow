@@ -71,7 +71,7 @@ body {
 }
 
 .time-ago {
-    font-size: 20px;
+    font-size: 17px;
     font-family: 'Mallanna', sans-serif;
     color: #888;
     margin-left: 0;
@@ -183,7 +183,7 @@ body {
 }
 
 .vote-count {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
     color: #1671FE;
@@ -224,7 +224,7 @@ body {
 }
 
 .action-btn.comment span {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
     color: #1671FE;
