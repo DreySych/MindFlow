@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 import datetime
-from users.models import User
+from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 
 
@@ -22,5 +22,13 @@ def index_page(request):
         context['link2'] = ""
         context["page2"] = ''
     return render(request, template_name="index.html", context=context)
+
+def sidebar_page(request):
+    context = {}
+
+    subscriptions = Subscription.objects.filter(user1=request.user)
+    context['subscriptions'] = subscriptions
+
+    return render(request, template_name="sidebar.html", context=context)
 
 
