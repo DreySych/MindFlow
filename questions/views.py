@@ -67,6 +67,8 @@ def complaint_page(request):
 	return render(request, "complaint.html", context)
 
 def complaint_user_panel_page(request):
+	if not request.user.is_staff:
+		return redirect('/')
 	context = {}
 
 	complaints = Complaint.objects.filter(user__isnull=False)
@@ -76,6 +78,8 @@ def complaint_user_panel_page(request):
 	return render(request, "complaint_user_panel.html", context)
 
 def complaint_question_panel_page(request):
+	if not request.user.is_staff:
+		return redirect('/')
 	context = {}
 
 	complaints = Complaint.objects.filter(question__isnull=False)
