@@ -45,7 +45,7 @@ def question_make_page(request):
                     image_paths.append(path)
                 images_str = ','.join(image_paths)
 
-                question = Question(title=title, description=description,
+                question = Question(title=title, description=description, rating=0,
                                     creation_date=time, images=images_str, author=request.user)
                 question.save()
 
@@ -67,28 +67,6 @@ def question_make_page(request):
 
     return render(request, template_name='make_question.html', context=context)
 
-
-def complaint_user_panel_page(request):
-	if not request.user.is_staff:
-		return redirect('/')
-	context = {}
-
-	complaints = Complaint.objects.filter(user__isnull=False)
-
-	context['complaints'] = complaints
-
-	return render(request, "complaint_user_panel.html", context)
-
-def complaint_question_panel_page(request):
-	if not request.user.is_staff:
-		return redirect('/')
-	context = {}
-
-	complaints = Complaint.objects.filter(question__isnull=False)
-
-	context['complaints'] = complaints
-
-	return render(request, "complaint_question_panel.html", context)
 
 def themes_page(request):
     return render(request, template_name="themes.html")
