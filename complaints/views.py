@@ -1,6 +1,6 @@
 from complaints.forms import *
 from complaints.models import *
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 def complaint_page(request):
     context = {}
@@ -24,3 +24,26 @@ def complaint_page(request):
     context['form'] = form
 
     return render(request, "complaint.html", context)
+
+
+def complaint_user_panel_page(request):
+	if not request.user.is_staff:
+		return redirect('/')
+	context = {}
+
+	complaints = Complaint.objects.filter(user__isnull=False)
+
+	context['complaints'] = complaints
+
+	return render(request, "complaint_user_panel.html", context)
+
+def complaint_question_panel_page(request):
+	if not request.user.is_staff:
+		return redirect('/')
+	context = {}
+
+	complaints = Complaint.objects.filter(question__isnull=False)
+
+	context['complaints'] = complaints
+
+	return render(request, "complaint_question_panel.html", context)

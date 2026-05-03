@@ -3,6 +3,7 @@ import main.views as view
 from django.urls import path
 from main import views as main_views
 from users import views as users_views
+from complaints import views as complaint_views
 from questions import views as question_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -22,9 +23,9 @@ urlpatterns = [
     path('question/theme/<int:theme_num>/', question_views.question_themes_page, name='questions'),
     path('question/make/', question_views.question_make_page, name='make_question'),
 
-    path('complaint/', question_views.complaint_page, name='complaint'),
-    path('complaint/panel/users', question_views.complaint_user_panel_page, name='complaint_user_panel'),
-    path('complaint/panel/questions', question_views.complaint_question_panel_page, name='complaint_question_panel'),
+    path('complaint/', complaint_views.complaint_page, name='complaint'),
+    path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
+    path('complaint/panel/questions', complaint_views.complaint_question_panel_page, name='complaint_question_panel'),
     path('complaint/', complaint_views.complaint_page, name='complaint'),
 
     path('themes/', question_views.themes_page, name='themes'),
