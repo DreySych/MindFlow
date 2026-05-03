@@ -34,6 +34,8 @@ def signup_page(request):
                 user.email = form.cleaned_data['email']
                 user.password = make_password(form.cleaned_data['password'])
                 user.role = ''
+                user.sex = form.cleaned_data['sex']
+                user.birth_date = form.cleaned_data['birth_date']
                 user.registration_date = datetime.date.today()
                 user.reputation = 0
                 user.save()

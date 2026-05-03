@@ -17,7 +17,7 @@ class SignUpForm(forms.Form):
     email = forms.EmailField(label='Почта', widget=forms.EmailInput)
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
     password_confirm = forms.CharField(widget=forms.PasswordInput, label='Подтверждение пароля')
-    sex = forms.ChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False)
+    sex = forms.TypedChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False, empty_value=None, coerce= lambda x: int(x))
     birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
 
 
