@@ -5,9 +5,8 @@
     {% if question.modified_date %}
         <p><strong>Изменён:</strong> {{ question.modified_date|date:"d.m.Y H:i" }}</p>
     {% endif %}
-    <p><strong>Тема:</strong> {{ question.theme }}</p>
     <p><strong>Теги:</strong> {{ question.tags|default:"нет" }}</p>
-    <p><strong>Просмотров:</strong> {{ question.views }}</p>
+    <p><strong>Рейтинг:</strong> {{ question.rating }}</p>
     <hr>
     <p><strong>Описание:</strong> {{ question.description }}</p>
     <p><strong>Изображения:</strong></p>
@@ -15,21 +14,6 @@
         {% for image in question_images %}
             <img src="{{MEDIA_URL}}{{image}}" width="200px" height="auto">
         {% endfor %}
-    {% endif %}
-   {% if answers %}
-        {% for answer in answers %}
-            <div>
-                <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
-                <p>{{ answer.answer|linebreaks }}</p>
-                {% if answer.images %}
-                    <p><strong>Изображения:</strong> {{ answer.images }}</p>
-                {% endif %}
-                <p>Рейтинг: {{ answer.rating }}</p>
-            </div>
-            <hr>
-        {% endfor %}
-    {% else %}
-        <p>Пока нет ответов.</p>
     {% endif %}
     {% if comments %}
         {% for comment in comments %}
