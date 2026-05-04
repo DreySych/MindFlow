@@ -4,10 +4,10 @@
 
 <div class="body-sidebar">
   <div class="sidebar-search">
-    <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input">
+    <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input" id="friendSearchInput">
   </div>
 
-  <div class="friends-list">
+  <div class="friends-list" id="friendsList">
     <div class="friend-item">
       <a href="{% url 'profile_somelse' %}" class="friend-button">
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="friend-avatar">
@@ -93,6 +93,8 @@
 </div>
 
 {% include 'PM.html' %}
+
+<script src="{% static 'js/sidebar_search.js' %}"></script>
 
 <script>
   function openChatOverlay() {
