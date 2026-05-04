@@ -65,7 +65,7 @@ def question_make_page(request):
     else:
         return redirect('/account/login')
 
-    return render(request, template_name='make_question.html', context=context)
+    return render(request, template_name='make_edit_question.html', context=context)
 
 
 def question_edit_page(request):
@@ -98,7 +98,7 @@ def question_edit_page(request):
     else:
         return redirect('/account/login')
 
-    return render(request, template_name='make_question.html', context=context)
+    return render(request, template_name='make_edit_question.html', context=context)
 
 
 def themes_page(request):
