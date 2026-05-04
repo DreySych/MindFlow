@@ -1,4 +1,6 @@
+from email.policy import default
 from django import forms
+from .models import *
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -22,3 +24,4 @@ class QuestionForm(forms.Form):
     description = forms.CharField()
     #tags = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
+

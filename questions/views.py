@@ -68,5 +68,38 @@ def question_make_page(request):
     return render(request, template_name='make_question.html', context=context)
 
 
+def question_edit_page(request):
+    context = {}
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = QuestionForm(request.POST)
+            if form.is_valid():
+                title = form.cleaned_data['title']
+                description = form.cleaned_data['description']
+                images = request.FILES.getlist('images')
+                image_paths = []
+                for image in images:
+                    ext = image.name.split('.')[-1]
+                    filename = f"question_images/{uuid.uuid4()}.{ext}"
+                    path = default_storage.save(filename, ContentFile(image.read()))
+                    image_paths.append(path)
+                images_str = ','.join(image_paths)
+
+                question = Question.objects.filter(id=request.GET.get('id'))[0]
+                question.title=title
+                question.description = description
+                question.images = images_str
+                question.save()
+
+        else:
+            form = QuestionForm()
+
+        context['form'] = form
+    else:
+        return redirect('/account/login')
+
+    return render(request, template_name='make_question.html', context=context)
+
+
 def themes_page(request):
     return render(request, template_name="themes.html")
