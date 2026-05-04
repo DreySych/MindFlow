@@ -6,264 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;600;500;400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/profile_comments.css' %}">
     <title>Комментарии | MindFlow</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Manrope', sans-serif;
-            background: #ffffff;
-            min-height: 100vh;
-            color: #1a1a2e;
-        }
-
-        .profile-container {
-            max-width: 1200px;
-            margin: 40px 0 0 250px;
-            padding: 60px 40px 40px 0px
-        }
-
-        .profile-header {
-            background: transparent;
-            border-radius: 16px;
-            padding: 40px 0;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
-        .profile-avatar-large {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .profile-avatar-large img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-info {
-            flex: 1;
-        }
-
-        .profile-name {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 6px;
-        }
-
-        .profile-username {
-            color: #9CA3AF;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
-
-        .profile-tabs {
-            display: flex;
-            justify-content: flex-start;
-            gap: 12px;
-            margin-bottom: 30px;
-            padding-left: 0;
-        }
-
-        .tab-btn {
-            padding: 14px 32px;
-            background: #ffffff;
-            border: 2px solid transparent;
-            border-radius: 25px;
-            color: #6B7280;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 600;
-            font-size: 15px;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .tab-btn:hover {
-            border-color: #4A90E2;
-            color: #4A90E2;
-        }
-
-        .tab-btn.active {
-            background: #4A90E2;
-            border-color: #4A90E2;
-            color: #fff;
-        }
-
-        .post-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 20px;
-            border: 2px solid #D1D9E6;
-            max-width: 800px;  /* ← ограничил ширину постов */
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .post-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            overflow: hidden;
-        }
-
-        .post-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .post-author-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .post-author {
-            font-weight: 600;
-            color: #1a1a2e;
-            font-size: 15px;
-        }
-
-        .post-time {
-            color: #9CA3AF;
-            font-size: 13px;
-        }
-
-        .post-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 12px;
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            max-height: 400px;
-            object-fit: cover;
-            background: #E0E6ED;
-        }
-
-        .post-text {
-            color: #4B5563;
-            line-height: 1.7;
-            margin-bottom: 16px;
-            font-size: 15px;
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 12px;
-            padding-top: 16px;
-            border-top: 1px solid #E0E6ED;
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: #F0F4F8;
-            border: 2px solid #D1D9E6;
-            border-radius: 20px;
-            color: #6B7280;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .action-btn:hover {
-            border-color: #4A90E2;
-            color: #4A90E2;
-        }
-
-        .flag-btn {
-            margin-left: auto;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 100px 40px;
-            background: #ffffff;
-            border-radius: 12px;
-            margin-top: 50px;
-        }
-
-        .empty-icon {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 30px;
-            background: #F0F4F8;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-        }
-
-        .empty-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-bottom: 16px;
-        }
-
-        .empty-text {
-            color: #6B7280;
-            font-size: 15px;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-                padding: 40px 20px;
-            }
-
-            .profile-tabs {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .tab-btn {
-                padding: 12px 24px;
-                font-size: 14px;
-            }
-
-            .profile-container {
-                margin: 0;
-                padding: 40px 20px 20px 20px;
-            }
-        }
-    </style>
 </head>
 <body>
     {% include 'header.html' %}
@@ -279,8 +23,8 @@
                 {% endif %}
             </div>
             <div class="profile-info">
-                <h1 class="profile-name">{{ profile_user.username }}</h1>
-                <p class="profile-username">@{{ profile_user.username }}</p>
+                <h1 class="profile-name">kahdami</h1>
+                <p class="profile-username">@ka$hdami</p>
             </div>
         </div>
 
@@ -290,53 +34,149 @@
             <a href="{% url 'profile_likes' %}" class="tab-btn">Нравится</a>
         </div>
 
-        {% if comments %}
-            {% for comment in comments %}
-            <div class="comment-card">
-                <div class="comment-header">
-                    <div class="comment-avatar">
-                        {% if comment.author.profile.avatar %}
-                            <img src="{{ comment.author.profile.avatar.url }}" alt="">
-                        {% endif %}
-                    </div>
-                    <div class="comment-author-info">
-                        <span class="comment-author">{{ comment.author.username }}</span>
-                        <span class="comment-time">{{ comment.created_at|timesince }} назад</span>
-                    </div>
-                </div>
-
-                <div class="comment-post-ref">
-                    <strong>Пост:</strong> {{ comment.post.title }}
-                </div>
-
-                <p class="comment-text">{{ comment.text|truncatewords:30 }}</p>
-
-                <div class="post-actions">
-                    <form action="{% url 'vote_comment' comment.id %}" method="POST" style="display: inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="vote_type" value="like">
-                        <button type="submit" class="action-btn">
-                            <span>👍</span>
-                            <span>{{ comment.votes|default:0 }}</span>
-                        </button>
-                    </form>
-
-                    <a href="{{ comment.post.get_absolute_url }}#comment-form" class="action-btn">
-                        <span>💬</span>
-                        <span>Ответить</span>
-                    </a>
+        <!-- Comment 1 -->
+        <div class="comment-card">
+            <div class="comment-header">
+                <div class="comment-avatar"></div>
+                <div class="comment-author-info">
+                    <span class="comment-author">kahdami</span>
+                    <span class="comment-time">1 час назад</span>
                 </div>
             </div>
-            {% endfor %}
-        {% else %}
-        <div class="empty-state">
-            <div class="empty-icon">💬</div>
-            <h2 class="empty-title">Нет комментариев</h2>
-            <p class="empty-text">
-                Пользователь пока не написал ни одного комментария.
+
+            <div class="comment-post-ref">
+                <strong>Пост:</strong> Какой язык программирования лучше всего учить в 2026 году?
+            </div>
+
+            <p class="comment-text">
+                Однозначно Python! С него легче всего начинать, и рынок вакансий огромный. Плюс огромное сообщество и куча библиотек для всего что угодно.
             </p>
+
+            <div class="comment-actions">
+                <button class="comment-action-btn">
+                    <span>↑</span>
+                    <span>23</span>
+                    <span>↓</span>
+                </button>
+                <button class="comment-action-btn">
+                    <span>💬</span>
+                    <span>Ответить</span>
+                </button>
+            </div>
+
+            <!-- Nested Reply -->
+            <div class="nested-reply">
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar"></div>
+                        <div class="comment-author-info">
+                            <span class="comment-author">Анна К.</span>
+                            <span class="comment-time">45 минут назад</span>
+                        </div>
+                    </div>
+
+                    <p class="comment-text">
+                        Спасибо! А как думаешь, стоит параллельно учить SQL или сначала только Python?
+                    </p>
+
+                    <div class="comment-actions">
+                        <button class="comment-action-btn">
+                            <span>↑</span>
+                            <span>5</span>
+                            <span>↓</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endif %}
+
+        <!-- Comment 2 -->
+        <div class="comment-card">
+            <div class="comment-header">
+                <div class="comment-avatar"></div>
+                <div class="comment-author-info">
+                    <span class="comment-author">kahdami</span>
+                    <span class="comment-time">3 часа назад</span>
+                </div>
+            </div>
+
+            <div class="comment-post-ref">
+                <strong>Пост:</strong> Как настроить CI/CD для Django-проекта на GitHub Actions?
+            </div>
+
+            <p class="comment-text">
+                Я бы посоветовал TypeScript если интересует веб-разработка. Огромный спрос на фронтенд и фулстек разработчиков.
+            </p>
+
+            <div class="comment-actions">
+                <button class="comment-action-btn">
+                    <span>↑</span>
+                    <span>18</span>
+                    <span>↓</span>
+                </button>
+                <button class="comment-action-btn">
+                    <span>💬</span>
+                    <span>Ответить</span>
+                </button>
+            </div>
+
+            <!-- Nested Reply -->
+            <div class="nested-reply">
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar"></div>
+                        <div class="comment-author-info">
+                            <span class="comment-author">Дмитрий</span>
+                            <span class="comment-time">2 часа назад</span>
+                        </div>
+                    </div>
+
+                    <p class="comment-text">
+                        Согласен! TypeScript + React = идеальный старт в 2026.
+                    </p>
+
+                    <div class="comment-actions">
+                        <button class="comment-action-btn">
+                            <span>↑</span>
+                            <span>7</span>
+                            <span>↓</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comment 3 -->
+        <div class="comment-card">
+            <div class="comment-header">
+                <div class="comment-avatar"></div>
+                <div class="comment-author-info">
+                    <span class="comment-author">kahdami</span>
+                    <span class="comment-time">5 часов назад</span>
+                </div>
+            </div>
+
+            <div class="comment-post-ref">
+                <strong>Пост:</strong> Какие ресурсы порекомендуете для изучения Python?
+            </div>
+
+            <p class="comment-text">
+                Смотря какие цели. Если Data Science — Python, если системное программирование — Rust, если веб — JavaScript/TypeScript. Всё зависит от того, что больше нравится!
+            </p>
+
+            <div class="comment-actions">
+                <button class="comment-action-btn">
+                    <span>↑</span>
+                    <span>12</span>
+                    <span>↓</span>
+                </button>
+                <button class="comment-action-btn">
+                    <span>💬</span>
+                    <span>Ответить</span>
+                </button>
+            </div>
+        </div>
+
     </main>
 
     {% include 'footer.html' %}
