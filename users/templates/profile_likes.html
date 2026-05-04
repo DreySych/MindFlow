@@ -24,15 +24,15 @@
 
         .profile-container {
             max-width: 1200px;
-            margin: 40px 0 0 250px;
-            padding: 60px 40px 40px 0px
+            margin: 130px 0 0 250px;
+            padding: 0 40px 40px 40px;
         }
 
         .profile-header {
             background: transparent;
             border-radius: 16px;
-            padding: 40px 0;
-            margin-bottom: 20px;
+            padding: 20px 0;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 24px;
@@ -68,6 +68,7 @@
             color: #9CA3AF;
             font-size: 15px;
             margin-bottom: 20px;
+            margin-top: 8px;
         }
 
         .profile-tabs {
@@ -108,7 +109,7 @@
             padding: 24px;
             margin-bottom: 20px;
             border: 2px solid #D1D9E6;
-            max-width: 800px;  /* ← ограничил ширину постов */
+            max-width: 800px;
         }
 
         .post-header {
@@ -201,16 +202,19 @@
             color: #4A90E2;
         }
 
-        .flag-btn {
-            margin-left: auto;
+        .action-btn.liked {
+            border-color: #EF4444;
+            color: #EF4444;
         }
 
         .empty-state {
             text-align: center;
-            padding: 100px 40px;
+            padding: 80px 40px;
             background: #ffffff;
             border-radius: 12px;
-            margin-top: 50px;
+            margin: 50px auto !important;
+            max-width: 800px !important;
+            width: 100%;
         }
 
         .empty-icon {
@@ -236,11 +240,10 @@
             color: #6B7280;
             font-size: 15px;
             max-width: 500px;
-            margin: 0 auto;
+            margin: 0 auto !important;
             line-height: 1.7;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .profile-header {
                 flex-direction: column;
@@ -279,8 +282,8 @@
                 {% endif %}
             </div>
             <div class="profile-info">
-                <h1 class="profile-name">{{ profile_user.username }}</h1>
-                <p class="profile-username">@{{ profile_user.username }}</p>
+                <h1 class="profile-name">kahdami</h1>
+                <p class="profile-username">@ka$hdami</p>
             </div>
         </div>
 
