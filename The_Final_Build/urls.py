@@ -9,8 +9,11 @@ from complains import views as complains_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.index_page, name='index'),
-
+    path('posts/', users_views.profile_posts_page, name='profile_posts'),
+    path('comments/', users_views.profile_comments_view, name='profile_comments'),
+    path('likes/', users_views.profile_likes_view, name='profile_likes'),
     path('account/signup/', users_views.signup_page, name='signup'),
+    path('settings', users_views.settings_page, name='settings'),
     path('account/login/', users_views.login_page, name='login'),
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/', users_views.profile_page, name='profile'),

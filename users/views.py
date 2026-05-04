@@ -22,7 +22,19 @@ def signup_page(request):
     return render(request, 'signup.html')
 
 def profile_page(request):
-    return render(request, template_name="profile.html")
+    return render(request, template_name="profile_posts.html")
 
 def profile_somelse_page(request):
     return render(request, template_name="profile_somelse.html")
+
+def profile_posts_page(request):
+    return render(request, template_name="profile_posts.html")
+
+def profile_comments_view(request):
+    return render(request, template_name="profile_comments.html")
+
+def profile_likes_view(request):
+    return render(request, template_name="profile_likes.html")
+
+def settings_page(request):
+    return render(request, template_name="settings.html")
