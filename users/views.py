@@ -80,8 +80,10 @@ def password_restore_page(request):
 def profile_page_general(request):
     if request.user.is_authenticated:
         user = request.user
+        posts = Question.objects.filter(author=user)
         context = {
             'user': user,
+            'posts': posts,
         }
         return render(request, 'profile_general.html', context=context)
 
@@ -124,18 +126,6 @@ def profile_page_settings(request):
         return redirect('/account/login')
     return render(request, 'profile_settings.html')
 
-def profile_page_posts(request):
-    if request.user.is_authenticated:
-        user = request.user
-        posts = Question.objects.filter(author=user)
-        context = {
-            'user': user,
-            'posts': posts,
-        }
-        return render(request, 'profile_posts.html', context=context)
-
-    else:
-        return redirect('/account/login')
 
 def profile_page_comments(request):
     if request.user.is_authenticated:

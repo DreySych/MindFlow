@@ -19,7 +19,6 @@ urlpatterns = [
     path('account/logout/', users_views.logout_page, name='logout'),
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/general', users_views.profile_page_general, name='profile_general'),
-    path('profile/posts', users_views.profile_page_posts, name='profile_posts'),
     path('profile/comments', users_views.profile_page_comments, name='profile_comments'),
     path('profile/liked', users_views.profile_page_liked, name='profile_liked'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
