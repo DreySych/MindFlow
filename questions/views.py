@@ -9,20 +9,23 @@ from questions.models import *
 
 # Create your views here.
 
-def question_themes_page(request):
-    return render(request, template_name="questions.html")
-
-
-def question_page(request, question_id):
+def get_question_context(question_id):
     question = get_object_or_404(Question, pk=question_id)
     comments = Comment.objects.filter(question=question)
-    question_images = list(question.images.split(","))
-    context = {
+    question_images = list(question.images.split(",")) if question.images else []
+    return {
         'question': question,
         'question_images': question_images,
         'comments': comments
     }
-    return render(request, 'question.html', context)
+
+def question_themes_page(request):
+    return render(request, template_name="questions.html")
+
+
+def question_page(request, question_id, template_name='question.html'):
+    context = get_question_context(question_id)
+    return render(request, template_name=template_name, context=context)
 
 
 def question_make_page(request):
@@ -53,8 +56,6 @@ def question_make_page(request):
                 #         tag.save()
                 #         link = PostToTag(question=question, tag=tag)
                 #         link.save()
-
-
 
         else:
             form = QuestionForm()

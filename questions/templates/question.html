@@ -5,7 +5,6 @@
     {% if question.modified_date %}
         <p><strong>Изменён:</strong> {{ question.modified_date|date:"d.m.Y H:i" }}</p>
     {% endif %}
-    <p><strong>Теги:</strong> {{ question.tags|default:"нет" }}</p>
     <p><strong>Рейтинг:</strong> {{ question.rating }}</p>
     <hr>
     <p><strong>Описание:</strong> {{ question.description }}</p>
@@ -19,7 +18,7 @@
         {% for comment in comments %}
             <div>
                 <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
-                <p>{{ comment.comment|linebreaks }}</p>
+                <p>{{ comment.text|linebreaks }}</p>
                 {% if comment.images %}
                     <p><strong>Изображения:</strong> {{ comment.images }}</p>
                 {% endif %}

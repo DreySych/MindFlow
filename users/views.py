@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.conf import settings
+from django.db.models import Prefetch
 from django.shortcuts import render, redirect
 
 from questions.models import Question, Comment
@@ -13,6 +14,7 @@ from django.core.files.base import ContentFile
 import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from questions.views import get_question_context
 
 # Create your views here.
 
@@ -77,15 +79,21 @@ def login_page(request):
 def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
+
 def profile_page_general(request):
     if request.user.is_authenticated:
         user = request.user
         posts = Question.objects.filter(author=user)
+
+        posts_context = []
+        for post in posts:
+            posts_context.append(get_question_context(post.pk))
+
         context = {
             'user': user,
-            'posts': posts,
+            'posts_context': posts_context,
         }
-        return render(request, 'profile_general.html', context=context)
+        return render(request, 'profile_general.html', context)
 
     else:
         return redirect('/account/login')

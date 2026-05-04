@@ -6,14 +6,13 @@
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
     {% endif %}
     <p><a href="{% url 'index' %}">На главную</a> | <a href="{% url 'profile_comments' %}">Комментарии</a> | <a href="{% url 'profile_liked' %}">Понравившееся</a></p>
-    {% if posts %}
-        <h3>Посты:</h3>
-        {% for post in posts %}
-            <li>Название:<a href="/question/{{post.id}}"> {{post.title}}</a> | Рейтинг: {{post.rating}}</li>
-        {% endfor %}
-    {% else %}
+    {% for post_data in posts_context %}
+        {% include 'question.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments %}
+        <hr class="post-separator">
+    {% empty %}
+        <p>У вас пока нет постов.</p>
+    {% endfor %}
         <h3>Здесь пока ничего нет</h3>
-    {% endif %}
 
 {% endblock %}
 
