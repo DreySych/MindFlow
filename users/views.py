@@ -3,7 +3,7 @@ import uuid
 from django.conf import settings
 from django.shortcuts import render, redirect
 
-from questions.models import Question
+from questions.models import Question, Comment
 from users.forms import ProfileForm
 from users.forms import *
 from users.models import User
@@ -34,6 +34,8 @@ def signup_page(request):
                 user.email = form.cleaned_data['email']
                 user.password = make_password(form.cleaned_data['password'])
                 user.role = ''
+                user.sex = form.cleaned_data['sex']
+                user.birth_date = form.cleaned_data['birth_date']
                 user.registration_date = datetime.date.today()
                 user.reputation = 0
                 user.save()
@@ -75,7 +77,18 @@ def login_page(request):
 def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
-def profile_page(request):
+def profile_page_general(request):
+    if request.user.is_authenticated:
+        user = request.user
+        context = {
+            'user': user,
+        }
+        return render(request, 'profile_general.html', context=context)
+
+    else:
+        return redirect('/account/login')
+
+def profile_page_settings(request):
     if request.user.is_authenticated:
         user = request.user
         if request.method == "POST":
@@ -92,7 +105,7 @@ def profile_page(request):
                     path = default_storage.save(filename, ContentFile(image_file.read()))
                     user.image = path
                 user.save()
-                return redirect('profile')
+                return redirect('profile_general')
         else:
             initial_data = {
                 'username': user.username,
@@ -102,14 +115,40 @@ def profile_page(request):
                 'image_photo': user.image
             }
             form = ProfileForm(initial=initial_data)
-            posts = Question.objects.filter(author=user)
             context = {
                 'form': form,
                 'user': user,
-                'posts': posts,
             }
-            return render(request, 'profile.html', context=context)
+            return render(request, 'profile_settings.html', context=context)
+    else:
+        return redirect('/account/login')
+    return render(request, 'profile_settings.html')
+
+def profile_page_posts(request):
+    if request.user.is_authenticated:
+        user = request.user
+        posts = Question.objects.filter(author=user)
+        context = {
+            'user': user,
+            'posts': posts,
+        }
+        return render(request, 'profile_posts.html', context=context)
 
     else:
         return redirect('/account/login')
-    return render(request, template_name="profile.html")
+
+def profile_page_comments(request):
+    if request.user.is_authenticated:
+        user = request.user
+        comments = Comment.objects.filter(author=user)
+        context = {
+            'user': user,
+            'comments': comments,
+        }
+        return render(request, 'profile_comments.html', context=context)
+
+    else:
+        return redirect('/account/login')
+
+def profile_page_liked(request):
+    return render(request, 'profile_liked.html')
