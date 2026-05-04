@@ -8,6 +8,9 @@
     <h1>Подписки</h1>
     <hr>
     {% for i in subscriptions %}
+        {% if i.user2.image %}
+            <img src="{{ i.user2.image.url }}" alt="{{ i.user2.username }} " style="width: 200px;">
+        {% endif %}
         {{i.user2.username}}
         <br><hr>
     {% endfor %}
