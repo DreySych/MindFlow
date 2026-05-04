@@ -1,12 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Создание вопроса</title>
+    <title>Создание поста - MindFlow</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/post.css' %}">
+    <link rel="stylesheet" href="{% static 'css/comments.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_question.css' %}">
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
 {% include 'header.html' %}
 {% include 'body.html' %}
+
+<div class="content-wrapper" style="margin-left: 10vw; padding-top: 140px; padding-bottom: 100px; min-height: 100vh; box-sizing: border-box;">
+    <main>
+        <div class="feed">
+            <article class="post-detail-card" style="max-width: 800px; margin: 0 auto;">
+                <h1 style="font-size: 32px; margin-bottom: 30px; color: #333; font-family: 'Mallanna', sans-serif;">Создать пост</h1>
+
+                <form id="createPostForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div style="margin-bottom: 25px;">
+                        <label for="postTitle" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Заголовок</label>
+                        <input 
+                            type="text" 
+                            id="postTitle" 
+                            name="title" 
+                            maxlength="200"
+                            required
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
+                        >
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label for="postImage" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Добавить изображение</label>
+                        <div style="position: relative;">
+                            <label for="postImage" style="display: flex; align-items: center; justify-content: center; padding: 30px; border: 2px dashed #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #f9f9f9;">
+                                <span>Нажмите для загрузки или перетащите изображение</span>
+                            </label>
+                            <input 
+                                type="file" 
+                                id="postImage" 
+                                name="image" 
+                                accept="image/*"
+                                style="display: none;"
+                            >
+                            <img id="imagePreview" style="margin-top: 10px; max-width: 100%; border-radius: 8px; display: none; max-height: 400px; object-fit: cover;" alt="Предпросмотр">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <label for="postText" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Текстовая область</label>
+                        <textarea 
+                            id="postText" 
+                            name="description" 
+                            maxlength="5000"
+                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; resize: vertical; min-height: 120px;"
+                        ></textarea>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Опубликовать</button>
+                    </div>
+                </form>
+            </article>
+        </div>
+    </main>
+</div>
+
 {% include 'footer.html' %}
 </body>
 </html>

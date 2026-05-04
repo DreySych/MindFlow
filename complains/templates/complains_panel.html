@@ -1,12 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Панель жалоб</title>
+    <title>Панель жалоб - Посты | MindFlow</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
-{% include 'header.html' %}
-{% include 'body.html' %}
-{% include 'footer.html' %}
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <div class="content-wrapper">
+        <main>
+            <div class="admin-container">
+                <h1 class="admin-title">Панель жалоб</h1>
+
+                <div class="admin-tabs">
+                    <a href="{% url 'admin_index' %}" class="admin-tab active">Посты</a>
+                    <a href="{% url 'admin_comments' %}" class="admin-tab">Комментарии</a>
+                </div>
+
+                <div class="complaints-list">
+                    <!-- Жалоба 1 -->
+                    <div class="complaint-card">
+                        <div class="complaint-post">
+                            <div class="complaint-post-title">Какой язык программирования лучше всего учить в 2026 году?</div>
+                            <p class="complaint-post-text">
+                                Друзья, я серьёзно задумалась о смене профессии. Сейчас активно развиваются Python, Rust и Go...
+                            </p>
+                            <a href="{% url 'question' %}" class="complaint-detail-btn">Подробнее</a>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Тип жалобы:</span>
+                                <span class="complaint-value">Спам</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Жалоба 2 -->
+                    <div class="complaint-card">
+                        <div class="complaint-post">
+                            <div class="complaint-post-title">Как настроить CI/CD для Django-проекта на GitHub Actions?</div>
+                            <p class="complaint-post-text">
+                                Поделитесь опытом настройки CI/CD пайплайна для Django проекта...
+                            </p>
+                            <a href="{% url 'question' %}" class="complaint-detail-btn">Подробнее</a>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Тип жалобы:</span>
+                                <span class="complaint-value">Оскорбление</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Жалоба 3 -->
+                    <div class="complaint-card">
+                        <div class="complaint-post">
+                            <div class="complaint-post-title">React или Vue — что выбрать новичку в 2026?</div>
+                            <p class="complaint-post-text">
+                                Не могу определиться между React и Vue. Слышал много разных мнений...
+                            </p>
+                            <a href="{% url 'question' %}" class="complaint-detail-btn">Подробнее</a>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Тип жалобы:</span>
+                                <span class="complaint-value">Нецензурная лексика</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
 </body>
 </html>

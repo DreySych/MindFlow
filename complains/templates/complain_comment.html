@@ -2,57 +2,33 @@
 <div class="complain-overlay" id="complainCommentOverlay">
   <div class="complain-backdrop" onclick="closeComplainCommentOverlay()"></div>
   <div class="complain-modal">
-    <div class="complain-header">
-      <span class="complain-title">Пожаловаться на комментарий</span>
-    </div>
-
-    <div class="complain-body">
-      <p class="complain-subtitle">Укажите причину жалобы:</p>
-
-      <div class="complain-reasons">
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="spam">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Спам или реклама</span>
-        </label>
-
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="offensive">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Оскорбительный контент</span>
-        </label>
-
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="harassment">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Преследование или травля</span>
-        </label>
-
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="misinformation">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Ложная информация</span>
-        </label>
-
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="inappropriate">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Неприемлемый контент (18+)</span>
-        </label>
-
-        <label class="complain-reason">
-          <input type="radio" name="complain_comment_reason" value="other">
-          <span class="reason-radio"></span>
-          <span class="reason-text">Другое</span>
-        </label>
+    <!-- Форма жалобы -->
+    <div id="complainCommentForm">
+      <div class="complain-header">
+        <span class="complain-title">Пожаловаться на комментарий</span>
       </div>
 
-      <textarea class="complain-textarea" placeholder="Опишите подробнее (необязательно)..."></textarea>
+      <div class="complain-body">
+        <p class="complain-subtitle">Введите причину жалобы:</p>
+        <textarea class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+      </div>
+
+      <div class="complain-footer">
+        <button class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
+        <button class="complain-submit-btn" onclick="submitComplainComment()">Отправить жалобу</button>
+      </div>
     </div>
 
-    <div class="complain-footer">
-      <button class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
-      <button class="complain-submit-btn">Отправить жалобу</button>
+    <div id="complainCommentThanks" style="display: none;">
+      <div class="complain-header">
+        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+      </div>
+      <div class="complain-body">
+        <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+      </div>
+      <div class="complain-footer">
+        <button class="complain-submit-btn" onclick="closeComplainCommentOverlay()">Закрыть</button>
+      </div>
     </div>
   </div>
 </div>
@@ -60,11 +36,18 @@
 <script>
   function openComplainCommentOverlay() {
     document.getElementById('complainCommentOverlay').classList.add('active');
+    document.getElementById('complainCommentForm').style.display = 'block';
+    document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
   }
 
   function closeComplainCommentOverlay() {
     document.getElementById('complainCommentOverlay').classList.remove('active');
     document.body.style.overflow = '';
+  }
+
+  function submitComplainComment() {
+    document.getElementById('complainCommentForm').style.display = 'none';
+    document.getElementById('complainCommentThanks').style.display = 'block';
   }
 </script>
