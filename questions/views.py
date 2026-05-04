@@ -9,3 +9,6 @@ def question_page(request):
 
 def question_make_page(request):
     return render(request, template_name='make_question.html')
+
+def question_edit_page(request):
+    return render(request, template_name='edit_question.html')
