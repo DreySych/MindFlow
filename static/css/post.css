@@ -17,6 +17,17 @@
     margin-bottom: 16px;
 }
 
+.user-avatar-link {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+    transition: opacity 0.2s;
+}
+
+.user-avatar-link:hover {
+    opacity: 0.85;
+}
+
 .post-detail-card .user-avatar {
     width: 48px;
     height: 48px;
@@ -24,14 +35,20 @@
     object-fit: cover;
 }
 
-.post-detail-card .user-name {
+.user-name-link {
     font-weight: 400;
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
     color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
 }
 
-.post-detail-card .user-name::after {
+.user-name-link:hover {
+    color: #1671FE;
+}
+
+.user-name-link::after {
     content: "•";
     font-family: sans-serif;
     color: #999;
@@ -42,7 +59,7 @@
 }
 
 .post-detail-card .time-ago {
-    font-size: 20px;
+    font-size: 17px;
     font-family: 'Mallanna', sans-serif;
     color: #888;
 }
@@ -141,7 +158,6 @@
 .post-detail-card .vote-btn img {
     width: 20px;
     height: 20px;
-    opacity: 1;
 }
 
 .post-detail-card .vote-count {
@@ -192,4 +208,14 @@
     .post-text {
         font-size: 16px;
     }
+
+    .user-name-link {
+        font-size: 18px;
+    }
+
+    .user-name-link::after {
+        font-size: 16px;
+    }
+
+
 }
