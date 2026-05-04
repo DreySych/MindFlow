@@ -9,7 +9,7 @@
 
     <hr>
     <h3>Текущие данные:</h3>
-    <p><strong>Роль:</strong> {{ user.role|default:"не указана" }}</p>
+    <p><strong>Пол</strong> {{ user.role|default:"не указана" }}</p>
     <p><strong>Email:</strong> {{ user.email }}</p>
     <p><strong>Дата рождения:</strong> {{ user.birth_date|date:"d.m.Y" }}</p>
     {% if user.image %}
@@ -17,5 +17,4 @@
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
     {% endif %}
     <a href="{% url 'index' %}">На главную</a>
-    <hr>
 {% endblock %}

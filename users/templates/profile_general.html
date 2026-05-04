@@ -1,6 +1,6 @@
 {% block content %}
     <h2>Профиль пользователя {{ user.username }}</h2>
-    <p><a href="{% url 'profile_settings' %}">Редактировать профиль</a> / <a href="{% url 'logout' %}">Выйти из профиля</a></p>
+    <p><a href="{% url 'profile_settings' %}">Настройки</a> / <a href="{% url 'logout' %}">Выйти из профиля</a></p>
     {% if user.image %}
         <p><strong>Фото:</strong></p>
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
