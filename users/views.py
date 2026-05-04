@@ -97,7 +97,7 @@ def profile_page_settings(request):
                 user.username = form.cleaned_data['username']
                 user.email = form.cleaned_data['email']
                 user.birth_date = form.cleaned_data['birth_date']
-                user.role = form.cleaned_data['role']
+                user.sex = form.cleaned_data['sex']
                 image_file = form.cleaned_data.get('image')
                 if image_file:
                     ext = image_file.name.split('.')[-1]
@@ -109,7 +109,7 @@ def profile_page_settings(request):
         else:
             initial_data = {
                 'username': user.username,
-                'role': user.role,
+                'sex': user.sex,
                 'email': user.email,
                 'birth_date': user.birth_date,
                 'image_photo': user.image

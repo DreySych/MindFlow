@@ -26,8 +26,13 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
 
 class ProfileForm(forms.Form):
+    sex_vatiants = [
+        (1, "Мужской"),
+        (2, "Женский")
+    ]
+
     username = forms.CharField(label='Никнейм', max_length=100, required=True)
-    role = forms.CharField(label='Роль', max_length=100, required=False)
+    sex = forms.TypedChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False,empty_value=None, coerce=lambda x: int(x))
     email = forms.EmailField(label='Почта', required=True)
     birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=True)
     image = forms.ImageField(label='Фото профиля', required=False)
