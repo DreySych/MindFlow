@@ -46,6 +46,13 @@ body {
     margin-bottom: 8px;
 }
 
+.user-avatar-link {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+    transition: opacity 0.2s;
+}
+
 .user-avatar {
     width: 44px;
     height: 44px;
@@ -53,14 +60,23 @@ body {
     object-fit: cover;
 }
 
-.user-name {
+.user-name-link {
     font-weight: 400;
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
     color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
 }
 
-.user-name::after {
+.user-name-link:hover {
+    color: #1671FE;
+    text-decoration: none;
+}
+
+.user-name-link::after {
     content: "•";
     font-family: sans-serif;
     color: #999;
@@ -336,5 +352,17 @@ body {
     .action-btn.cross img {
         width: 16px;
         height: 16px;
+    }
+
+    .user-name-link {
+        font-size: 18px;
+    }
+
+    .user-name-link::after {
+        font-size: 16px;
+    }
+
+    .time-ago {
+        font-size: 16px;
     }
 }
