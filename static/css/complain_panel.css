@@ -1,0 +1,212 @@
+body {
+    font-family: 'Mallanna', sans-serif;
+}
+
+.content-wrapper {
+    margin-left: 10vw;
+    padding-top: 140px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.admin-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.admin-title {
+    font-size: 28px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid;
+    border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+    padding-bottom: 16px;
+}
+
+.admin-tab {
+    padding: 12px 28px;
+    font-family: 'Mallanna', sans-serif;
+    font-size: 16px;
+    color: #888;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: all 0.2s;
+}
+
+.admin-tab:hover {
+    color: #1671FE;
+    background: #f5f7fa;
+}
+
+.admin-tab.active {
+    color: #fff;
+    background: #1671FE;
+}
+
+.complaints-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.complaint-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.complaint-post {
+    margin-bottom: 16px;
+}
+
+.complaint-post-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.complaint-post-text {
+    font-size: 15px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.complaint-detail-btn {
+    display: inline-block;
+    font-family: 'Mallanna', sans-serif;
+    font-size: 14px;
+    color: #1671FE;
+    text-decoration: none;
+    padding: 6px 16px;
+    border: 1px solid #1671FE;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.complaint-detail-btn:hover {
+    background: #1671FE;
+    color: #fff;
+}
+
+.complaint-comment {
+    margin-bottom: 16px;
+}
+
+.complaint-comment-text {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    font-style: italic;
+    padding: 12px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.complaint-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+}
+
+.complaint-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.complaint-label {
+    font-size: 14px;
+    color: #888;
+}
+
+.complaint-value {
+    font-size: 14px;
+    color: #e53935;
+    font-weight: 500;
+}
+
+.complaint-verdict {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.verdict-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.verdict-btn img {
+    width: 22px;
+    height: 22px;
+}
+
+.verdict-btn.approve {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #4caf50 0%, #2e7d32 100%) border-box;
+}
+
+.verdict-btn.approve:hover {
+    background: #e8f5e9;
+    border-color: #4caf50;
+}
+
+.verdict-btn.reject {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+}
+
+.verdict-btn.reject:hover {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        margin-left: 0;
+        padding-top: 140px;
+    }
+
+    .admin-container {
+        padding: 0 16px;
+    }
+
+    .admin-title {
+        font-size: 24px;
+    }
+
+    .complaint-card {
+        padding: 16px;
+    }
+
+    .complaint-info {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .complaint-verdict {
+        align-self: flex-end;
+    }
+}

@@ -26,5 +26,6 @@ urlpatterns = [
 
     path('complaint/question/', complains_views.complain_question_page, name='complain_question'),
     path('complaint/user/', complains_views.complain_user_page, name='complain_user'),
-    path('complaint/panel/', complains_views.complains_panel_page, name='complains_panel'),
+    path('complaint/panel/post', complains_views.complains_panel_page_p, name='complains_panel_page_p'),
+    path('complaint/panel/comment', complains_views.complains_panel_page_c, name='complains_panel_page_c'),
 ]

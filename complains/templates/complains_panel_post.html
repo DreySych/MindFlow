@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Панель жалоб - Посты | MindFlow</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/admin_panel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_panel.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -17,12 +17,11 @@
                 <h1 class="admin-title">Панель жалоб</h1>
 
                 <div class="admin-tabs">
-                    <a href="{% url 'admin_index' %}" class="admin-tab active">Посты</a>
-                    <a href="{% url 'admin_comments' %}" class="admin-tab">Комментарии</a>
+                    <a href="{% url 'complains_panel_page_p' %}" class="admin-tab active">Посты</a>
+                    <a href="{% url 'complains_panel_page_c' %}" class="admin-tab">Комментарии</a>
                 </div>
 
                 <div class="complaints-list">
-                    <!-- Жалоба 1 -->
                     <div class="complaint-card">
                         <div class="complaint-post">
                             <div class="complaint-post-title">Какой язык программирования лучше всего учить в 2026 году?</div>
@@ -38,7 +37,7 @@
                             </div>
                             <div class="complaint-verdict">
                                 <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
                                 </button>
                                 <button class="verdict-btn reject" aria-label="Отклонить">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">
@@ -47,7 +46,6 @@
                         </div>
                     </div>
 
-                    <!-- Жалоба 2 -->
                     <div class="complaint-card">
                         <div class="complaint-post">
                             <div class="complaint-post-title">Как настроить CI/CD для Django-проекта на GitHub Actions?</div>
@@ -63,7 +61,7 @@
                             </div>
                             <div class="complaint-verdict">
                                 <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
                                 </button>
                                 <button class="verdict-btn reject" aria-label="Отклонить">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">
@@ -72,7 +70,6 @@
                         </div>
                     </div>
 
-                    <!-- Жалоба 3 -->
                     <div class="complaint-card">
                         <div class="complaint-post">
                             <div class="complaint-post-title">React или Vue — что выбрать новичку в 2026?</div>
@@ -88,7 +85,7 @@
                             </div>
                             <div class="complaint-verdict">
                                 <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/like.png' %}" alt="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
                                 </button>
                                 <button class="verdict-btn reject" aria-label="Отклонить">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">

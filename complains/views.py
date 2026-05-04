@@ -7,5 +7,8 @@ def complain_question_page(request):
 def complain_user_page(request):
     return render(request, template_name="complain_user.html")
 
-def complains_panel_page(request):
-    return render(request, template_name="complains_panel.html")
+def complains_panel_page_c(request):
+    return render(request, template_name="complains_panel_comment.html")
+
+def complains_panel_page_p(request):
+    return render(request, template_name="complains_panel_post.html")
