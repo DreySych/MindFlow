@@ -22,9 +22,9 @@
             color: #1a1a2e;
         }
 
-        .settings-container {
-            max-width: 800px;
-            margin: 60px 0 0 250px;
+        .settings-wrapper {
+            max-width: 900px;
+            margin: 60px auto 0 auto;
             padding: 0 40px 40px 40px;
         }
 
@@ -35,27 +35,97 @@
             margin-bottom: 30px;
         }
 
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            padding-left: 4px;
+        }
+
         .settings-card {
             background: #ffffff;
             border-radius: 12px;
-            margin-bottom: 12px;
+            overflow: hidden;
         }
 
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            border-bottom: 1px solid #E0E6ED;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:hover {
+            background: #F0F4F8;
+        }
+
+        .settings-item-left {
+            flex: 1;
+            max-width: 50%;
+        }
+
+        .settings-item-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .settings-item-description {
+            font-size: 13px;
+            color: #9CA3AF;
+        }
+
+        .settings-item-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #6B7280;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .settings-item-arrow {
+            color: #9CA3AF;
+            font-size: 18px;
+        }
+
+        /* Avatar Section */
         .avatar-section {
-            padding: 30px 24px;
+            padding: 30px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #E0E6ED;
+        }
+
+        .avatar-left {
             display: flex;
             align-items: center;
             gap: 24px;
+            flex: 1;
         }
 
         .avatar-preview {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
             background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             flex-shrink: 0;
             overflow: hidden;
-            /* border: 3px solid #D1D9E6; ← УБРАЛ */
         }
 
         .avatar-preview img {
@@ -69,92 +139,69 @@
         }
 
         .avatar-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a1a2e;
-            margin-bottom: 8px;
-        }
-
-        .avatar-description {
-            font-size: 14px;
-            color: #6B7280;
-            margin-bottom: 16px;
-        }
-
-        .avatar-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 24px;
-            /* border-bottom: 1px solid #E0E6ED; ← УБРАЛ */
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .settings-item:hover {
-            background: #F0F4F8;
-        }
-
-        .settings-item-info {
-            flex: 1;
-        }
-
-        .settings-item-label {
             font-size: 16px;
             font-weight: 600;
             color: #1a1a2e;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
-        .settings-item-description {
+        .avatar-description {
             font-size: 13px;
             color: #9CA3AF;
         }
 
-        .settings-item-value {
+        .avatar-actions {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #6B7280;
+            gap: 10px;
+            margin-left: auto;
         }
 
-        .settings-item-arrow {
-            color: #9CA3AF;
-            font-size: 18px;
+        /* Form Items */
+        .form-item {
+            padding: 26px 28px;
+            border-bottom: 1px solid #E0E6ED;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .form-section {
-            padding: 24px;
+        .form-item:last-child {
+            border-bottom: none;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .form-left {
+            flex: 1;
+            max-width: 50%;
         }
 
         .form-label {
             display: block;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: #1a1a2e;
             margin-bottom: 8px;
         }
 
+        .form-hint {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin-top: 6px;
+        }
+
+        .form-input-wrapper {
+            margin-left: auto;
+            width: 300px;
+        }
+
         .form-input {
             width: 100%;
-            padding: 12px 16px;
-            /* border: 2px solid #D1D9E6; ← УБРАЛ */
+            padding: 10px 16px;
             border: 2px solid transparent;
             border-radius: 20px;
             background: #F0F4F8;
             color: #1a1a2e;
             font-family: 'Manrope', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             transition: all 0.2s;
         }
@@ -165,23 +212,13 @@
             box-shadow: 0 2px 8px rgba(74,144,226,0.2);
         }
 
-        .form-input:read-only {
-            cursor: not-allowed;
-        }
-
-        .form-hint {
-            font-size: 13px;
-            color: #9CA3AF;
-            margin-top: 6px;
-        }
-
         /* Buttons */
         .btn {
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 20px;
             font-family: 'Manrope', sans-serif;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
             border: none;
@@ -192,19 +229,18 @@
         .btn-primary {
             background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
             color: #ffffff;
-            box-shadow: 0 2px 8px rgba(74,144,226,0.3);
+            box-shadow: 0 2px 6px rgba(74,144,226,0.3);
         }
 
         .btn-primary:hover {
             background: linear-gradient(135deg, #357ABD 0%, #2E6BAA 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(74,144,226,0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(74,144,226,0.4);
         }
 
         .btn-secondary {
             background: #F0F4F8;
             color: #6B7280;
-            /* border: 2px solid #D1D9E6; ← УБРАЛ */
             border: 2px solid transparent;
         }
 
@@ -213,12 +249,163 @@
             color: #4A90E2;
         }
 
+        /* Save Section */
         .save-section {
-            padding: 20px 24px;
+            padding: 22px 28px;
             display: flex;
             justify-content: flex-end;
             gap: 12px;
-            /* border-top: 1px solid #E0E6ED; ← УБРАЛ */
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            color: #9CA3AF;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1a1a2e;
+        }
+
+        .modal-body {
+            margin-bottom: 24px;
+        }
+
+        .modal-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #D1D9E6;
+            border-radius: 20px;
+            background: #F0F4F8;
+            color: #1a1a2e;
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: #4A90E2;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+        }
+
+        .modal-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        /* Gender Options */
+        .gender-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px solid #D1D9E6;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .gender-option:hover {
+            border-color: #4A90E2;
+            background: #F0F4F8;
+        }
+
+        .gender-option.selected {
+            border-color: #4A90E2;
+            background: rgba(74,144,226,0.1);
+        }
+
+        .gender-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #D1D9E6;
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .gender-option.selected .gender-radio {
+            border-color: #4A90E2;
+        }
+
+        .gender-option.selected .gender-radio::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4A90E2;
+        }
+
+        .gender-label {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
         }
 
         /* Notification */
@@ -228,7 +415,6 @@
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
             background: #ffffff;
-            /* border: 2px solid #D1D9E6; ← УБРАЛ */
             border: 2px solid transparent;
             padding: 16px 24px;
             border-radius: 12px;
@@ -242,7 +428,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .notification.show {
@@ -272,24 +458,39 @@
         }
 
         @media (max-width: 768px) {
-            .settings-container {
-                margin: 0;
-                padding: 40px 20px 20px 20px;
+            .settings-wrapper {
+                margin: 40px 20px 0 20px;
+                padding: 0 0 20px 0;
             }
 
+            .settings-item,
+            .form-item,
             .avatar-section {
                 flex-direction: column;
-                text-align: center;
-            }
-
-            .avatar-actions {
-                justify-content: center;
-            }
-
-            .settings-item {
-                flex-direction: column;
                 align-items: flex-start;
-                gap: 12px;
+                gap: 16px;
+                padding: 20px;
+            }
+
+            .settings-item-left,
+            .form-left {
+                max-width: 100%;
+            }
+
+            .settings-item-right,
+            .form-input-wrapper,
+            .avatar-actions {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .avatar-left {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .avatar-info {
+                text-align: center;
             }
         }
     </style>
@@ -298,23 +499,27 @@
     {% include 'header.html' %}
     {% include 'body.html' %}
 
-    <main class="settings-container">
+    <main class="settings-wrapper">
         <h1 class="settings-title">Настройки</h1>
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
             <!-- Avatar Section -->
-            <div class="settings-card">
-                <div class="avatar-section">
-                    <div class="avatar-preview">
-                        {% if user.profile.avatar %}
-                            <img src="{{ user.profile.avatar.url }}" alt="Аватар">
-                        {% endif %}
-                    </div>
-                    <div class="avatar-info">
-                        <h3 class="avatar-title">Аватар</h3>
-                        <p class="avatar-description">Отредактируйте свой аватар или загрузите изображение</p>
+            <div class="settings-section">
+                <div class="settings-card">
+                    <div class="avatar-section">
+                        <div class="avatar-left">
+                            <div class="avatar-preview">
+                                {% if user.profile.avatar %}
+                                    <img src="{{ user.profile.avatar.url }}" alt="Аватар">
+                                {% endif %}
+                            </div>
+                            <div class="avatar-info">
+                                <h3 class="avatar-title">Аватар</h3>
+                                <p class="avatar-description">Отредактируйте свой аватар или загрузите изображение</p>
+                            </div>
+                        </div>
                         <div class="avatar-actions">
                             <label class="btn btn-primary">
                                 Загрузить
@@ -326,41 +531,54 @@
                 </div>
             </div>
 
-            <!-- Email Section -->
-            <div class="settings-card">
-                <div class="settings-item">
-                    <div class="settings-item-info">
-                        <div class="settings-item-label">Электронная почта</div>
-                        <div class="settings-item-description">Ваш адрес электронной почты</div>
+            <!-- Account Section -->
+            <div class="settings-section">
+                <h2 class="settings-section-title">Аккаунт</h2>
+                <div class="settings-card">
+                    <!-- Email -->
+                    <div class="settings-item" onclick="openEmailModal()">
+                        <div class="settings-item-left">
+                            <div class="settings-item-label">Электронная почта</div>
+                            <div class="settings-item-description">Ваш адрес электронной почты</div>
+                        </div>
+                        <div class="settings-item-right">
+                            <span id="current-email">{{ user.email }}</span>
+                            <span class="settings-item-arrow">›</span>
+                        </div>
                     </div>
-                    <div class="settings-item-value">
-                        <span>{{ user.email }}</span>
-                        <span class="settings-item-arrow">›</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Display Name Section -->
-            <div class="settings-card">
-                <div class="form-section">
-                    <div class="form-group">
-                        <label class="form-label">Отображаемое имя</label>
-                        <input type="text" class="form-input" name="display_name" value="{{ user.profile.display_name|default:user.username }}" placeholder="Введите имя">
-                        <p class="form-hint">Изменение отображаемого имени не изменит ваше имя пользователя</p>
+                    <!-- Display Name -->
+                    <div class="form-item">
+                        <div class="form-left">
+                            <label class="form-label">Отображаемое имя</label>
+                            <p class="form-hint">Изменение отображаемого имени не изменит ваше имя пользователя</p>
+                        </div>
+                        <div class="form-input-wrapper">
+                            <input type="text" class="form-input" name="display_name" value="{{ user.profile.display_name|default:user.username }}" placeholder="Введите имя">
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Gender Section -->
-            <div class="settings-card">
-                <div class="settings-item">
-                    <div class="settings-item-info">
-                        <div class="settings-item-label">Пол</div>
-                        <div class="settings-item-description">Выберите ваш пол</div>
+                    <!-- Gender -->
+                    <div class="settings-item" onclick="openGenderModal()">
+                        <div class="settings-item-left">
+                            <div class="settings-item-label">Пол</div>
+                            <div class="settings-item-description">Выберите ваш пол</div>
+                        </div>
+                        <div class="settings-item-right">
+                            <span id="current-gender">{{ user.profile.get_gender_display|default:"Не указан" }}</span>
+                            <span class="settings-item-arrow">›</span>
+                        </div>
                     </div>
-                    <div class="settings-item-value">
-                        <span>{{ user.profile.get_gender_display|default:"Не указан" }}</span>
-                        <span class="settings-item-arrow">›</span>
+
+                    <!-- Date of Birth -->
+                    <div class="form-item">
+                        <div class="form-left">
+                            <label class="form-label">Дата рождения</label>
+                            <p class="form-hint">Ваша дата рождения не будет отображаться публично</p>
+                        </div>
+                        <div class="form-input-wrapper">
+                            <input type="date" class="form-input" name="birthdate" value="{{ user.profile.birthdate|date:'Y-m-d' }}">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -369,11 +587,59 @@
             <div class="settings-card">
                 <div class="save-section">
                     <button type="button" class="btn btn-secondary">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                 </div>
             </div>
         </form>
     </main>
+
+    <!-- Email Modal -->
+    <div class="modal-overlay" id="email-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Изменить почту</h2>
+                <button class="modal-close" onclick="closeEmailModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <label class="modal-label">Новый адрес электронной почты</label>
+                <input type="email" class="modal-input" id="new-email" placeholder="example@mail.com" value="{{ user.email }}">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEmailModal()">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="saveEmail()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gender Modal -->
+    <div class="modal-overlay" id="gender-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Выберите пол</h2>
+                <button class="modal-close" onclick="closeGenderModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="gender-options">
+                    <div class="gender-option" data-value="male" onclick="selectGender(this)">
+                        <div class="gender-radio"></div>
+                        <span class="gender-label">Мужской</span>
+                    </div>
+                    <div class="gender-option" data-value="female" onclick="selectGender(this)">
+                        <div class="gender-radio"></div>
+                        <span class="gender-label">Женский</span>
+                    </div>
+                    <div class="gender-option" data-value="other" onclick="selectGender(this)">
+                        <div class="gender-radio"></div>
+                        <span class="gender-label">Другой</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeGenderModal()">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="saveGender()">Сохранить</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Notification -->
     <div class="notification" id="notification">
@@ -386,7 +652,79 @@
 
     <script>
         const notification = document.getElementById('notification');
+        const emailModal = document.getElementById('email-modal');
+        const genderModal = document.getElementById('gender-modal');
+        const newEmailInput = document.getElementById('new-email');
+        const currentEmailSpan = document.getElementById('current-email');
+        const currentGenderSpan = document.getElementById('current-gender');
+        let selectedGender = null;
+        let selectedGenderText = null;
 
+        // Email Modal Functions
+        function openEmailModal() {
+            newEmailInput.value = currentEmailSpan.textContent;
+            emailModal.classList.add('active');
+        }
+
+        function closeEmailModal() {
+            emailModal.classList.remove('active');
+        }
+
+        function saveEmail() {
+            const newEmail = newEmailInput.value.trim();
+
+            if (!newEmail || !newEmail.includes('@')) {
+                showNotification('Введите корректный email', 'error');
+                return;
+            }
+
+            currentEmailSpan.textContent = newEmail;
+            closeEmailModal();
+            showNotification('Почта успешно изменена', 'success');
+        }
+
+        // Gender Modal Functions
+        function openGenderModal() {
+            const currentGender = currentGenderSpan.textContent;
+
+            // Сбросить выбор
+            document.querySelectorAll('.gender-option').forEach(option => {
+                option.classList.remove('selected');
+                if (option.querySelector('.gender-label').textContent === currentGender) {
+                    option.classList.add('selected');
+                    selectedGender = option.dataset.value;
+                    selectedGenderText = currentGender;
+                }
+            });
+
+            genderModal.classList.add('active');
+        }
+
+        function closeGenderModal() {
+            genderModal.classList.remove('active');
+        }
+
+        function selectGender(element) {
+            document.querySelectorAll('.gender-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedGender = element.dataset.value;
+            selectedGenderText = element.querySelector('.gender-label').textContent;
+        }
+
+        function saveGender() {
+            if (!selectedGender) {
+                showNotification('Выберите пол', 'error');
+                return;
+            }
+
+            currentGenderSpan.textContent = selectedGenderText;
+            closeGenderModal();
+            showNotification('Пол успешно изменён', 'success');
+        }
+
+        // Notification Functions
         function showNotification(message, type = 'success') {
             const icon = notification.querySelector('.notification-icon');
             icon.textContent = type === 'success' ? '✓' : '✕';
@@ -398,6 +736,19 @@
         function hideNotification() {
             notification.classList.remove('show');
         }
+
+        // Close modals on overlay click
+        emailModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEmailModal();
+            }
+        });
+
+        genderModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeGenderModal();
+            }
+        });
 
         {% if messages %}
             {% for message in messages %}
