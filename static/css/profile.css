@@ -1,0 +1,401 @@
+.profile-header-container {
+    position: relative;
+    top: 120px;
+    width: 100%;
+    background: transparent;
+    border-bottom: none;
+    z-index: 5;
+}
+
+.profile-header-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 20px 10px calc(10vw + 20px);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.profile-avatar-section {
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: fill;
+    border: 2px solid #1671FE;
+}
+
+.profile-info {
+    flex-shrink: 0;
+}
+
+.profile-nick {
+    font-size: 28px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1a1a1a;
+    margin: 0 0 4px 0;
+    font-weight: 400;
+}
+
+.profile-id {
+    font-size: 14px;
+    color: #888;
+    font-family: monospace;
+}
+
+.content-wrapper {
+    margin-left: 10vw;
+    padding-top: 130px;
+    padding-bottom: 100px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.profile-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.nav-btn {
+    padding: 10px 24px;
+    font-size: 18px;
+    font-family: 'Mallanna', sans-serif;
+    color: #666;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-btn:hover {
+    color: #1671FE;
+}
+
+.nav-btn.active {
+    color: #1671FE;
+}
+
+.nav-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    background: #1671FE;
+}
+
+.posts-list {
+    margin-top: 0;
+}
+
+.question-card {
+    margin-bottom: 0;
+    padding: 16px 0;
+}
+
+.question-card + .question-card {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 16px;
+}
+
+.question-card-content {
+    border-radius: 12px;
+    padding: 8px;
+    margin: -8px;
+}
+
+.question-text {
+    font-size: 22px;
+    font-family: 'Mallanna', sans-serif;
+    line-height: 1.5;
+    color: #222;
+    margin: 0 0 10px 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.user-avatar-link {
+    display: inline-block;
+    text-decoration: none;
+    line-height: 0;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: fill;
+}
+
+.user-name-link {
+    font-weight: 400;
+    font-size: 22px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.user-name-link:hover {
+    color: #1671FE;
+}
+
+.user-name-link::after {
+    content: "•";
+    font-family: sans-serif;
+    color: #999;
+    font-size: 20px;
+    margin-left: 8px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
+.time-ago {
+    font-size: 17px;
+    font-family: sans-serif;
+    color: #888;
+}
+
+.comment-post-link {
+    font-size: 17px;
+    font-family: 'Mallanna', sans-serif;
+    color: #888;
+    text-decoration: none;
+    margin-left: 4px;
+    transition: color 0.2s;
+}
+
+.comment-post-link:hover {
+    color: #1671FE;
+}
+
+.comment-text {
+    font-size: 22px;
+    font-family: 'Mallanna', sans-serif;
+    line-height: 1.5;
+    color: #222;
+    margin: 0 0 10px 0;
+}
+
+.question-image-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #e0e0e0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.question-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    border-radius: 16px;
+    display: block;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 2px;
+}
+
+.vote-group,
+.action-btn.comment {
+    background: #f0f0f0;
+    border-radius: 20px;
+    border: none;
+}
+
+.vote-group {
+    width: auto;
+    height: 44px;
+    gap: 4px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vote-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.vote-btn.upvote:hover {
+    background: rgba(76, 175, 80, 0.15);
+}
+
+.vote-btn.downvote:hover {
+    background: rgba(244, 67, 54, 0.15);
+}
+
+.vote-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.vote-count {
+    font-size: 24px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+    min-width: 30px;
+    text-align: center;
+}
+
+.action-btn.comment {
+    width: auto;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 16px;
+}
+
+.action-btn.comment:hover {
+    background: #e3f2fd;
+}
+
+.action-btn.comment span {
+    font-size: 24px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+}
+
+.action-btn.comment img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.vote-btn.upvote.active {
+    background: rgba(76, 175, 80, 0.15);
+}
+
+.vote-btn.upvote.active img {
+    filter: brightness(0) saturate(100%) invert(58%) sepia(84%) saturate(495%) hue-rotate(78deg) brightness(92%) contrast(87%);
+}
+
+.vote-btn.downvote.active {
+    background: rgba(244, 67, 54, 0.15);
+}
+
+@media (max-width: 768px) {
+    .profile-header-wrapper {
+        padding: 16px 20px 8px 20px;
+        margin-left: 0;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-nick {
+        font-size: 24px;
+    }
+
+    .profile-id {
+        font-size: 12px;
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+        padding-top: 110px;
+    }
+
+    .profile-container {
+        padding: 0 16px;
+    }
+
+    .nav-btn {
+        padding: 8px 20px;
+        font-size: 16px;
+    }
+
+    .nav-btn.active::after {
+        left: 20px;
+        right: 20px;
+    }
+
+    .user-name-link {
+        font-size: 18px;
+    }
+
+    .user-name-link::after {
+        font-size: 16px;
+    }
+
+    .time-ago {
+        font-size: 16px;
+    }
+
+    .question-text {
+        font-size: 18px;
+    }
+
+    .comment-post-link {
+        font-size: 16px;
+    }
+
+    .comment-text {
+        font-size: 18px;
+    }
+
+    .vote-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .vote-count {
+        font-size: 20px;
+    }
+
+    .action-btn.comment span {
+        font-size: 20px;
+    }
+
+    .action-btn.comment img {
+        width: 18px;
+        height: 18px;
+    }
+}
