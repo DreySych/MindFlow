@@ -27,6 +27,9 @@ def profile_page(request):
 def profile_somelse_page(request):
     return render(request, template_name="profile_somelse.html")
 
+def profile_somelse_page_c(request):
+    return render(request, template_name="profile_somelse_comments.html")
+
 def profile_posts_page(request):
     return render(request, template_name="profile_posts.html")
 

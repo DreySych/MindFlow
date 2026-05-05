@@ -225,10 +225,12 @@
 }
 
 .vote-group,
-.action-btn.comment {
-    background: #f0f0f0;
+.action-btn.comment,
+.action-btn.report {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
-    border: none;
+    border: 1px solid transparent;
 }
 
 .vote-group {
@@ -282,8 +284,6 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: #f0f0f0;
-    border-radius: 20px;
     cursor: pointer;
     text-decoration: none;
     padding: 0 16px;
@@ -291,6 +291,7 @@
 
 .action-btn.comment:hover {
     background: #e3f2fd;
+    border-color: #1671FE;
 }
 
 .action-btn.comment span {
@@ -300,6 +301,28 @@
 }
 
 .action-btn.comment img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.action-btn.report {
+    width: auto;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 16px;
+}
+
+.action-btn.report:hover {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+.action-btn.report img {
     width: 20px;
     height: 20px;
     object-fit: fill;
@@ -390,11 +413,26 @@
         font-size: 20px;
     }
 
+    .action-btn.comment {
+        height: 40px;
+        padding: 0 12px;
+    }
+
     .action-btn.comment span {
         font-size: 20px;
     }
 
     .action-btn.comment img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .action-btn.report {
+        height: 40px;
+        padding: 0 12px;
+    }
+
+    .action-btn.report img {
         width: 18px;
         height: 18px;
     }

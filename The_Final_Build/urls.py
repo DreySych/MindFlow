@@ -18,6 +18,7 @@ urlpatterns = [
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/', users_views.profile_page, name='profile'),
     path('profile/somelse/', users_views.profile_somelse_page, name='profile_somelse'),
+    path('profile/somelse/c', users_views.profile_somelse_page_c, name='profile_somelse_c'),
     path('notifications/', users_views.notifications_page, name='notifications'),
     path('PM/', users_views.PM_page, name='PM'),
 
