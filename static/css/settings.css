@@ -112,9 +112,10 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            background: linear-gradient(135deg, #E8F1FF 0%, #D4E4FF 100%);
             flex-shrink: 0;
             overflow: hidden;
+            border: 3px solid #4A90E2;
         }
 
         .avatar-preview img {
