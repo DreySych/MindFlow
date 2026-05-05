@@ -43,7 +43,7 @@
                         </button>
                         <a href="{% url 'PM' %}" class="pm-btn" onclick="openChatOverlay(); return false;">
                             <img src="{% static 'images/chat.png' %}" alt="ЛС">
-                            ЛС
+                            Начать чат
                         </a>
                     </div>
                 </div>
@@ -51,6 +51,14 @@
                 <div class="posts-list">
                     <article class="question-card">
                         <div class="question-card-content">
+                            <div class="user-info">
+                                <span class="self-user-avatar">
+                                    <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg"
+                                         alt="Avatar" class="user-avatar">
+                                </span>
+                                <span class="self-user-name">Анна К.</span>
+                                <span class="time-ago">2 часа назад</span>
+                            </div>
                             <p class="question-text">
                                 Какой язык программирования лучше всего учить в 2026 году?
                             </p>
@@ -73,7 +81,7 @@
                                     <span>67</span>
                                 </a>
                                 <div style="flex: 1;"></div>
-                                <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
+                                <button class="action-btn report" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                                 </button>
                             </div>
@@ -82,6 +90,14 @@
 
                     <article class="question-card">
                         <div class="question-card-content">
+                            <div class="user-info">
+                                <span class="self-user-avatar">
+                                    <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg"
+                                         alt="Avatar" class="user-avatar">
+                                </span>
+                                <span class="self-user-name">Анна К.</span>
+                                <span class="time-ago">5 часов назад</span>
+                            </div>
                             <p class="question-text">
                                 Как настроить CI/CD для Django-проекта на GitHub Actions?
                             </p>
@@ -103,7 +119,7 @@
                                     <span>42</span>
                                 </a>
                                 <div style="flex: 1;"></div>
-                                <button class="action-btn report gradient-border" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
+                                <button class="action-btn report" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
                                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                                 </button>
                             </div>
