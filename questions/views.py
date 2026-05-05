@@ -88,7 +88,6 @@ def question_edit_page(request):
                 question.description = description
                 question.images = images_str
                 question.save()
-
         else:
             form = QuestionForm()
 

@@ -12,6 +12,18 @@ class Question(models.Model):
     images = models.TextField()
     rating = models.IntegerField()
 
+    @property
+    def image_list(self):
+        if not self.images:
+            return [[]]
+        l = []
+        for i in self.images.split(','):
+            l.append("media/"+i)
+
+        print(l)
+
+        return l
+
 class Comment(models.Model):
     text = models.TextField()
     rating = models.IntegerField()
@@ -29,6 +41,7 @@ class Answer(models.Model):
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
 
 # class Tag(models.Model):
 #     title = models.TextField()
