@@ -27,13 +27,13 @@ class Question(models.Model):
 class Comment(models.Model):
     text = models.TextField()
     rating = models.IntegerField()
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     creation_date = models.DateTimeField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 class Answer(models.Model):
     answer = models.TextField()
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
     creation_date = models.DateTimeField()
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
