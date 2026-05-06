@@ -1,34 +1,101 @@
 from django.shortcuts import render, redirect
 import datetime
+
+from django.template.context_processors import request
+
+from questions.models import Question, Like
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 
 
 # Create your views here.
 def index_page(request):
-    username = request.user.username if request.user.is_authenticated else "Профиль"
-    all_users = User.objects .all()
-    context = {
-        "username": username,
-        "users": all_users,
-        "link1": "account/login/",
-        "page1": 'Логин',
-        "link2": "account/signup/",
-        "page2": 'Регистрация'
-    }
-    if request.user.is_authenticated:
-        context['link1'] = "account/logout/"
-        context["page1"] = 'Выход'
-        context['link2'] = ""
-        context["page2"] = ''
-    return render(request, template_name="index.html", context=context)
+	username = request.user.username if request.user.is_authenticated else "Профиль"
+	all_users = User.objects .all()
+	context = {
+		"username": username,
+		"users": all_users,
+		"link1": "account/login/",
+		"page1": 'Логин',
+		"link2": "account/signup/",
+		"page2": 'Регистрация'
+	}
+	if request.user.is_authenticated:
+		context['link1'] = "account/logout/"
+		context["page1"] = 'Выход'
+		context['link2'] = ""
+		context["page2"] = ''
+
+	questions = []
+	if request.user.is_authenticated:
+		subscriptions = Subscription.objects.filter(user1=request.user)
+		authors = []
+		for i in subscriptions:
+			authors.append(i.user2)
+		question = Question.objects.filter(author__in=authors).order_by('-creation_date')
+		for j in question:
+			questions.append(j)
+		question = Question.objects.exclude(author__in=authors).order_by('-creation_date')
+		for j in question:
+			questions.append(j)
+
+	else:
+		question = Question.objects.all().order_by('-creation_date')
+		for i in question:
+			questions.append(i)
+
+	context['questions'] = questions
+	context['user'] = request.user
+	images = {}
+	for i in questions:
+		images[f'{i.id}'] = i.images.split(',')[0]
+	context['images'] = images
+	context['len'] = len(questions)
+
+	return render(request, template_name="index.html", context=context)
+
+def delete_post(request):
+	question = Question.objects.filter(id=request.GET.get('id'))[0]
+	question.delete()
+	page = request.GET.get('to')
+	return redirect(page)
+
+def change_rating(request, x):
+	question = Question.objects.filter(id=request.GET.get('id'))[0]
+
+	if len(Like.objects.filter(user=request.user, question=question)) == 0:
+		question.rating += x
+		question.save()
+		Like(user=request.user, question=question, rating=x).save()
+	else:
+		like_obj = Like.objects.filter(user=request.user, question=question)[0]
+		if x > 0 and like_obj.rating != 1:
+			like_obj.rating += 1
+			like_obj.save()
+			question.rating += x
+			question.save()
+		elif x < 0 and like_obj.rating != -1:
+			like_obj.rating -= 1
+			like_obj.save()
+			question.rating += x
+			question.save()
+
+def like(request):
+	change_rating(request, 1)
+	page = request.GET.get('to')
+	return redirect(page + f"#question-{request.GET.get('id')}")
+
+def dislike(request):
+	change_rating(request, -1)
+	page = request.GET.get('to')
+	return redirect(page + f"#question-{request.GET.get('id')}")
 
 def sidebar_page(request):
-    context = {}
+	context = {}
 
-    subscriptions = Subscription.objects.filter(user1=request.user)
-    context['subscriptions'] = subscriptions
+	subscriptions = Subscription.objects.filter(user1=request.user)
+	context['subscriptions'] = subscriptions
 
-    return render(request, template_name="sidebar.html", context=context)
+	return render(request, template_name="sidebar.html", context=context)
 
 

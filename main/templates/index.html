@@ -1,6 +1,37 @@
-{% block content %}
 <h1><a href="{% url 'profile_general' %}"> {{ username }}</a></h1>
+<a href={{link1}}>{{page1}}</a>
+<a href={{link2}}>{{page2}}</a>
+<hr>
 
+<h1>Посты</h1>
+
+<hr>
+<a href="/question/make">Создать пост</a>
+<hr>
+
+{% for i in questions %}
+    <div id="question-{{ i.id }}">
+        <h2>{{i.title}}</h2>
+        {% if i.images%}
+            {% for j in i.image_list %}
+                <img src="{{ j }}" style="width: 200px;">
+            {% endfor %}
+        {% endif %}
+        <br>
+        Описание: {{i.description}}<br>
+        Автор: {{i.author.username}}<br>
+        Создан: {{i.creation_date}}<br>
+        Рейтинг: {{i.rating}} | <a href="/like/?id={{i.id}}&to=/">Нравится</a> | <a href="/dislike/?id={{i.id}}&to=/">Не нравится</a> <br>
+        {% if user.is_staff %}
+            <a href="/delete/?id={{i.id}}&to=/">Удалить пост</a>
+        {% endif %}
+        <hr>
+    </div>
+
+{% endfor %}
+
+<br>
+{% block content %}
     <h2>Зарегистрированные пользователи:</h2>
     <ul>
         {% for user in users %}
@@ -11,6 +42,3 @@
         {% endfor %}
     </ul>
 {% endblock %}
-
-<a href={{link1}}>{{page1}}</a>
-<a href={{link2}}>{{page2}}</a>

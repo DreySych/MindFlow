@@ -13,6 +13,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main_views.index_page, name='index'),
     path('sidebar/', main_views.sidebar_page, name='sidebar'),
+    path('like/', main_views.like, name='like'),
+    path('dislike/', main_views.dislike, name='dislike'),
+    path('delete/', main_views.delete_post, name='delete_post'),
 
     path('account/signup/', users_views.signup_page, name='signup'),
     path('account/login/', users_views.login_page, name='login'),
@@ -22,7 +25,6 @@ urlpatterns = [
     path('profile/comments', users_views.profile_page_comments, name='profile_comments'),
     path('profile/liked', users_views.profile_page_liked, name='profile_liked'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
-
 
     path('question/<int:question_id>/', question_views.question_page, name='question'),
     path('question/theme/<int:theme_num>/', question_views.question_themes_page, name='questions'),
