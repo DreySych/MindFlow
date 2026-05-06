@@ -40,8 +40,11 @@ class Answer(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     rating = models.IntegerField(default=0)
+
 
 # class Tag(models.Model):
 #     title = models.TextField()
