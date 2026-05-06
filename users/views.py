@@ -144,7 +144,7 @@ def profile_page_comments(request, username):
         context = {
             'user': target_user,
             'comments': comments,
-            'post': posts,
+            'posts': posts,
         }
         return render(request, 'profile_comments.html', context=context)
 
