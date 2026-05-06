@@ -1,9 +1,12 @@
 import os
 import uuid
+from itertools import chain
+from operator import attrgetter
+
 from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
-from questions.models import Question, Comment
+from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
 from users.forms import ProfileForm
 from users.forms import *
 from users.models import User
@@ -152,4 +155,22 @@ def profile_page_comments(request, username):
         return redirect('/account/login')
 
 def profile_page_liked(request, username):
-    return render(request, 'profile_liked.html')
+    if request.user.is_authenticated:
+        target_user = get_object_or_404(User, username=username)
+        question_likes = QuestionLike.objects.filter(author=target_user)
+        comments_likes = CommentLike.objects.filter(author=target_user)
+        answers_likes = AnswerLike.objects.filter(author=target_user)
+        all_likes = sorted(chain(question_likes, comments_likes, answers_likes), key=attrgetter('created_at'), reverse=True)
+
+
+        context = {
+            'user': target_user,
+            'all_likes': all_likes,
+            'questions_likes': question_likes,
+            'comments_likes': comments_likes,
+            'answers_likes': answers_likes,
+        }
+        return render(request, 'profile_liked.html', context=context)
+
+    else:
+        return redirect('/account/login')
