@@ -69,16 +69,38 @@ def change_rating(request, x):
 		Like(user=request.user, question=question, rating=x).save()
 	else:
 		like_obj = Like.objects.filter(user=request.user, question=question)[0]
-		if x > 0 and like_obj.rating != 1:
-			like_obj.rating += 1
-			like_obj.save()
-			question.rating += x
-			question.save()
-		elif x < 0 and like_obj.rating != -1:
-			like_obj.rating -= 1
-			like_obj.save()
-			question.rating += x
-			question.save()
+		if x > 0:
+			if like_obj.rating == 0:
+				like_obj.rating += 1
+				like_obj.save()
+				question.rating += x
+				question.save()
+			elif like_obj.rating == -1:
+				like_obj.rating += 2
+				like_obj.save()
+				question.rating += 2
+				question.save()
+			elif like_obj.rating == 1:
+				like_obj.rating = 0
+				like_obj.save()
+				question.rating -= 1
+				question.save()
+		elif x < 0:
+			if like_obj.rating == 1:
+				like_obj.rating -= 2
+				like_obj.save()
+				question.rating -= 2
+				question.save()
+			elif like_obj.rating == 0:
+				like_obj.rating -= 1
+				like_obj.save()
+				question.rating -= 1
+				question.save()
+			elif like_obj.rating == -1:
+				like_obj.rating = 0
+				like_obj.save()
+				question.rating += 1
+				question.save()
 
 def like(request):
 	change_rating(request, 1)
