@@ -22,8 +22,8 @@ urlpatterns = [
     path('account/logout/', users_views.logout_page, name='logout'),
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/<str:username>/', users_views.profile_page_general, name='profile_general'),
-    path('profile/comments', users_views.profile_page_comments, name='profile_comments'),
-    path('profile/liked', users_views.profile_page_liked, name='profile_liked'),
+    path('profile/<str:username>/comments.', users_views.profile_page_comments, name='profile_comments'),
+    path('profile/<str:username>/liked.', users_views.profile_page_liked, name='profile_liked'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
 
     path('question/<int:question_id>/', question_views.question_page, name='question'),

@@ -7,7 +7,7 @@
         <p><strong>Фото:</strong></p>
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
     {% endif %}
-    <p><a href="{% url 'index' %}">На главную</a> | <a href="{% url 'profile_comments' %}">Комментарии</a> | <a href="{% url 'profile_liked' %}">Понравившееся</a></p>
+    <p><a href="{% url 'index' %}">На главную</a> | <a href="{% url 'profile_comments' username=user.username %}">Комментарии</a> | <a href="{% url 'profile_liked' username=user.username %}">Понравившееся</a></p>
     {% for post_data in posts_context %}
         {% include 'question.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments %}
         <hr class="post-separator">

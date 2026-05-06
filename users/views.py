@@ -116,7 +116,7 @@ def profile_page_settings(request):
                     path = default_storage.save(filename, ContentFile(image_file.read()))
                     user.image = path
                 user.save()
-                return redirect('profile_general')
+                return redirect('profile_general', username=user.username)
         else:
             initial_data = {
                 'username': user.username,
@@ -136,18 +136,20 @@ def profile_page_settings(request):
     return render(request, 'profile_settings.html')
 
 
-def profile_page_comments(request):
+def profile_page_comments(request, username):
     if request.user.is_authenticated:
-        user = request.user
-        comments = Comment.objects.filter(author=user)
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        comments = Comment.objects.filter(author=target_user)
         context = {
-            'user': user,
+            'user': target_user,
             'comments': comments,
+            'post': posts,
         }
         return render(request, 'profile_comments.html', context=context)
 
     else:
         return redirect('/account/login')
 
-def profile_page_liked(request):
+def profile_page_liked(request, username):
     return render(request, 'profile_liked.html')
