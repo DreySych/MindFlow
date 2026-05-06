@@ -22,7 +22,7 @@
         Автор: {{i.author.username}}<br>
         Создан: {{i.creation_date}}<br>
         Рейтинг: {{i.rating}} | <a href="/like/?id={{i.id}}&to=/">Нравится</a> | <a href="/dislike/?id={{i.id}}&to=/">Не нравится</a> <br>
-        {% if user.is_staff %}
+        {% if user.is_staff or i.author == user%}
             <a href="/delete/?id={{i.id}}&to=/">Удалить пост</a>
         {% endif %}
         <hr>
