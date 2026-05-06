@@ -1,6 +1,8 @@
 {% block content %}
     <h2>Профиль пользователя {{ user.username }}</h2>
+    {% if is_owner %}
     <p><a href="{% url 'profile_settings' %}">Настройки</a> / <a href="{% url 'logout' %}">Выйти из профиля</a></p>
+    {% endif %}
     {% if user.image %}
         <p><strong>Фото:</strong></p>
         <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
@@ -10,9 +12,8 @@
         {% include 'question.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments %}
         <hr class="post-separator">
     {% empty %}
-        <p>У вас пока нет постов.</p>
-    {% endfor %}
         <h3>Здесь пока ничего нет</h3>
+    {% endfor %}
 
 {% endblock %}
 

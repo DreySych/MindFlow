@@ -2,8 +2,7 @@ import os
 import uuid
 from django.conf import settings
 from django.db.models import Prefetch
-from django.shortcuts import render, redirect
-
+from django.shortcuts import render, redirect, get_object_or_404
 from questions.models import Question, Comment
 from users.forms import ProfileForm
 from users.forms import *
@@ -80,18 +79,20 @@ def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
 
-def profile_page_general(request):
+def profile_page_general(request, username):
     if request.user.is_authenticated:
         user = request.user
-        posts = Question.objects.filter(author=user)
-
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        is_owner = (request.user.is_authenticated and user == target_user)
         posts_context = []
         for post in posts:
             posts_context.append(get_question_context(post.pk))
 
         context = {
-            'user': user,
+            'user': target_user,
             'posts_context': posts_context,
+            'is_owner': is_owner,
         }
         return render(request, 'profile_general.html', context)
 
