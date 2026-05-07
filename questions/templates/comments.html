@@ -1,0 +1,8 @@
+{% for comment in comments %}
+    <div class="comment">
+        <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+        <p>{{ comment.text|linebreaks }}</p>
+        <p>Рейтинг: {{ comment.rating }}</p>
+    </div>
+    <hr>
+{% endfor %}

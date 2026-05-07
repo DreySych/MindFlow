@@ -5,6 +5,8 @@ from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
 from questions.forms import *
 from questions.models import *
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 # Create your views here.
@@ -25,6 +27,21 @@ def question_themes_page(request):
 
 def question_page(request, question_id, template_name='question.html'):
     context = get_question_context(question_id)
+    context_for_update = {
+        'question_rating': context['question'].rating,
+        'question_title': context['question'].title,
+        'question_description': context['question'].description,
+    }
+
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        "group",
+        {
+            "type": "send_data",
+            "message": context_for_update
+        }
+    )
+
     return render(request, template_name=template_name, context=context)
 
 

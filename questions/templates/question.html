@@ -1,35 +1,54 @@
 {% block content %}
-    <h1>{{ question.title }}</h1>
+    <h1 id="title">{{ question.title }}</h1>
     <p><strong>Автор:</strong> {{ question.author.username }}</p>
     <p><strong>Дата создания:</strong> {{ question.creation_date|date:"d.m.Y H:i" }}</p>
-    {% if question.modified_date %}
-        <p><strong>Изменён:</strong> {{ question.modified_date|date:"d.m.Y H:i" }}</p>
-    {% endif %}
-    <p><strong>Рейтинг:</strong> {{ question.rating }}</p>
+    <p id="rating"><strong>Рейтинг:</strong> {{ question.rating }}</p>
     <hr>
-    <p><strong>Описание:</strong> {{ question.description }}</p>
+    <p id="description"><strong>Описание:</strong> {{ question.description }}</p>
     <p><strong>Изображения:</strong></p>
     {% if question_images %}
         {% for image in question_images %}
             <img src="{{MEDIA_URL}}{{image}}" width="200px" height="auto">
         {% endfor %}
     {% endif %}
-    {% if comments %}
-        {% for comment in comments %}
-            <div>
-                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
-                <p>{{ comment.text|linebreaks }}</p>
-                {% if comment.images %}
-                    <p><strong>Изображения:</strong> {{ comment.images }}</p>
-                {% endif %}
-                <p>Рейтинг: {{ comment.rating }}</p>
-            </div>
-            <hr>
-        {% endfor %}
-    {% else %}
-        <p>Пока нет комментариев.</p>
-    {% endif %}
+
+    <hr>
+
+    <h2>Комментарии:</h2>
+
+    <div id="comments">
+        {% include "comments.html" with comments=comments %}
+    </div>
 
 
     <a href="{% url 'index' %}">На главную</a>
 {% endblock %}
+
+<script>
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/data/');
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+        switch (data.data.event_type) {
+
+            case 'new_comment':
+                const container = document.getElementById('comments');
+                container.innerHTML = data.data.html;
+                break;
+
+            case 'new_data':
+                const description = data.data.question_description;
+                const rating = data.data.question_rating;
+                const title = data.data.question_title;
+
+                document.getElementById('rating').innerHTML = `<strong>Рейтинг:</strong> ${rating}`;
+                document.getElementById('description').innerHTML = `<strong>Описание:</strong> ${description}`;
+                document.getElementById('title').innerHTML = `${title}`;
+                break;
+        }
+    };
+
+    socket.onopen = () => console.log("Соединение установлено");
+    socket.onclose = () => console.log("Соединение разорвано");
+</script>
