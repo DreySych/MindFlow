@@ -60,55 +60,65 @@ def delete_post(request):
 	page = request.GET.get('to')
 	return redirect(page)
 
-def change_rating(request, x):
+def change_rating(request, question, x):
+	like_obj = Like.objects.filter(user=request.user, question=question)[0]
+	if x > 0:
+		if like_obj.rating == 0:
+			like_obj.rating += 1
+			like_obj.save()
+			question.rating += 1
+			question.save()
+		elif like_obj.rating == -1:
+			like_obj.rating += 2
+			like_obj.save()
+			question.rating += 2
+			question.save()
+		elif like_obj.rating == 1:
+			like_obj.rating = 0
+			like_obj.save()
+			question.rating -= 1
+			question.save()
+	elif x < 0:
+		if like_obj.rating == 1:
+			like_obj.rating -= 2
+			like_obj.save()
+			question.rating -= 2
+			question.save()
+		elif like_obj.rating == 0:
+			like_obj.rating -= 1
+			like_obj.save()
+			question.rating -= 1
+			question.save()
+		elif like_obj.rating == -1:
+			like_obj.rating = 0
+			like_obj.save()
+			question.rating += 1
+			question.save()
+
+def like(request):
 	question = Question.objects.filter(id=request.GET.get('id'))[0]
 
 	if len(Like.objects.filter(user=request.user, question=question)) == 0:
-		question.rating += x
+		question.rating += 1
 		question.save()
-		Like(user=request.user, question=question, rating=x).save()
-	else:
-		like_obj = Like.objects.filter(user=request.user, question=question)[0]
-		if x > 0:
-			if like_obj.rating == 0:
-				like_obj.rating += 1
-				like_obj.save()
-				question.rating += x
-				question.save()
-			elif like_obj.rating == -1:
-				like_obj.rating += 2
-				like_obj.save()
-				question.rating += 2
-				question.save()
-			elif like_obj.rating == 1:
-				like_obj.rating = 0
-				like_obj.save()
-				question.rating -= 1
-				question.save()
-		elif x < 0:
-			if like_obj.rating == 1:
-				like_obj.rating -= 2
-				like_obj.save()
-				question.rating -= 2
-				question.save()
-			elif like_obj.rating == 0:
-				like_obj.rating -= 1
-				like_obj.save()
-				question.rating -= 1
-				question.save()
-			elif like_obj.rating == -1:
-				like_obj.rating = 0
-				like_obj.save()
-				question.rating += 1
-				question.save()
+		Like(user=request.user, question=question, rating=1).save()
 
-def like(request):
-	change_rating(request, 1)
+	else:
+		change_rating(request, question, 1)
+
 	page = request.GET.get('to')
 	return redirect(page + f"#question-{request.GET.get('id')}")
 
 def dislike(request):
-	change_rating(request, -1)
+	question = Question.objects.filter(id=request.GET.get('id'))[0]
+
+	if len(Like.objects.filter(user=request.user, question=question)) == 0:
+		question.rating -= 1
+		question.save()
+		Like(user=request.user, question=question, rating=-1).save()
+	else:
+		change_rating(request, question, -1)
+
 	page = request.GET.get('to')
 	return redirect(page + f"#question-{request.GET.get('id')}")
 
