@@ -3,6 +3,8 @@ import uuid, datetime
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
+from sentence_transformers import SentenceTransformer
+
 from questions.forms import *
 from questions.models import *
 from channels.layers import get_channel_layer
@@ -51,11 +53,14 @@ def question_make_page(request):
         if request.method == "POST":
             form = QuestionForm(request.POST)
             if form.is_valid():
+                model = SentenceTransformer("my_local_model", local_files_only=True)
                 time = datetime.datetime.now()
                 title = form.cleaned_data['title']
                 description = form.cleaned_data['description']
                 images = request.FILES.getlist('images')
                 image_paths = []
+                text = f"{title}\n{description}"
+                embeddings = model.encode([text])[0]
                 for image in images:
                     ext = image.name.split('.')[-1]
                     filename = f"question_images/{uuid.uuid4()}.{ext}"
@@ -64,7 +69,8 @@ def question_make_page(request):
                 images_str = ','.join(image_paths)
 
                 question = Question(title=title, description=description, rating=0,
-                                    creation_date=time, images=images_str, author=request.user)
+                                    creation_date=time, images=images_str, author=request.user,)
+                question.set_embedding(embeddings)
                 question.save()
 
                 # for tag_title in tags:

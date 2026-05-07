@@ -16,6 +16,13 @@ class Question(models.Model):
     creation_date = models.DateTimeField()
     images = models.TextField()
     rating = models.IntegerField()
+    embedding = models.TextField(blank=True)
+
+    def set_embedding(self, vector):
+        self.embedding = ",".join(map(str, vector))
+
+    def get_embedding(self):
+        return list(map(float, self.embedding.split(','))) if self.embedding else None
 
     @property
     def image_list(self):
