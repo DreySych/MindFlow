@@ -50,6 +50,32 @@ class Like(models.Model):
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     rating = models.IntegerField(default=0)
 
+class QuestionLike(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE)
+    rating = models.SmallIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=False)
+
+    class Meta:
+        unique_together = ('author', 'question')
+
+class AnswerLike(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
+    rating = models.SmallIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=False)
+
+    class Meta:
+        unique_together = ('author', 'answer')
+
+class CommentLike(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
+    rating = models.SmallIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=False)
+
+    class Meta:
+        unique_together = ('author', 'comment')
 
 @receiver(post_save, sender=Question)
 def announce_new_data(sender, instance, **kwargs):

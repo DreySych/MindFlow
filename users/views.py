@@ -1,10 +1,12 @@
 import os
 import uuid
+from itertools import chain
+from operator import attrgetter
+
 from django.conf import settings
 from django.db.models import Prefetch
-from django.shortcuts import render, redirect
-
-from questions.models import Question, Comment
+from django.shortcuts import render, redirect, get_object_or_404
+from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
 from users.forms import ProfileForm
 from users.forms import *
 from users.models import User
@@ -80,18 +82,20 @@ def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
 
-def profile_page_general(request):
+def profile_page_general(request, username):
     if request.user.is_authenticated:
         user = request.user
-        posts = Question.objects.filter(author=user)
-
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        is_owner = (request.user.is_authenticated and user == target_user)
         posts_context = []
         for post in posts:
             posts_context.append(get_question_context(post.pk))
 
         context = {
-            'user': user,
+            'user': target_user,
             'posts_context': posts_context,
+            'is_owner': is_owner,
         }
         return render(request, 'profile_general.html', context)
 
@@ -115,7 +119,7 @@ def profile_page_settings(request):
                     path = default_storage.save(filename, ContentFile(image_file.read()))
                     user.image = path
                 user.save()
-                return redirect('profile_general')
+                return redirect('profile_general', username=user.username)
         else:
             initial_data = {
                 'username': user.username,
@@ -135,18 +139,38 @@ def profile_page_settings(request):
     return render(request, 'profile_settings.html')
 
 
-def profile_page_comments(request):
+def profile_page_comments(request, username):
     if request.user.is_authenticated:
-        user = request.user
-        comments = Comment.objects.filter(author=user)
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        comments = Comment.objects.filter(author=target_user)
         context = {
-            'user': user,
+            'user': target_user,
             'comments': comments,
+            'posts': posts,
         }
         return render(request, 'profile_comments.html', context=context)
 
     else:
         return redirect('/account/login')
 
-def profile_page_liked(request):
-    return render(request, 'profile_liked.html')
+def profile_page_liked(request, username):
+    if request.user.is_authenticated:
+        target_user = get_object_or_404(User, username=username)
+        question_likes = QuestionLike.objects.filter(author=target_user)
+        comments_likes = CommentLike.objects.filter(author=target_user)
+        answers_likes = AnswerLike.objects.filter(author=target_user)
+        all_likes = sorted(chain(question_likes, comments_likes, answers_likes), key=attrgetter('created_at'), reverse=True)
+
+
+        context = {
+            'user': target_user,
+            'all_likes': all_likes,
+            'questions_likes': question_likes,
+            'comments_likes': comments_likes,
+            'answers_likes': answers_likes,
+        }
+        return render(request, 'profile_liked.html', context=context)
+
+    else:
+        return redirect('/account/login')
