@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% block content %}
+<h1>Понравившиеся {{ user.username }}</h1>
 
-</body>
-</html>
+{% if not all_likes %}
+    <p>Пользователь ещё ничего не отметил.</p>
+{% else %}
+    <ul>
+        {% for like in all_likes %}
+            <li>
+                {% if like.question %}
+                    {# Это лайк вопроса #}
+                    <a href="/question/{{ like.question.id }}">
+                        Название: {{ like.question.title }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.question.rating }} | Автор поста: {{ like.question.author.username }}
+                    </a>
+                {% elif like.comment %}
+                    {# Это лайк комментария #}
+                    <p>Текст комментария: {{ like.comment.text }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.comment.rating }}</p>
+                    <a href="/question/{{ like.comment.question.id }}">Ссылка на пост</a>
+                {% elif like.answer %}
+                    {# Это лайк ответа #}
+                    <p>Текст ответа: {{ like.answer.answer }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.answer.rating }}</p>
+                    <a href="/question/{{ like.answer.comment.question.id }}">Ссылка на пост</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

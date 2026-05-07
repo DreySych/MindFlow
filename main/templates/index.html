@@ -8,7 +8,11 @@
 <hr>
 <a href="/question/make">Создать пост</a>
 <hr>
-
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="input_text" placeholder="Поиск по постам..." value="{{ query|default:'' }}">
+    <button type="submit">Искать</button>
+</form>
 {% for i in questions %}
     <div id="question-{{ i.id }}">
         <h2>{{i.title}}</h2>
