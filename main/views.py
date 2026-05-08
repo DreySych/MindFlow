@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 import datetime
 
 from django.template.context_processors import request
-
-from sentence_transformers import SentenceTransformer
 from main.forms import SearchForm
+from main.model_loader import get_model
 from questions.models import Question, Like
 from questions.views import get_question_context
 from users.models import User, Subscription
@@ -15,10 +14,11 @@ from django.contrib.auth.hashers import check_password, make_password
 def index_page(request):
 	username = request.user.username if request.user.is_authenticated else "Профиль"
 	all_users = User.objects .all()
+	model = get_model()
 	if request.method == "POST":
 		form = SearchForm(request.POST)
 		if form.is_valid():
-			model = SentenceTransformer("my_local_model", local_files_only=True)
+			model = get_model()
 			input_text = model.encode([form.cleaned_data['input_text']])[0]
 			questions = Question.objects.all()
 			results = []
