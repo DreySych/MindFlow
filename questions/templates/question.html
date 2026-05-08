@@ -1,6 +1,6 @@
 {% block content %}
     <h1 id="title">{{ question.title }}</h1>
-    <p><strong>Автор:</strong> {{ question.author.username }}</p>
+    <a href="{% url 'profile_general' username=question.author.username %}"><strong>Автор:</strong> {{ question.author.username }}</a>
     <p><strong>Дата создания:</strong> {{ question.creation_date|date:"d.m.Y H:i" }}</p>
     <p id="rating"><strong>Рейтинг:</strong> {{ question.rating }}</p>
     <hr>
