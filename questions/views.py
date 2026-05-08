@@ -169,24 +169,19 @@ def make_comment_page(request, question_id):
 
 def make_answer_page(request, comment_id):
     if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk=comment_id)
         if request.method == "POST":
             form = AnswerForm(request.POST)
             if form.is_valid():
-                answer = form.cleaned_data['text']
-                rating = 0
-                author = request.user
-                creation_date = datetime.datetime.now()
-                comment = get_object_or_404(Comment, pk=comment_id)
-                answer = Answer(answer=answer, rating=rating, author=author, creation_date=creation_date,
-                                  comment=comment)
+                answer_text = form.cleaned_data['text']
+                answer = Answer(
+                    answer=answer_text,
+                    rating=0,
+                    author=request.user,
+                    creation_date=datetime.datetime.now(),
+                    comment=comment
+                )
                 answer.save()
                 return redirect('/')
-            else:
-                form = AnswerForm()
-                return render(request, 'make_comment_answer.html', {'form': form})
-
-        else:
-            form = AnswerForm()
-            return render(request, 'make_comment_answer.html', {'form': form})
-    else:
-        return redirect('/account/login')
+        return redirect('/')
+    return redirect('/account/login')

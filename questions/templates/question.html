@@ -30,16 +30,33 @@
     <div id="comments">
     {% if comments %}
         {% for comment in comments %}
-            <div class="comment">
+            <div>
                 <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
                 <p>{{ comment.text }}</p>
+
+                {% if comment.answer_set.all %}
+                    {% for answer in comment.answer_set.all %}
+                        <div style="margin-left: 20px;">
+                            <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                            <p>{{ answer.answer }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'make_answer' comment_id=comment.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="text" placeholder="Ваш ответ...">
+                        <button type="submit">Ответить</button>
+                    </form>
+                {% endif %}
                 <hr>
             </div>
         {% endfor %}
-    {% else %}
+        {% else %}
         <p>Пока нет комментариев. Будьте первым!</p>
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
     <hr>
 
     <a href="{% url 'index' %}">На главную</a>
