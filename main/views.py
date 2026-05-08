@@ -6,6 +6,7 @@ from django.template.context_processors import request
 from sentence_transformers import SentenceTransformer
 from main.forms import SearchForm
 from questions.models import Question, Like
+from questions.views import get_question_context
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 
@@ -35,6 +36,9 @@ def index_page(request):
 	else:
 		results = get_default_questions(request)
 
+	posts_context = []
+	for post in results:
+		posts_context.append(get_question_context(post.pk))
 	context = {
 		"username": username,
 		"users": all_users,
@@ -50,7 +54,7 @@ def index_page(request):
 		context["page2"] = ''
 
 
-	context['questions'] = results
+	context['posts_context'] = posts_context
 	context['user'] = request.user
 	images = {}
 	for i in results:
@@ -157,5 +161,6 @@ def sidebar_page(request):
 	context['subscriptions'] = subscriptions
 
 	return render(request, template_name="sidebar.html", context=context)
+
 
 

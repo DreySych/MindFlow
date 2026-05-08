@@ -25,3 +25,8 @@ class QuestionForm(forms.Form):
     #tags = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
 
+class CommentForm(forms.Form):
+    text = forms.CharField()
+
+class AnswerForm(forms.Form):
+    text = forms.CharField()

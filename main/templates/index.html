@@ -13,25 +13,11 @@
     <input type="text" name="input_text" placeholder="Поиск по постам..." value="{{ query|default:'' }}">
     <button type="submit">Искать</button>
 </form>
-{% for i in questions %}
-    <div id="question-{{ i.id }}">
-        <h2>{{i.title}}</h2>
-        {% if i.images%}
-            {% for j in i.image_list %}
-                <img src="{{ j }}" style="width: 200px;">
-            {% endfor %}
-        {% endif %}
-        <br>
-        Описание: {{i.description}}<br>
-        Автор: {{i.author.username}}<br>
-        Создан: {{i.creation_date}}<br>
-        Рейтинг: {{i.rating}} | <a href="/like/?id={{i.id}}&to=/">Нравится</a> | <a href="/dislike/?id={{i.id}}&to=/">Не нравится</a> <br>
-        {% if user.is_staff or i.author == user%}
-            <a href="/delete/?id={{i.id}}&to=/">Удалить пост</a>
-        {% endif %}
-        <hr>
-    </div>
-
+{% for post_data in posts_context %}
+    {% include 'question.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments %}
+    <hr>
+{% empty %}
+    <h3>Здесь пока ничего нет</h3>
 {% endfor %}
 
 <br>

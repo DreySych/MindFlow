@@ -31,6 +31,11 @@ urlpatterns = [
     path('question/make/', question_views.question_make_page, name='make_question'),
     path('question/edit/', question_views.question_edit_page, name='edit_question'),
 
+    path('comment/make/<int:question_id>', question_views.make_edit_comment_page, name='make_edit_comment'),
+    path('answer/make/<int:comment_id>', question_views.make_edit_answer_page, name='make_edit_answer'),
+    path('add_friend/<int:user_id>/', users_views.add_friend, name='add_friend'),
+
+
     path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
     path('complaint/panel/questions', complaint_views.complaint_question_panel_page, name='complaint_question_panel'),
     path('complaint/', complaint_views.complaint_page, name='complaint'),

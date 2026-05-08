@@ -15,9 +15,9 @@
     <hr>
 
     <h2>Комментарии:</h2>
-
+    <a href="comment/make/{{question.id}}"> Прокомментировать</a>
     <div id="comments">
-        {% include "comments.html" with comments=comments %}
+        {% include "comments.html" with comments=comments comments_data=comments_data %}
     </div>
 
     <hr>
