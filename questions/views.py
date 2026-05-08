@@ -142,11 +142,11 @@ def make_comment_page(request, question_id):
                 return redirect('/')
             else:
                 form = CommentForm()
-                return render(request, 'make_edit_comment_answer.html', {'form': form})
+                return render(request, 'make_comment_answer.html', {'form': form})
 
         else:
             form = CommentForm()
-            return render(request, 'make_edit_comment_answer.html', {'form': form})
+            return render(request, 'make_comment_answer.html', {'form': form})
     else:
         return redirect('/account/login')
 
@@ -166,10 +166,10 @@ def make_answer_page(request, comment_id):
                 return redirect('/')
             else:
                 form = AnswerForm()
-                return render(request, 'make_edit_comment_answer.html', {'form': form})
+                return render(request, 'make_comment_answer.html', {'form': form})
 
         else:
             form = AnswerForm()
-            return render(request, 'make_edit_comment_answer.html', {'form': form})
+            return render(request, 'make_comment_answer.html', {'form': form})
     else:
         return redirect('/account/login')
