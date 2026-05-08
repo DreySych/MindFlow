@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin ):
     registration_date = models.DateField()
     image = models.ImageField(null=True)
     is_staff = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
 
     objects = MyUserManager()
 

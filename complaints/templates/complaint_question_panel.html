@@ -6,12 +6,13 @@
 </head>
 <body>
     {% for i in complaints %}
-        Описание: {{i.description}}
-        <br>
-        От: {{i.author}}
-        <br>
-        На: <a href="/question/{{i.question.id}}"> {{i.question.title}}</a>
+        Описание: {{i.description}}<br>
+        От: {{i.author}}<br>
+        На: <a href="/question/{{i.question.id}}"> {{i.question.title}}</a> <br>
+        <a href="/accept/?complaint_id={{i.id}}&to=/complaint/panel/questions">Принять</a> |
+        <a href="/decline/?complaint_id={{i.id}}&to=/complaint/panel/questions">Отклонить</a>
         <hr>
+
     {% endfor %}
 </body>
 </html>

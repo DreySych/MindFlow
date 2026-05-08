@@ -1,6 +1,24 @@
 from complaints.forms import *
 from complaints.models import *
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+
+def accept(request):
+	complaint = Complaint.objects.filter(id=request.GET.get('complaint_id'))[0]
+	if complaint.question:
+		complaint.question.delete()
+	elif complaint.user:
+		complaint.user.active = False
+		complaint.user.save()
+
+	complaint.delete()
+
+	return redirect(request.GET.get('to'))
+
+def decline(request):
+	complaint = Complaint.objects.filter(id=request.GET.get('complaint_id'))[0]
+	complaint.delete()
+
+	return redirect(request.GET.get('to'))
 
 def complaint_page(request):
 	context = {}
@@ -34,6 +52,7 @@ def complaint_user_panel_page(request):
 	complaints = Complaint.objects.filter(user__isnull=False)
 
 	context['complaints'] = complaints
+	context['user'] = request.user
 
 	return render(request, "complaint_user_panel.html", context)
 
@@ -45,5 +64,6 @@ def complaint_question_panel_page(request):
 	complaints = Complaint.objects.filter(question__isnull=False)
 
 	context['complaints'] = complaints
+	context['user'] = request.user
 
 	return render(request, "complaint_question_panel.html", context)
