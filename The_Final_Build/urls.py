@@ -34,6 +34,7 @@ urlpatterns = [
     path('comment/make/<int:question_id>', question_views.make_comment_page, name='make_comment'),
     path('answer/make/<int:comment_id>', question_views.make_answer_page, name='make_answer'),
     path('add_friend/<int:user_id>/', users_views.add_friend, name='add_friend'),
+    path('delete_friend/<int:user_id>/', users_views.delete_friend, name='delete_friend'),
 
 
     path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
