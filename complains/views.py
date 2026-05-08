@@ -16,3 +16,6 @@ def complains_panel_page_c(request):
 
 def complains_panel_page_p(request):
     return render(request, template_name="complains_panel_post.html")
+
+def complains_panel_page_u(request):
+    return render(request, template_name="complains_panel_user.html")

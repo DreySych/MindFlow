@@ -182,6 +182,86 @@ body {
     border-color: #e53935;
 }
 
+.user-complaint-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.user-info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar-link {
+    display: inline-block;
+    line-height: 0;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.user-avatar-complaint {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.user-name-link-complaint {
+    flex: 1;
+    font-size: 16px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1a1a1a;
+    text-decoration: none;
+    padding: 8px 16px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    display: block;
+    font-weight: normal;
+    transition: color 0.2s ease;
+}
+
+.user-name-link-complaint:hover {
+    color: #1671FE !important;
+    background: #f8f8f8;
+    text-decoration: none;
+}
+
+.user-complaint-card .complaint-info-complaint {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 0;
+    width: 100%;
+}
+
+.user-complaint-card .complaint-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-complaint-card .complaint-label {
+    font-size: 14px;
+    color: #888;
+}
+
+.user-complaint-card .complaint-value {
+    font-size: 14px;
+    color: #e53935;
+    font-weight: 500;
+}
+
+.user-complaint-card .complaint-verdict {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 @media (max-width: 768px) {
     .content-wrapper {
         margin-left: 0;
@@ -208,5 +288,32 @@ body {
 
     .complaint-verdict {
         align-self: flex-end;
+    }
+
+    .user-avatar-complaint {
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-name-link-complaint {
+        font-size: 15px;
+        padding: 6px 12px;
+    }
+
+    .user-complaint-card .complaint-info-complaint {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .user-complaint-card .complaint-info-complaint .complaint-verdict {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+    .user-name-link-complaint {
+            transition: color 0.2s ease;
+        }
+    .user-name-link-complaint:hover {
+        color: #1671FE !important;
+        background: #f8f8f8 !important;
     }
 }
