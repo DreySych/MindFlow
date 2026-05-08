@@ -3,6 +3,7 @@
         <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
         <p>{{ comment.text|linebreaks }}</p>
         <p>Рейтинг: {{ comment.rating }}</p>
+        <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
         <a href="answer/make/{{ comment.id }}">Ответить</a>
 
         {% for answer in comment.answer_set.all %}

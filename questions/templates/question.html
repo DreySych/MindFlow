@@ -33,6 +33,7 @@
             <div>
                 <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
                 <p>{{ comment.text }}</p>
+                <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
 
                 {% if comment.answer_set.all %}
                     {% for answer in comment.answer_set.all %}
