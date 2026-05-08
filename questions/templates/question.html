@@ -1,6 +1,6 @@
 {% block content %}
     <h1 id="title">{{ question.title }}</h1>
-    <p><strong>Автор:</strong> {{ question.author.username }}</p>
+    <a href="{% url 'profile_general' username=question.author.username %}"><strong>Автор:</strong> {{ question.author.username }}</a>
     <p><strong>Дата создания:</strong> {{ question.creation_date|date:"d.m.Y H:i" }}</p>
     <p id="rating"><strong>Рейтинг:</strong> {{ question.rating }}</p>
     <hr>
@@ -15,11 +15,48 @@
     <hr>
 
     <h2>Комментарии:</h2>
+    {% if user.is_authenticated %}
+    <h3>Оставить комментарий</h3>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
 
+    {% else %}
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
     <div id="comments">
-        {% include "comments.html" with comments=comments %}
-    </div>
+    {% if comments %}
+        {% for comment in comments %}
+            <div>
+                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                <p>{{ comment.text }}</p>
 
+                {% if comment.answer_set.all %}
+                    {% for answer in comment.answer_set.all %}
+                        <div style="margin-left: 20px;">
+                            <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                            <p>{{ answer.answer }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'make_answer' comment_id=comment.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="text" placeholder="Ваш ответ...">
+                        <button type="submit">Ответить</button>
+                    </form>
+                {% endif %}
+                <hr>
+            </div>
+        {% endfor %}
+        {% else %}
+        <p>Пока нет комментариев. Будьте первым!</p>
+        {% endif %}
+    </div>
     <hr>
 
     <a href="{% url 'index' %}">На главную</a>

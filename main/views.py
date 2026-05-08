@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 import datetime
 
 from django.template.context_processors import request
-
-from sentence_transformers import SentenceTransformer
 from main.forms import SearchForm
-from questions.models import Question, Like
+from main.model_loader import get_model
+from questions.forms import CommentForm
+from questions.models import Question, Like, Comment
+from questions.views import get_question_context
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 
@@ -14,10 +15,27 @@ from django.contrib.auth.hashers import check_password, make_password
 def index_page(request):
 	username = request.user.username if request.user.is_authenticated else "Профиль"
 	all_users = User.objects .all()
+	model = get_model()
+	if request.method == "POST" and 'question_id' in request.POST:
+		question_id = request.POST.get('question_id')
+		question = get_object_or_404(Question, pk=question_id)
+		form = CommentForm(request.POST)
+		if form.is_valid() and request.user.is_authenticated:
+			text = form.cleaned_data['text']
+			comment = Comment(
+				text=text,
+				author=request.user,
+				question=question,
+				creation_date=datetime.datetime.now(),
+				rating=0
+			)
+			comment.save()
+		return redirect('index')
+
 	if request.method == "POST":
 		form = SearchForm(request.POST)
 		if form.is_valid():
-			model = SentenceTransformer("my_local_model", local_files_only=True)
+			model = get_model()
 			input_text = model.encode([form.cleaned_data['input_text']])[0]
 			questions = Question.objects.all()
 			results = []
@@ -35,6 +53,11 @@ def index_page(request):
 	else:
 		results = get_default_questions(request)
 
+	posts_context = []
+	for post in results:
+		post_context = get_question_context(post.pk)
+		post_context['comment_form'] = CommentForm()
+		posts_context.append(post_context)
 	context = {
 		"username": username,
 		"users": all_users,
@@ -50,7 +73,7 @@ def index_page(request):
 		context["page2"] = ''
 
 
-	context['questions'] = results
+	context['posts_context'] = posts_context
 	context['user'] = request.user
 	images = {}
 	for i in results:
@@ -157,5 +180,6 @@ def sidebar_page(request):
 	context['subscriptions'] = subscriptions
 
 	return render(request, template_name="sidebar.html", context=context)
+
 
 

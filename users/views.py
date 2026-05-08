@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
 from users.forms import ProfileForm
 from users.forms import *
-from users.models import User
+from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -174,3 +174,13 @@ def profile_page_liked(request, username):
 
     else:
         return redirect('/account/login')
+
+def add_friend(request, user_id):
+    friend = get_object_or_404(User, id=user_id)
+    current_user = request.user
+    subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
+    if not subscription_exists and current_user != friend:
+        Subscription.objects.create(user1=current_user, user2=friend)
+
+    return redirect(f'/profile/{friend.username}', user_id=friend.id)
+

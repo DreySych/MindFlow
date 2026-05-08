@@ -15,13 +15,14 @@ from asgiref.sync import async_to_sync
 
 def get_question_context(question_id):
     question = get_object_or_404(Question, pk=question_id)
-    comments = Comment.objects.filter(question=question)
+    comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
     question_images = list(question.images.split(",")) if question.images else []
     return {
         'question': question,
         'question_images': question_images,
-        'comments': comments
+        'comments': comments,
     }
+
 
 def question_themes_page(request):
     return render(request, template_name="questions.html")
@@ -29,6 +30,24 @@ def question_themes_page(request):
 
 def question_page(request, question_id, template_name='question.html'):
     context = get_question_context(question_id)
+    question = get_object_or_404(Question, pk=question_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid() and request.user.is_authenticated:
+            text = form.cleaned_data['text']
+            comment = Comment(
+                text=text,
+                author=request.user,
+                question=question,
+                creation_date=datetime.datetime.now(),
+                rating=0
+            )
+            comment.save()
+        return redirect('question', question_id=question_id)
+    else:
+        form = CommentForm()
+    context['comment_form'] = form
     context_for_update = {
         'question_rating': context['question'].rating,
         'question_title': context['question'].title,
@@ -43,7 +62,6 @@ def question_page(request, question_id, template_name='question.html'):
             "message": context_for_update
         }
     )
-
     return render(request, template_name=template_name, context=context)
 
 
@@ -69,7 +87,7 @@ def question_make_page(request):
                 images_str = ','.join(image_paths)
 
                 question = Question(title=title, description=description, rating=0,
-                                    creation_date=time, images=images_str, author=request.user,)
+                                    creation_date=time, images=images_str, author=request.user, )
                 question.set_embedding(embeddings)
                 question.save()
 
@@ -108,7 +126,7 @@ def question_edit_page(request):
                 images_str = ','.join(image_paths)
 
                 question = Question.objects.filter(id=request.GET.get('id'))[0]
-                question.title=title
+                question.title = title
                 question.description = description
                 question.images = images_str
                 question.save()
@@ -124,3 +142,46 @@ def question_edit_page(request):
 
 def themes_page(request):
     return render(request, template_name="themes.html")
+
+def make_comment_page(request, question_id):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                text = form.cleaned_data['text']
+                rating = 0
+                author = request.user
+                creation_date = datetime.datetime.now()
+                question = get_object_or_404(Question, pk=question_id)
+                comment = Comment(text=text, rating=rating, author=author, creation_date=creation_date,
+                                  question=question)
+                comment.save()
+                return redirect('/')
+            else:
+                form = CommentForm()
+                return render(request, 'make_comment_answer.html', {'form': form})
+
+        else:
+            form = CommentForm()
+            return render(request, 'make_comment_answer.html', {'form': form})
+    else:
+        return redirect('/account/login')
+
+def make_answer_page(request, comment_id):
+    if request.user.is_authenticated:
+        comment = get_object_or_404(Comment, pk=comment_id)
+        if request.method == "POST":
+            form = AnswerForm(request.POST)
+            if form.is_valid():
+                answer_text = form.cleaned_data['text']
+                answer = Answer(
+                    answer=answer_text,
+                    rating=0,
+                    author=request.user,
+                    creation_date=datetime.datetime.now(),
+                    comment=comment
+                )
+                answer.save()
+                return redirect('/')
+        return redirect('/')
+    return redirect('/account/login')

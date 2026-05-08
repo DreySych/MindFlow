@@ -2,6 +2,11 @@
     <h2>Профиль пользователя {{ user.username }}</h2>
     {% if is_owner %}
     <p><a href="{% url 'profile_settings' %}">Настройки</a> / <a href="{% url 'logout' %}">Выйти из профиля</a></p>
+    {% else %}
+    <form action="{% url 'add_friend' user.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Добавить в друзья</button>
+    </form>
     {% endif %}
     {% if user.image %}
         <p><strong>Фото:</strong></p>
@@ -10,7 +15,7 @@
     <p><a href="{% url 'index' %}">На главную</a> | <a href="{% url 'profile_comments' username=user.username %}">Комментарии</a> | <a href="{% url 'profile_liked' username=user.username %}">Понравившееся</a></p>
     {% for post_data in posts_context %}
         {% include 'question.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments %}
-        <hr class="post-separator">
+        <hr>
     {% empty %}
         <h3>Здесь пока ничего нет</h3>
     {% endfor %}
