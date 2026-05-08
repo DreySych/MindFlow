@@ -26,7 +26,7 @@ class QuestionForm(forms.Form):
     images = MultipleFileField(required=False, label='Изображения')
 
 class CommentForm(forms.Form):
-    text = forms.CharField()
+    text = forms.CharField(label='Комментарий')
 
 class AnswerForm(forms.Form):
     text = forms.CharField()

@@ -1,9 +1,9 @@
-{% block content %}
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.text }}
-    <button type="submit">Отправить</button>
-</form>
-
-{% endblock %}
+{% if user.is_authenticated %}
+    <h3>Оставить комментарий</h3>
+    <form method="post" action="{% url 'index' %}">
+        {% csrf_token %}
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+{% endif %}

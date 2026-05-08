@@ -15,11 +15,31 @@
     <hr>
 
     <h2>Комментарии:</h2>
-    <a href="comment/make/{{question.id}}"> Прокомментировать</a>
-    <div id="comments">
-        {% include "comments.html" with comments=comments comments_data=comments_data %}
-    </div>
+    {% if user.is_authenticated %}
+    <h3>Оставить комментарий</h3>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
 
+    {% else %}
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
+    <div id="comments">
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment">
+                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                <p>{{ comment.text }}</p>
+                <hr>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Пока нет комментариев. Будьте первым!</p>
+    {% endif %}
+</div>
     <hr>
 
     <a href="{% url 'index' %}">На главную</a>

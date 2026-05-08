@@ -20,7 +20,7 @@ def get_question_context(question_id):
     return {
         'question': question,
         'question_images': question_images,
-        'comments': comments
+        'comments': comments,
     }
 
 
@@ -30,6 +30,24 @@ def question_themes_page(request):
 
 def question_page(request, question_id, template_name='question.html'):
     context = get_question_context(question_id)
+    question = get_object_or_404(Question, pk=question_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid() and request.user.is_authenticated:
+            text = form.cleaned_data['text']
+            comment = Comment(
+                text=text,
+                author=request.user,
+                question=question,
+                creation_date=datetime.datetime.now(),
+                rating=0
+            )
+            comment.save()
+        return redirect('question', question_id=question_id)
+    else:
+        form = CommentForm()
+    context['comment_form'] = form
     context_for_update = {
         'question_rating': context['question'].rating,
         'question_title': context['question'].title,
@@ -44,7 +62,6 @@ def question_page(request, question_id, template_name='question.html'):
             "message": context_for_update
         }
     )
-
     return render(request, template_name=template_name, context=context)
 
 
