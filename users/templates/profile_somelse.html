@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile_somelse.css' %}">
-    <link rel="stylesheet" href="{% static 'css/complain_question.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain_comment.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
@@ -45,6 +45,9 @@
                             <img src="{% static 'images/chat.png' %}" alt="ЛС">
                             Начать чат
                         </a>
+                        <button class="action-btn report" onclick="openComplainUserOverlay()">
+                            <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                        </button>
                     </div>
                 </div>
 
@@ -133,5 +136,6 @@
     {% include 'footer.html' %}
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
+    {% include 'complain_user.html' %}
 </body>
 </html>
