@@ -126,7 +126,7 @@ def question_edit_page(request):
 def themes_page(request):
     return render(request, template_name="themes.html")
 
-def make_edit_comment_page(request, question_id):
+def make_comment_page(request, question_id):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = CommentForm(request.POST)
@@ -150,7 +150,7 @@ def make_edit_comment_page(request, question_id):
     else:
         return redirect('/account/login')
 
-def make_edit_answer_page(request, comment_id):
+def make_answer_page(request, comment_id):
     if request.user.is_authenticated:
         if request.method == "POST":
             form = AnswerForm(request.POST)
