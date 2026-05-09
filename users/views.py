@@ -6,6 +6,8 @@ from operator import attrgetter
 from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
+
+from questions.forms import CommentForm
 from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
 from users.forms import ProfileForm
 from users.forms import *
@@ -96,6 +98,8 @@ def profile_page_general(request, username):
             'user': target_user,
             'posts_context': posts_context,
             'is_owner': is_owner,
+            'is_friend': is_friend(user, target_user),
+            'comment_form': CommentForm()
         }
         return render(request, 'profile_general.html', context)
 
@@ -184,3 +188,15 @@ def add_friend(request, user_id):
 
     return redirect(f'/profile/{friend.username}', user_id=friend.id)
 
+def delete_friend(request, user_id):
+    friend = get_object_or_404(User, id=user_id)
+    current_user = request.user
+    subscription = Subscription.objects.filter(user1=current_user, user2=friend).first()
+    if subscription:
+        subscription.delete()
+    return redirect(f'/profile/{friend.username}')
+
+def is_friend(current_user, other_user):
+    if not current_user.is_authenticated or current_user == other_user:
+        return False
+    return Subscription.objects.filter(user1=current_user, user2=other_user).exists()

@@ -7,7 +7,8 @@ from complaints import views as complaint_views
 from questions import views as question_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from private_messages import views as private_messages_views
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,6 +35,7 @@ urlpatterns = [
     path('comment/make/<int:question_id>', question_views.make_comment_page, name='make_comment'),
     path('answer/make/<int:comment_id>', question_views.make_answer_page, name='make_answer'),
     path('add_friend/<int:user_id>/', users_views.add_friend, name='add_friend'),
+    path('delete_friend/<int:user_id>/', users_views.delete_friend, name='delete_friend'),
 
 
     path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
@@ -44,6 +46,9 @@ urlpatterns = [
     path('decline/', complaint_views.decline, name='decline_complaint'),
 
     path('themes/', question_views.themes_page, name='themes'),
+
+    path('chat/<int:user_id>/', private_messages_views.chat_page, name='chat'),
+    path('notifications/', include('notifications.urls')),
 ]
 
 if settings.DEBUG:
