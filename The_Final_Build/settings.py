@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'complaints',
     'channels',
     'private_messages',
+    'notifications',
 ]
 
 MIDDLEWARE = [

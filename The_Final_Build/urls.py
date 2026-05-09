@@ -8,6 +8,7 @@ from questions import views as question_views
 from django.conf import settings
 from django.conf.urls.static import static
 from private_messages import views as private_messages_views
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,6 +48,7 @@ urlpatterns = [
     path('themes/', question_views.themes_page, name='themes'),
 
     path('chat/<int:user_id>/', private_messages_views.chat_page, name='chat'),
+    path('notifications/', include('notifications.urls')),
 ]
 
 if settings.DEBUG:
