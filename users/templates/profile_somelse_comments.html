@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль - Комментарии</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile_somelse.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_comment.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <div class="profile-header-container">
+        <div class="profile-header-wrapper">
+            <div class="profile-avatar-section">
+                <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg"
+                     alt="Avatar" class="profile-avatar">
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-nick">Анна К.</h1>
+                <div class="profile-id">ID: 67890</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <main>
+            <div class="profile-container">
+                <div class="profile-nav-actions">
+                    <div class="profile-nav">
+                        <a href="{% url 'profile_somelse' %}" class="nav-btn">Посты</a>
+                        <a href="{% url 'profile_somelse_c' %}" class="nav-btn active">Комментарии</a>
+                    </div>
+                    <div class="profile-action-buttons">
+                        <button class="add-friend-btn">
+                            <img src="{% static 'images/add_friend.png' %}" alt="Добавить">
+                            Добавить в друзья
+                        </button>
+                        <a href="{% url 'PM' %}" class="pm-btn" onclick="openChatOverlay(); return false;">
+                            <img src="{% static 'images/chat.png' %}" alt="ЛС">
+                            Начать чат
+                        </a>
+                    </div>
+                </div>
+
+                <div class="posts-list">
+                    <article class="question-card">
+                        <div class="question-card-content">
+                            <div class="user-info">
+                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
+                                    <img src="{% static 'images/default.png' %}"
+                                         alt="Avatar" class="user-avatar">
+                                </a>
+                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
+                                <span class="time-ago">45 минут назад</span>
+                                <span class="time-ago" style="margin-left: 4px;">•</span>
+                                <a href="{% url 'question' %}" class="comment-post-link">Какой язык программирования лучше всего учить в 2026 году?</a>
+                            </div>
+                            <p class="comment-text">
+                                Спасибо! А как думаешь, стоит параллельно учить SQL или сначала только Python?
+                            </p>
+                            <div class="actions">
+                                <div class="vote-group">
+                                    <button class="vote-btn upvote" aria-label="Лайк">
+                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                    </button>
+                                    <span class="vote-count">5</span>
+                                    <button class="vote-btn downvote" aria-label="Дизлайк">
+                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                    </button>
+                                </div>
+                                <div style="flex: 1;"></div>
+                                <button class="action-btn report" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
+                                    <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="question-card">
+                        <div class="question-card-content">
+                            <div class="user-info">
+                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
+                                    <img src="{% static 'images/default.png' %}"
+                                         alt="Avatar" class="user-avatar">
+                                </a>
+                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
+                                <span class="time-ago">2 часа назад</span>
+                                <span class="time-ago" style="margin-left: 4px;">•</span>
+                                <a href="{% url 'question' %}" class="comment-post-link">Как настроить CI/CD для Django-проекта на GitHub Actions?</a>
+                            </div>
+                            <p class="comment-text">
+                                Отличный гайд! Подскажите, а есть ли смысл использовать Docker вместе с GitHub Actions?
+                            </p>
+                            <div class="actions">
+                                <div class="vote-group">
+                                    <button class="vote-btn upvote" aria-label="Лайк">
+                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                    </button>
+                                    <span class="vote-count">3</span>
+                                    <button class="vote-btn downvote" aria-label="Дизлайк">
+                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                    </button>
+                                </div>
+                                <div style="flex: 1;"></div>
+                                <button class="action-btn report" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
+                                    <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+    {% include 'complain_question.html' %}
+    {% include 'complain_comment.html' %}
+</body>
+</html>

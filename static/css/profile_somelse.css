@@ -1,0 +1,259 @@
+.profile-nav-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.profile-nav {
+    display: flex;
+    gap: 8px;
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.profile-action-buttons {
+    display: flex;
+    gap: 8px;
+    padding-bottom: 8px;
+}
+
+.add-friend-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #1671FE;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-family: 'Mallanna', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.add-friend-btn:hover {
+    background: #1258cc;
+}
+
+.add-friend-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: fill;
+    filter: brightness(0) invert(1);
+}
+
+.pm-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    color: #1671FE;
+    font-size: 16px;
+    font-family: 'Mallanna', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.pm-btn:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.pm-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: fill;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 2px;
+}
+
+.vote-group,
+.action-btn.comment,
+.action-btn.report {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+.vote-group {
+    width: auto;
+    height: 44px;
+    gap: 4px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vote-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.vote-btn.upvote:hover {
+    background: rgba(76, 175, 80, 0.15);
+}
+
+.vote-btn.downvote:hover {
+    background: rgba(244, 67, 54, 0.15);
+}
+
+.vote-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.vote-count {
+    font-size: 24px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+    min-width: 30px;
+    text-align: center;
+}
+
+.action-btn.comment {
+    width: auto;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 16px;
+}
+
+.action-btn.comment:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.action-btn.comment span {
+    font-size: 24px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+}
+
+.action-btn.comment img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+.action-btn.report {
+    width: auto;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 16px;
+}
+
+.action-btn.report:hover {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+.action-btn.report img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
+@media (max-width: 768px) {
+    .profile-nav-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 8px;
+    }
+
+    .profile-action-buttons {
+        padding-bottom: 0;
+    }
+
+    .add-friend-btn {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .add-friend-btn img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .pm-btn {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .pm-btn img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .vote-group {
+        height: 40px;
+        padding: 0 8px;
+    }
+
+    .vote-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .vote-count {
+        font-size: 20px;
+        min-width: 24px;
+    }
+
+    .action-btn.comment {
+        height: 40px;
+        padding: 0 12px;
+    }
+
+    .action-btn.comment span {
+        font-size: 20px;
+    }
+
+    .action-btn.comment img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .action-btn.report {
+        height: 40px;
+        padding: 0 12px;
+    }
+
+    .action-btn.report img {
+        width: 18px;
+        height: 18px;
+    }
+}

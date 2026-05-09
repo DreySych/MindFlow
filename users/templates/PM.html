@@ -1,0 +1,59 @@
+{% load static %}
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-backdrop"></div>
+  <div class="chat-modal">
+    <div class="chat-modal-header">
+      <div class="chat-user-info">
+        <img src="{% static 'images/default.png' %}" alt="Аватар" class="chat-modal-avatar">
+        <span class="chat-modal-username">Александр</span>
+      </div>
+      <button class="chat-modal-close" onclick="closeChatOverlay()">
+        <img src="{% static 'images/close_cross.png' %}" alt="Закрыть">
+      </button>
+    </div>
+
+    <div class="chat-modal-messages">
+      <div class="chat-message chat-message-other">
+        <div class="chat-message-bubble">
+          <p>Привет! Как дела?</p>
+          <span class="chat-message-time">12:34</span>
+        </div>
+      </div>
+
+      <div class="chat-message chat-message-my">
+        <div class="chat-message-bubble">
+          <p>Привет! Всё отлично, спасибо!</p>
+          <span class="chat-message-time">12:35</span>
+        </div>
+      </div>
+
+      <div class="chat-message chat-message-other">
+        <div class="chat-message-bubble">
+          <p>Чем занимаешься?</p>
+          <span class="chat-message-time">12:36</span>
+        </div>
+      </div>
+
+      <div class="chat-message chat-message-my">
+        <div class="chat-message-bubble">
+          <p>Изучаю Django, очень интересно!</p>
+          <span class="chat-message-time">12:38</span>
+        </div>
+      </div>
+
+      <div class="chat-message chat-message-other">
+        <div class="chat-message-bubble">
+          <p>Это круто! Можешь помочь с одним вопросом?</p>
+          <span class="chat-message-time">12:40</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-modal-input-area">
+      <input type="text" placeholder="Напишите сообщение...">
+      <button type="button" class="chat-modal-send-btn">
+        <img src="{% static 'images/send.png' %}" alt="Отправить">
+      </button>
+    </div>
+  </div>
+</div>

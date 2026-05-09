@@ -1,0 +1,52 @@
+{% load static %}
+<div class="complain-overlay" id="complainQuestionOverlay">
+  <div class="complain-backdrop" onclick="closeComplainQuestionOverlay()"></div>
+  <div class="complain-modal">
+    <div id="complainQuestionForm">
+      <div class="complain-header">
+        <span class="complain-title">Пожаловаться на вопрос</span>
+      </div>
+
+      <div class="complain-body">
+        <p class="complain-subtitle">Введите причину жалобы:</p>
+        <textarea class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+      </div>
+
+      <div class="complain-footer">
+        <button class="complain-cancel-btn" onclick="closeComplainQuestionOverlay()">Отмена</button>
+        <button class="complain-submit-btn" onclick="submitComplainQuestion()">Отправить жалобу</button>
+      </div>
+    </div>
+
+    <div id="complainQuestionThanks" style="display: none;">
+      <div class="complain-header">
+        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+      </div>
+      <div class="complain-body">
+        <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+      </div>
+      <div class="complain-footer">
+        <button class="complain-submit-btn" onclick="closeComplainQuestionOverlay()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openComplainQuestionOverlay() {
+    document.getElementById('complainQuestionOverlay').classList.add('active');
+    document.getElementById('complainQuestionForm').style.display = 'block';
+    document.getElementById('complainQuestionThanks').style.display = 'none';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeComplainQuestionOverlay() {
+    document.getElementById('complainQuestionOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function submitComplainQuestion() {
+    document.getElementById('complainQuestionForm').style.display = 'none';
+    document.getElementById('complainQuestionThanks').style.display = 'block';
+  }
+</script>

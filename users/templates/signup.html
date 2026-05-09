@@ -1,8 +1,125 @@
-{% block content %}
-    <h2>Регистрация</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зарегистрироваться</button>
-    </form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;600;500;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <title>Регистрация | MindFlow</title>
+</head>
+<body>
+    <!-- Убраны header и body -->
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <h1 class="auth-title">Регистрация</h1>
+
+            <form id="registerForm" method="POST" action="{% url 'signup' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <input type="text" class="input-field" name="username" placeholder="Придумайте логин" required minlength="3">
+                </div>
+
+                <div class="input-group">
+                    <input type="email" class="input-field" name="email" placeholder="Введите почту" required>
+                </div>
+
+                <div class="input-group">
+                    <select class="input-field" name="gender" required>
+                        <option value="" disabled selected>Выберите пол</option>
+                        <option value="male">Мужской</option>
+                        <option value="female">Женский</option>
+                        <option value="other">Другой</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <input type="date" class="input-field" name="birthdate" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" class="input-field" name="password" placeholder="Придумайте пароль" required minlength="6">
+                </div>
+
+                <div class="input-group">
+                    <input type="password" class="input-field" name="confirm_password" placeholder="Повторите пароль" required>
+                </div>
+
+                <div class="auth-links">
+                    <a href="{% url 'login' %}" class="auth-link">Уже есть аккаунт? Войти</a>
+                </div>
+
+                <button type="submit" class="auth-button">Создать аккаунт</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span class="notification-icon">✕</span>
+        <span class="notification-message">Ошибка регистрации</span>
+        <span class="notification-close" onclick="hideNotification()">✕</span>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        const notification = document.getElementById('notification');
+        const registerForm = document.getElementById('registerForm');
+
+        function showNotification(message, type = 'error') {
+            const icon = notification.querySelector('.notification-icon');
+            icon.textContent = type === 'success' ? '✓' : '✕';
+            notification.querySelector('.notification-message').textContent = message;
+            notification.className = 'notification ' + type + ' show';
+            setTimeout(hideNotification, 5000);
+        }
+
+        function hideNotification() {
+            notification.classList.remove('show');
+        }
+
+        function showError(input) {
+            input.classList.add('error');
+            setTimeout(() => input.classList.remove('error'), 500);
+        }
+
+        {% if messages %}
+            {% for message in messages %}
+                showNotification('{{ message }}', '{% if message.tags == "success" %}success{% else %}error{% endif %}');
+            {% endfor %}
+        {% endif %}
+
+        registerForm.addEventListener('submit', function(e) {
+            const password = document.querySelector('[name="password"]').value;
+            const confirmPassword = document.querySelector('[name="confirm_password"]').value;
+            const username = document.querySelector('[name="username"]').value;
+
+            if (username.length < 3) {
+                e.preventDefault();
+                showError(document.querySelector('[name="username"]'));
+                showNotification('Логин должен быть не менее 3 символов');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                showError(document.querySelector('[name="password"]'));
+                showError(document.querySelector('[name="confirm_password"]'));
+                showNotification('Пароли не совпадают');
+                return;
+            }
+
+            if (password.length < 6) {
+                e.preventDefault();
+                showError(document.querySelector('[name="password"]'));
+                showNotification('Пароль должен быть не менее 6 символов');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

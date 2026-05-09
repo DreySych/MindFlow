@@ -1,14 +1,102 @@
-{% block content %}
-    <h2>Профиль пользователя {{ user.username }}</h2>
-    {% if comments %}
-        <h3>Посты:</h3>
-        {% for comment in comments %}
-            <li>Комментарий:<a href="/question/{{comment.question.id}}"> {{comment.text}}</a> <br> Просмотры: {{comment.rating}} </li>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль - Комментарии</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
 
+    <div class="profile-header-container">
+        <div class="profile-header-wrapper">
+            <div class="profile-avatar-section">
+                <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+                     alt="Avatar" class="profile-avatar">
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-nick">ник</h1>
+                <div class="profile-id">ID: 12345</div>
+            </div>
+        </div>
+    </div>
 
-        {% endfor %}
-    {% else %}
-        <h3>Здесь пока ничего нет</h3>
-    {% endif %}
+    <div class="content-wrapper">
+        <main>
+            <div class="profile-container">
+                <div class="profile-nav">
+                    <a href="{% url 'profile_posts' %}" class="nav-btn">Посты</a>
+                    <a href="{% url 'profile_comments' %}" class="nav-btn active">Комментарии</a>
+                    <a href="{% url 'profile_likes' %}" class="nav-btn">Понравилось</a>
+                </div>
 
-{% endblock %}
+                <div class="posts-list">
+                    <article class="question-card">
+                        <div class="question-card-content">
+                            <div class="user-info">
+                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
+                                    <img src="{% static 'images/default.png' %}"
+                                         alt="Avatar" class="user-avatar">
+                                </a>
+                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
+                                <span class="time-ago">2 часа назад</span>
+                                <span class="time-ago" style="margin-left: 4px;">•</span>
+                                <a href="{% url 'question' %}" class="comment-post-link">Какой язык программирования лучше всего учить в 2026 году?</a>
+                            </div>
+                            <p class="comment-text">
+                                Отличный вопрос! Я бы посоветовал Python, потому что он универсален и востребован в 2026 году.
+                            </p>
+                            <div class="actions">
+                                <div class="vote-group">
+                                    <button class="vote-btn upvote" aria-label="Лайк">
+                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                    </button>
+                                    <span class="vote-count">12</span>
+                                    <button class="vote-btn downvote" aria-label="Дизлайк">
+                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="question-card">
+                        <div class="question-card-content">
+                            <div class="user-info">
+                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
+                                    <img src="{% static 'images/default.png' %}"
+                                         alt="Avatar" class="user-avatar">
+                                </a>
+                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
+                                <span class="time-ago">5 часов назад</span>
+                                <span class="time-ago" style="margin-left: 4px;">•</span>
+                                <a href="{% url 'question' %}" class="comment-post-link">Как настроить CI/CD для Django-проекта на GitHub Actions?</a>
+                            </div>
+                            <p class="comment-text">
+                                Для CI/CD с Django и GitHub Actions достаточно создать простой workflow файл. Главное — не забыть про переменные окружения.
+                            </p>
+                            <div class="actions">
+                                <div class="vote-group">
+                                    <button class="vote-btn upvote" aria-label="Лайк">
+                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                    </button>
+                                    <span class="vote-count">8</span>
+                                    <button class="vote-btn downvote" aria-label="Дизлайк">
+                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

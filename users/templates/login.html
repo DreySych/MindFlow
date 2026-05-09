@@ -1,8 +1,88 @@
-{% block content %}
-    <h2>Вход</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Войти</button>
-    </form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;600;500;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Вход | MindFlow</title>
+</head>
+<body>
+
+    <div class="auth-wrapper">
+        <div class="auth-container">
+            <h1 class="auth-title">Вход</h1>
+
+            <form id="loginForm" method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+
+                <div class="input-group">
+                    <input type="email" class="input-field" name="email" placeholder="Введите почту" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" class="input-field" name="password" placeholder="Введите пароль" required>
+                </div>
+
+                <div class="auth-links">
+                    <a href="#" class="auth-link">Забыли пароль?</a>
+                    <a href="{% url 'signup' %}" class="auth-link">Нет аккаунта? Создать</a>
+                </div>
+
+                <button type="submit" class="auth-button">Войти</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="notification" id="notification">
+        <span class="notification-icon">✕</span>
+        <span class="notification-message">Неверная почта или пароль</span>
+        <span class="notification-close" onclick="hideNotification()">✕</span>
+    </div>
+
+    {% include 'footer.html' %}
+
+    <script>
+        const notification = document.getElementById('notification');
+        const loginForm = document.getElementById('loginForm');
+
+        function showNotification(message, type = 'error') {
+            const icon = notification.querySelector('.notification-icon');
+            icon.textContent = type === 'success' ? '✓' : '✕';
+            notification.querySelector('.notification-message').textContent = message;
+            notification.className = 'notification ' + type + ' show';
+            setTimeout(hideNotification, 5000);
+        }
+
+        function hideNotification() {
+            notification.classList.remove('show');
+        }
+
+        function showError(input) {
+            input.classList.add('error');
+            setTimeout(() => input.classList.remove('error'), 500);
+        }
+
+        {% if messages %}
+            {% for message in messages %}
+                showNotification('{{ message }}', '{% if message.tags == "success" %}success{% else %}error{% endif %}');
+            {% endfor %}
+        {% endif %}
+
+        loginForm.addEventListener('submit', function(e) {
+            const email = document.querySelector('[name="email"]').value.trim();
+            const password = document.querySelector('[name="password"]').value.trim();
+
+            if (!email || !password) {
+                e.preventDefault();
+                if (!email) showError(document.querySelector('[name="email"]'));
+                if (!password) showError(document.querySelector('[name="password"]'));
+                showNotification('Заполните все поля');
+            }
+        });
+    </script>
+</body>
+</html>

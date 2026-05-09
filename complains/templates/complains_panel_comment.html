@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель жалоб - Комментарии | MindFlow</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/complain_panel.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <div class="content-wrapper">
+        <main>
+            <div class="admin-container">
+                <h1 class="admin-title">Панель жалоб</h1>
+
+                <div class="admin-tabs">
+                    <a href="{% url 'complains_panel_page_p' %}" class="admin-tab">Посты</a>
+                    <a href="{% url 'complains_panel_page_c' %}" class="admin-tab active">Комментарии</a>
+                    <a href="{% url 'complains_panel_page_u' %}" class="admin-tab">Пользователи</a>
+                </div>
+
+                <div class="complaints-list">
+                    <div class="complaint-card">
+                        <div class="complaint-comment">
+                            <p class="complaint-comment-text">
+                                Однозначно Python! С него легче всего начинать, и рынок вакансий огромный.
+                            </p>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Причина жалобы:</span>
+                                <span class="complaint-value">Спам</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="complaint-card">
+                        <div class="complaint-comment">
+                            <p class="complaint-comment-text">
+                                Я бы посоветовал TypeScript если интересует веб-разработка. Огромный спрос на фронтенд.
+                            </p>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Причина жалобы:</span>
+                                <span class="complaint-value">Оскорбление</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="complaint-card">
+                        <div class="complaint-comment">
+                            <p class="complaint-comment-text">
+                                Согласен! TypeScript + React = идеальный старт в 2026.
+                            </p>
+                        </div>
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Причина жалобы:</span>
+                                <span class="complaint-value">Нецензурная лексика</span>
+                            </div>
+                            <div class="complaint-verdict">
+                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                </button>
+                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>
