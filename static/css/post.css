@@ -10,6 +10,12 @@ body {
     box-sizing: border-box;
 }
 
+.post-text {
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .feed {
     max-width: 900px;
     margin: 0 auto;

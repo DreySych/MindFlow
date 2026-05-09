@@ -76,6 +76,8 @@ def question_make_page(request):
                 title = form.cleaned_data['title']
                 description = form.cleaned_data['description']
                 images = request.FILES.getlist('images')
+                print('FILES:', request.FILES)
+                print('IMAGES:', images)
                 image_paths = []
                 text = f"{title}\n{description}"
                 embeddings = model.encode([text])[0]

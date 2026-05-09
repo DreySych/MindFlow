@@ -21,35 +21,39 @@
                         <a href="{% url 'profile_posts' %}" class="user-avatar-link">
                             <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg" alt="Аватар" class="user-avatar">
                         </a>
-                        <a href="{% url 'profile_posts' %}" class="user-name-link">Анна К.</a>
-                        <span class="time-ago">2 часа назад</span>
+                        <a href="{% url 'profile_posts' %}" class="user-name-link">{{ question.author.username }}</a>
+                        <span class="time-ago">{{ question.creation_date }}</span>
                     </div>
                     <p class="question-text">
-                        Какой язык программирования лучше всего учить в 2026 году?
+                        {{ question.title }}
                     </p>
+                    {% if question_images %}
                     <div class="question-image-placeholder">
-                        <img src="https://img.freepik.com/premium-photo/desktop-source-code-wallpaper-by-computer-language-with-coding-programming_33771-596.jpg" alt="Языки программирования">
+                        <img src="/media/{{ question_images.0 }}"
+                             alt="{{ question.description }}">
                     </div>
-                    <p class="post-text">
-                        Друзья, я серьёзно задумалась о смене профессии. Сейчас активно развиваются Python, Rust и Go.
-                        Python хорош для новичков и востребован в ML/AI. Rust сложнее, но даёт глубокое понимание системного программирования.
-                        Go отлично подходит для бэкенда и микросервисов. Что посоветуете? Может, у кого-то есть опыт перехода из другой сферы в IT?
+                    {% endif %}
+                    <p class="post-text" style="max-width: 100%; overflow-wrap: anywhere; word-break: break-word;">
+                        {{ question.description }}
                     </p>
                     <div class="actions">
                         <div class="vote-group">
-                            <button class="vote-btn upvote" aria-label="Лайк">
+
+                            <a href="/like/?id={{ question.id }}&to=/question/{{ question.id }}/#question-{{ question.id }}"
+                               class="vote-btn upvote">
                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
-                            </button>
-                            <span class="vote-count">245</span>
-                            <button class="vote-btn downvote" aria-label="Дизлайк">
+                            </a>
+
+                            <span class="vote-count">
+                                {{ question.rating }}
+                            </span>
+
+                            <a href="/dislike/?id={{ question.id }}&to=/question/{{ question.id }}/#question-{{ question.id }}"
+                               class="vote-btn downvote">
                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                            </button>
+                            </a>
+
                         </div>
-                        <div style="flex: 1;"></div>
-                        <button class="action-btn report" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
-                            <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                        </button>
-                    </div>
                 </article>
 
                 <div class="comment-create-section">
@@ -71,7 +75,7 @@
                 </div>
 
                 <div class="comments-section">
-                    <h3 class="comments-title">Комментарии (67)</h3>
+                    <h3 class="comments-title">Комментарии ({{ comments.count }})</h3>
 
                     <div class="comment-thread">
                         <div class="comment-item">

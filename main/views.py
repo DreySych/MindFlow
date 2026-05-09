@@ -174,13 +174,64 @@ def _vote(request, delta):
     like_obj.save()
     question.save()
     page = request.GET.get('to', 'index')
-    return redirect(f"{page}#question-{question_id}")
+    return redirect('/#question-' + str(question_id))
 
 def like(request):
-    return _vote(request, 1)
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    question_id = request.GET.get('id')
+    question = get_object_or_404(Question, id=question_id)
+
+    like_obj, created = Like.objects.get_or_create(
+        user=request.user,
+        question=question,
+        defaults={'rating': 0}
+    )
+
+    if like_obj.rating == 1:
+        like_obj.rating = 0
+        question.rating -= 1
+    elif like_obj.rating == 0:
+        like_obj.rating = 1
+        question.rating += 1
+    elif like_obj.rating == -1:
+        like_obj.rating = 1
+        question.rating += 2
+
+    like_obj.save()
+    question.save()
+
+    return redirect(request.GET.get('to', '/#question-' + str(question_id)))
+
 
 def dislike(request):
-    return _vote(request, -1)
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    question_id = request.GET.get('id')
+    question = get_object_or_404(Question, id=question_id)
+
+    like_obj, created = Like.objects.get_or_create(
+        user=request.user,
+        question=question,
+        defaults={'rating': 0}
+    )
+
+    if like_obj.rating == -1:
+        like_obj.rating = 0
+        question.rating += 1
+    elif like_obj.rating == 0:
+        like_obj.rating = -1
+        question.rating -= 1
+    elif like_obj.rating == 1:
+        like_obj.rating = -1
+        question.rating -= 2
+
+    like_obj.save()
+    question.save()
+
+    return redirect(request.GET.get('to', '/#question-' + str(question_id)))
 
 def sidebar_page(request):
     context = {}

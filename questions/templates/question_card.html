@@ -1,6 +1,6 @@
 {% load static %}
 
-<article class="question-card">
+<article class="question-card" id="question-{{ question.id }}">
     <div class="question-card-content">
 
         <div class="user-info">
@@ -28,25 +28,27 @@
         </p>
 
         {% if question_images %}
-        <div class="question-image-placeholder">
-            <img src="{{ question_images.0.image.url }}" alt="Изображение">
-        </div>
+            <div class="question-image-placeholder">
+                <img src="/media/{{ question_images.0 }}" alt="Изображение">
+            </div>
         {% endif %}
 
         <div class="actions">
 
             <div class="vote-group gradient-border">
-                <button class="vote-btn upvote">
+
+                <a href="{% url 'like' %}?id={{ question.id }}" class="vote-btn upvote">
                     <img src="{% static 'images/like.png' %}" alt="Лайк">
-                </button>
+                </a>
 
                 <span class="vote-count">
                     {{ question.rating }}
                 </span>
 
-                <button class="vote-btn downvote">
+                <a href="{% url 'dislike' %}?id={{ question.id }}" class="vote-btn downvote">
                     <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                </button>
+                </a>
+
             </div>
 
             <a href="{% url 'question' question.id %}"

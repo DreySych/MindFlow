@@ -1,0 +1,62 @@
+<div class="comment-thread">
+
+    <div class="comment-item">
+
+        <a href="/profile/{{ comment.user.username }}/" class="comment-avatar-link">
+
+            {% if comment.user.image %}
+                <img src="{{ comment.user.image.url }}"
+                     alt="Аватар"
+                     class="comment-avatar">
+            {% else %}
+                <img src="{% static 'images/default.png' %}"
+                     alt="Аватар"
+                     class="comment-avatar">
+            {% endif %}
+
+        </a>
+
+        <div class="comment-body">
+
+            <div class="comment-header">
+                <a href="/profile/{{ comment.user.username }}/"
+                   class="comment-author-link">
+
+                    {{ comment.user.username }}
+
+                </a>
+
+                <span class="comment-time">
+                    {{ comment.creation_date }}
+                </span>
+            </div>
+
+            <p class="comment-text">
+                {{ comment.text }}
+            </p>
+
+            <div class="comment-actions-row">
+
+                <div class="comment-vote-group">
+
+                    <button class="comment-vote-btn upvote">
+                        <img src="{% static 'images/like.png' %}" alt="Лайк">
+                    </button>
+
+                    <span class="comment-vote-count">
+                        {{ comment.rating }}
+                    </span>
+
+                    <button class="comment-vote-btn downvote">
+                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
