@@ -9,6 +9,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from private_messages import views as private_messages_views
 from django.urls import path, include
+import users.views as users_views
+import complaints.views as complaints_views
+import users.views as users_views
+import complaints.views as complaints_views
+import notifications.views as notifications_views
+import private_messages.views as pm_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,9 +53,73 @@ urlpatterns = [
 
     path('themes/', question_views.themes_page, name='themes'),
 
-    path('chat/<int:user_id>/', private_messages_views.chat_page, name='chat'),
-    path('notifications/', include('notifications.urls')),
+
+    path('profile/', users_views.my_profile_redirect, name='profile_posts'),
+
+    path(
+        'profile/<str:username>/',
+        users_views.profile_page_general,
+        name='profile_general'
+    ),
+
+    path(
+        'profile/someone/',
+        users_views.my_profile_redirect,
+        name='profile_somelse'
+    ),
+
+    path(
+        'settings/',
+        users_views.profile_page_settings,
+        name='settings'
+    ),
+
+    path(
+        'profile/<str:username>/comments/',
+        users_views.profile_page_comments,
+        name='profile_comments'
+    ),
+
+    path(
+        'profile/<str:username>/liked/',
+        users_views.profile_page_liked,
+        name='profile_liked'
+    ),
+
+
+
+    path(
+        'notifications/',
+        notifications_views.notifications_list,
+        name='notifications'
+    ),
+
+    path(
+        'notifications/list/',
+        notifications_views.notifications_list,
+        name='notifications_list'
+    ),
+
+
+
+    path(
+        'complaints/panel/',
+        complaints_views.complaint_question_panel_page,
+        name='complains_panel_page_c'
+    ),
+
+
+    path(
+        'messages/',
+        pm_views.chat_page,
+        name='PM'
+    ),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

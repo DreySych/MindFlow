@@ -31,6 +31,7 @@ def signup_page(request):
 
     if request.method == 'POST':
         form = SignUpForm(request.POST, request.FILES)
+        print(form.errors)
         if form.is_valid():
             password1 = form.cleaned_data['password']
             password2 = form.cleaned_data['password_confirm']
@@ -200,3 +201,12 @@ def is_friend(current_user, other_user):
     if not current_user.is_authenticated or current_user == other_user:
         return False
     return Subscription.objects.filter(user1=current_user, user2=other_user).exists()
+
+def my_profile_redirect(request):
+    if request.user.is_authenticated:
+        return redirect(
+            'profile_general',
+            username=request.user.username
+        )
+
+    return redirect('/account/login/')

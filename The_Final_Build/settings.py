@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'channels',
     'private_messages',
     'notifications',
+    'basic_templates',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,11 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'users.User'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 ASGI_APPLICATION = 'The_Final_Build.asgi.application'
 CHANNEL_LAYERS = {

@@ -1,10 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>MindFlow</title>
+
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
 </head>
+
 <body>
-$END$
+
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    {% block content %}
+    {% endblock %}
+
+    {% include 'footer.html' %}
+
 </body>
 </html>

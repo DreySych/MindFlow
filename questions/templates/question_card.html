@@ -1,10 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% load static %}
+
+<article class="question-card">
+    <div class="question-card-content">
+
+        <div class="user-info">
+            <a href="{% url 'profile_general' username=question.author.username %}" class="user-avatar-link">
+
+                {% if question.author.image %}
+                    <img src="{{ question.author.image.url }}" class="user-avatar" alt="Аватар">
+                {% else %}
+                    <img src="{% static 'images/default.png' %}" class="user-avatar" alt="Аватар">
+                {% endif %}
+
+            </a>
+
+            <a href="{% url 'profile_general' username=question.author.username %}" class="user-name-link">
+                {{ question.author.username }}
+            </a>
+
+            <span class="time-ago">
+                {{ question.created_at }}
+            </span>
+        </div>
+
+        <p class="question-text">
+            {{ question.title }}
+        </p>
+
+        {% if question_images %}
+        <div class="question-image-placeholder">
+            <img src="{{ question_images.0.image.url }}" alt="Изображение">
+        </div>
+        {% endif %}
+
+        <div class="actions">
+
+            <div class="vote-group gradient-border">
+                <button class="vote-btn upvote">
+                    <img src="{% static 'images/like.png' %}" alt="Лайк">
+                </button>
+
+                <span class="vote-count">
+                    {{ question.rating }}
+                </span>
+
+                <button class="vote-btn downvote">
+                    <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                </button>
+            </div>
+
+            <a href="{% url 'question' question.id %}"
+               class="action-btn comment gradient-border"
+               style="text-decoration:none; display:inline-flex; align-items:center;">
+
+                <img src="{% static 'images/comment.png' %}" alt="Комментарий">
+
+                <span>
+                    {{ comments|length }}
+                </span>
+            </a>
+
+            <div style="flex:1;"></div>
+
+            <button class="action-btn cross gradient-border">
+                <img src="{% static 'images/krest.png' %}" alt="">
+            </button>
+
+            <button class="action-btn report gradient-border">
+                <img src="{% static 'images/report.png' %}" alt="">
+            </button>
+
+        </div>
+    </div>
+</article>
