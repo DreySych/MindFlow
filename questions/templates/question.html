@@ -14,6 +14,7 @@
     {% include 'header.html' %}
     {% include 'body.html' %}
 
+<<<<<<< HEAD
     <div class="content-wrapper" style="margin-left: 10vw; padding-top: 140px; padding-bottom: 100px; min-height: 100vh; box-sizing: border-box;">
         <main>
             <div class="feed">
@@ -92,6 +93,65 @@
 
             </div>
         </main>
+=======
+    <h2>Комментарии:</h2>
+    {% if user.is_authenticated %}
+        {% if user.active %}
+            <h3>Оставить комментарий</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                {{ comment_form.as_p }}
+                <button type="submit">Отправить</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
+    <div id="comments">
+
+        {% if comments %}
+            {% for comment in comments %}
+                <div>
+                    <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                    <p>{{ comment.text }}</p>
+                    <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
+
+                    {% if comment.answer_set.all %}
+                        {% for answer in comment.answer_set.all %}
+                            <div style="margin-left: 20px;">
+                                <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                                <p>{{ answer.answer }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+
+                    <form method="post"
+                          action="{% url 'make_answer' comment_id=comment.id %}"
+                          class="reply-form">
+
+                        {% csrf_token %}
+
+                        <textarea name="text"
+                                  placeholder="Написать ответ..."
+                                  class="comment-input"></textarea>
+
+                        <button type="submit" class="submit-comment-btn">
+                            <img src="{% static 'images/send.png' %}" alt="Отправить">
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+                    <hr>
+                </div>
+            {% endfor %}
+        {% else %}
+        <p>Пока нет комментариев. Будьте первым!</p>
+        {% endif %}
+>>>>>>> origin/develop/backend
     </div>
 
     {% include 'footer.html' %}
@@ -106,21 +166,37 @@
             });
         });
 
+<<<<<<< HEAD
         document.querySelectorAll('.reply-toggle').forEach(button => {
             button.addEventListener('click', function() {
                 const commentId = this.getAttribute('data-comment-id');
                 const replyForm = document.getElementById('replyForm' + commentId);
+=======
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const container = document.getElementById('comments');
+>>>>>>> origin/develop/backend
 
                 if (replyForm) {
                     const isVisible = replyForm.style.display !== 'none';
                     replyForm.style.display = isVisible ? 'none' : 'flex';
 
+<<<<<<< HEAD
                     if (!isVisible) {
                         replyForm.querySelector('textarea').focus();
                     }
                 }
             });
         });
+=======
+            case 'new_comment':
+                container.innerHTML = data.data.html;
+                break;
+
+            case 'new_answer':
+                container.innerHTML = data.data.html;
+                break;
+>>>>>>> origin/develop/backend
 
     </script>
 </body>

@@ -67,48 +67,59 @@ def question_page(request, question_id, template_name='question.html'):
 
 def question_make_page(request):
     context = {}
+
     if request.user.is_authenticated:
-        if request.method == "POST":
-            form = QuestionForm(request.POST)
-            if form.is_valid():
-                model = SentenceTransformer("my_local_model", local_files_only=True)
-                time = datetime.datetime.now()
-                title = form.cleaned_data['title']
-                description = form.cleaned_data['description']
-                images = request.FILES.getlist('images')
-                print('FILES:', request.FILES)
-                print('IMAGES:', images)
-                image_paths = []
-                text = f"{title}\n{description}"
-                embeddings = model.encode([text])[0]
-                for image in images:
-                    ext = image.name.split('.')[-1]
-                    filename = f"question_images/{uuid.uuid4()}.{ext}"
-                    path = default_storage.save(filename, ContentFile(image.read()))
-                    image_paths.append(path)
-                images_str = ','.join(image_paths)
+        if request.user.active:
+            if request.method == "POST":
+                form = QuestionForm(request.POST)
 
-                question = Question(title=title, description=description, rating=0,
-                                    creation_date=time, images=images_str, author=request.user, )
-                question.set_embedding(embeddings)
-                question.save()
+                if form.is_valid():
+                    model = SentenceTransformer("my_local_model", local_files_only=True)
 
-                # for tag_title in tags:
-                #     if len(Tag.objects.filter(title=tag_title)) == 0:
-                #         tag = Tag(title=tag_title)
-                #         tag.save()
-                #         link = PostToTag(question=question, tag=tag)
-                #         link.save()
+                    time = datetime.datetime.now()
+                    title = form.cleaned_data['title']
+                    description = form.cleaned_data['description']
 
+                    images = request.FILES.getlist('images')
+                    print('FILES:', request.FILES)
+                    print('IMAGES:', images)
+
+                    image_paths = []
+                    text = f"{title}\n{description}"
+                    embeddings = model.encode([text])[0]
+
+                    for image in images:
+                        ext = image.name.split('.')[-1]
+                        filename = f"question_images/{uuid.uuid4()}.{ext}"
+                        path = default_storage.save(filename, ContentFile(image.read()))
+                        image_paths.append(path)
+
+                    images_str = ','.join(image_paths)
+
+                    question = Question(
+                        title=title,
+                        description=description,
+                        rating=0,
+                        creation_date=time,
+                        images=images_str,
+                        author=request.user,
+                    )
+
+                    question.set_embedding(embeddings)
+                    question.save()
+
+                    return redirect('/')
+
+            else:
+                form = QuestionForm()
+
+            context['form'] = form
         else:
-            form = QuestionForm()
-
-        context['form'] = form
+            return redirect('/')
     else:
         return redirect('/account/login')
 
     return render(request, template_name='make_edit_question.html', context=context)
-
 
 def question_edit_page(request):
     context = {}
@@ -169,24 +180,7 @@ def make_comment_page(request, question_id):
     else:
         return redirect('/account/login')
 
-def make_answer_page(request, comment_id):
-    if request.user.is_authenticated:
-        comment = get_object_or_404(Comment, pk=comment_id)
-        if request.method == "POST":
-            form = AnswerForm(request.POST)
-            if form.is_valid():
-                answer_text = form.cleaned_data['text']
-                answer = Answer(
-                    answer=answer_text,
-                    rating=0,
-                    author=request.user,
-                    creation_date=datetime.datetime.now(),
-                    comment=comment
-                )
-                answer.save()
-                return redirect('/')
-        return redirect('/')
-    return redirect('/account/login')
+
 
 def like_comment(request):
     if not request.user.is_authenticated:

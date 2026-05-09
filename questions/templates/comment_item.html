@@ -110,10 +110,24 @@
                 </div>
 
                 <p class="comment-text">
-
-                    {{ answer.answer }}
-
+                    {{ comment.text }}
                 </p>
+
+                <form method="post"
+                      action="{% url 'make_answer' comment_id=comment.id %}"
+                      class="reply-form">
+
+                    {% csrf_token %}
+
+                    <textarea name="text"
+                              placeholder="Написать ответ..."
+                              class="comment-input"></textarea>
+
+                    <button type="submit" class="submit-comment-btn">
+                        <img src="{% static 'images/send.png' %}" alt="Отправить">
+                    </button>
+
+                </form>
 
                 <div class="comment-actions-row">
 
