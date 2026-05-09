@@ -16,44 +16,48 @@
 
     <h2>Комментарии:</h2>
     {% if user.is_authenticated %}
-    <h3>Оставить комментарий</h3>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="question_id" value="{{ question.id }}">
-        {{ comment_form.as_p }}
-        <button type="submit">Отправить</button>
-    </form>
-
+        {% if user.active %}
+            <h3>Оставить комментарий</h3>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="question_id" value="{{ question.id }}">
+                {{ comment_form.as_p }}
+                <button type="submit">Отправить</button>
+            </form>
+        {% endif %}
     {% else %}
         <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
     {% endif %}
     <div id="comments">
-    {% if comments %}
-        {% for comment in comments %}
-            <div>
-                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
-                <p>{{ comment.text }}</p>
-                <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
 
-                {% if comment.answer_set.all %}
-                    {% for answer in comment.answer_set.all %}
-                        <div style="margin-left: 20px;">
-                            <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
-                            <p>{{ answer.answer }}</p>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+        {% if comments %}
+            {% for comment in comments %}
+                <div>
+                    <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                    <p>{{ comment.text }}</p>
+                    <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
 
-                {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'make_answer' comment_id=comment.id %}">
-                        {% csrf_token %}
-                        <input type="text" name="text" placeholder="Ваш ответ...">
-                        <button type="submit">Ответить</button>
-                    </form>
-                {% endif %}
-                <hr>
-            </div>
-        {% endfor %}
+                    {% if comment.answer_set.all %}
+                        {% for answer in comment.answer_set.all %}
+                            <div style="margin-left: 20px;">
+                                <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                                <p>{{ answer.answer }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        {% if user.active %}
+                            <form method="post" action="{% url 'make_answer' comment_id=comment.id %}">
+                                {% csrf_token %}
+                                <input type="text" name="text" placeholder="Ваш ответ...">
+                                <button type="submit">Ответить</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                    <hr>
+                </div>
+            {% endfor %}
         {% else %}
         <p>Пока нет комментариев. Будьте первым!</p>
         {% endif %}

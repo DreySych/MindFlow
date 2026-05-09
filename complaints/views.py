@@ -23,6 +23,8 @@ def decline(request):
 	return redirect(request.GET.get('to'))
 
 def complaint_page(request):
+	if not request.user.active:
+		return redirect('/')
 	context = {}
 
 	question_id = request.GET.get('question_id')
