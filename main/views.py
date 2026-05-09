@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 import datetime
 
 from django.template.context_processors import request
-from numpy.distutils.system_info import dfftw_info
+
 
 from main.forms import SearchForm
 from main.model_loader import get_model

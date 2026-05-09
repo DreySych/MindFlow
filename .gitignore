@@ -419,4 +419,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+my_local_model/
+
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,django,linux,windows

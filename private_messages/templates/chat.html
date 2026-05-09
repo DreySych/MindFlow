@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Чат</title>
+</head>
+<body>
+    <h2>Чат с {{ other_user.username }}</h2>
+
+    <div id="messages">
+        {% for message in messages %}
+            <div>
+                <b>{{ message.sender.username }}:</b>
+                {{ message.text }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <input id="messageInput" type="text" placeholder="Введите сообщение">
+    <button id="sendButton">Отправить</button>
+
+    <script>
+        const otherUserId = "{{ other_user.id }}";
+        const currentUserId = "{{ request.user.id }}";
+
+        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const socket = new WebSocket(
+            protocol + window.location.host + "/ws/chat/" + otherUserId + "/"
+        );
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            const messages = document.getElementById("messages");
+
+            const block = document.createElement("div");
+            block.innerHTML = "<b>" + data.sender + ":</b> " + data.message;
+
+            messages.appendChild(block);
+        };
+
+        document.getElementById("sendButton").onclick = function() {
+            const input = document.getElementById("messageInput");
+            const text = input.value;
+
+            if (text.trim() !== "") {
+                socket.send(JSON.stringify({
+                    "message": text
+                }));
+                input.value = "";
+            }
+        };
+    </script>
+</body>
+</html>

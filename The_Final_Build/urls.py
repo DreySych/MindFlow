@@ -7,7 +7,7 @@ from complaints import views as complaint_views
 from questions import views as question_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from private_messages import views as private_messages_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,6 +45,8 @@ urlpatterns = [
     path('decline/', complaint_views.decline, name='decline_complaint'),
 
     path('themes/', question_views.themes_page, name='themes'),
+
+    path('chat/<int:user_id>/', private_messages_views.chat_page, name='chat'),
 ]
 
 if settings.DEBUG:

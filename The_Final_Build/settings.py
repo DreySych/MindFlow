@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'questions',
     'users',
     'complaints',
-    'channels'
+    'channels',
+    'private_messages',
 ]
 
 MIDDLEWARE = [
