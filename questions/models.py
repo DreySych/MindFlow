@@ -123,6 +123,26 @@ def announce_new_comment(sender, instance, created, **kwargs):
             }
         )
 
+@receiver(post_save, sender=Answer)
+def announce_new_answer(sender, instance, created, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+
+        question = instance.comment.question
+        all_comments = question.comment_set.all().order_by('-creation_date')
+        html_content = render_to_string('comments.html', {'comments': all_comments})
+
+        async_to_sync(channel_layer.group_send)(
+            "group",
+            {
+                "type": "send_data",
+                "message": {
+                    "html": html_content,
+                    "event_type": "new_answer",
+                }
+            }
+        )
+
 
 # class Tag(models.Model):
 #     title = models.TextField()

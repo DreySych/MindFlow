@@ -75,11 +75,15 @@
 
     socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
+        const container = document.getElementById('comments');
 
         switch (data.data.event_type) {
 
             case 'new_comment':
-                const container = document.getElementById('comments');
+                container.innerHTML = data.data.html;
+                break;
+
+            case 'new_answer':
                 container.innerHTML = data.data.html;
                 break;
 
