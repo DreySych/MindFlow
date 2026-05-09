@@ -29,8 +29,6 @@ urlpatterns = [
     path('account/logout/', users_views.logout_page, name='logout'),
     path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
     path('profile/<str:username>/', users_views.profile_page_general, name='profile_general'),
-    path('profile/<str:username>/comments.', users_views.profile_page_comments, name='profile_comments'),
-    path('profile/<str:username>/liked.', users_views.profile_page_liked, name='profile_liked'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
 
     path('question/<int:question_id>/', question_views.question_page, name='question'),
@@ -42,7 +40,7 @@ urlpatterns = [
     path('answer/make/<int:comment_id>', question_views.make_answer_page, name='make_answer'),
     path('add_friend/<int:user_id>/', users_views.add_friend, name='add_friend'),
     path('delete_friend/<int:user_id>/', users_views.delete_friend, name='delete_friend'),
-
+    path('profile/<str:username>/comments/', users_views.profile_page_comments, name='profile_comments'),
 
     path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
     path('complaint/panel/questions', complaint_views.complaint_question_panel_page, name='complaint_question_panel'),
@@ -50,8 +48,14 @@ urlpatterns = [
     path('complaint/', complaint_views.complaint_page, name='complaint'),
     path('accept/', complaint_views.accept, name='accept_complaint'),
     path('decline/', complaint_views.decline, name='decline_complaint'),
+    path('profile/<str:username>/liked/', users_views.profile_page_liked, name='profile_liked'),
 
     path('themes/', question_views.themes_page, name='themes'),
+    path('comment/<int:comment_id>/answer/', question_views.make_answer_page, name='make_answer'),
+    path('answer/like/', question_views.like_answer, name='like_answer'),
+    path('answer/dislike/', question_views.dislike_answer, name='dislike_answer'),
+    path('comment/like/', question_views.like_comment, name='like_comment'),
+    path('comment/dislike/', question_views.dislike_comment, name='dislike_comment'),
 
 
     path('profile/', users_views.my_profile_redirect, name='profile_posts'),

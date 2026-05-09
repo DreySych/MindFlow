@@ -197,12 +197,12 @@ def like(request):
         question.rating += 1
     elif like_obj.rating == -1:
         like_obj.rating = 1
-        question.rating += 2
+        question.rating += 1
 
     like_obj.save()
     question.save()
 
-    return redirect(request.GET.get('to', '/#question-' + str(question_id)))
+    return redirect(request.GET.get('to', '/'))
 
 
 def dislike(request):
@@ -225,13 +225,13 @@ def dislike(request):
         like_obj.rating = -1
         question.rating -= 1
     elif like_obj.rating == 1:
-        like_obj.rating = -1
-        question.rating -= 2
+        like_obj.rating = 0
+        question.rating -= 1
 
     like_obj.save()
     question.save()
 
-    return redirect(request.GET.get('to', '/#question-' + str(question_id)))
+    return redirect(request.GET.get('to', '/'))
 
 def sidebar_page(request):
     context = {}

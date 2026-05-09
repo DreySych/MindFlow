@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+
 </head>
 <body>
     {% include 'header.html' %}
@@ -16,7 +17,7 @@
     <div class="content-wrapper" style="margin-left: 10vw; padding-top: 140px; padding-bottom: 100px; min-height: 100vh; box-sizing: border-box;">
         <main>
             <div class="feed">
-                <article class="post-detail-card">
+                <article class="post-detail-card" id="question-{{ question.id }}">
                     <div class="user-info">
                         <a href="{% url 'profile_posts' %}" class="user-avatar-link">
                             <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg" alt="Аватар" class="user-avatar">
@@ -39,8 +40,8 @@
                     <div class="actions">
                         <div class="vote-group">
 
-                            <a href="/like/?id={{ question.id }}&to=/question/{{ question.id }}/#question-{{ question.id }}"
-                               class="vote-btn upvote">
+                            <a href="/like/?id={{ question.id }}&to=/question/{{ question.id }}/"
+   class="vote-btn upvote">
                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
                             </a>
 
@@ -48,8 +49,8 @@
                                 {{ question.rating }}
                             </span>
 
-                            <a href="/dislike/?id={{ question.id }}&to=/question/{{ question.id }}/#question-{{ question.id }}"
-                               class="vote-btn downvote">
+                            <a href="/dislike/?id={{ question.id }}&to=/question/{{ question.id }}/"
+   class="vote-btn downvote">
                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                             </a>
 
@@ -58,208 +59,37 @@
 
                 <div class="comment-create-section">
                     <div class="comment-create-wrapper">
-                        <div class="comment-input-wrapper">
-                            <textarea
-                                class="comment-input"
-                                placeholder="Добавить комментарий..."
-                                rows="1"
-                                id="commentInput"
-                            ></textarea>
-                            <div class="comment-input-actions">
-                                <button class="submit-comment-btn" id="submitComment">
-                                    <img src="{% static 'images/send.png' %}" alt="Отправить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <form method="post">
+                            {% csrf_token %}
 
-                <div class="comments-section">
-                    <h3 class="comments-title">Комментарии ({{ comments.count }})</h3>
-
-                    <div class="comment-thread">
-                        <div class="comment-item">
-                            <a href="{% url 'profile_posts' %}" class="comment-avatar-link">
-                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPv8b11MBdnpp_FY0KG3PQNZCrpgtTevCbvw&s" alt="Аватар" class="comment-avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-header">
-                                    <a href="{% url 'profile_posts' %}" class="comment-author-link">Максим П.</a>
-                                    <span class="comment-time">1 час назад</span>
-                                </div>
-                                <p class="comment-text">
-                                    Однозначно Python! С него легче всего начинать, и рынок вакансий огромный.
-                                    Плюс огромное сообщество и куча библиотек для всего что угодно.
-                                </p>
-                                <div class="comment-actions-row">
-                                    <div class="comment-vote-group">
-                                        <button class="comment-vote-btn upvote" aria-label="Лайк">
-                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                        </button>
-                                        <span class="comment-vote-count">23</span>
-                                        <button class="comment-vote-btn downvote" aria-label="Дизлайк">
-                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                        </button>
-                                    </div>
-                                    <button class="comment-action-btn reply-toggle" data-comment-id="1">
-                                        <img src="{% static 'images/comment.png' %}" alt="Ответить">
-                                        <span>Ответить</span>
-                                    </button>
-                                    <button class="comment-report-btn" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
-                                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="reply-item">
-                            <a href="{% url 'profile_posts' %}" class="comment-avatar-link">
-                                <img src="https://i.pinimg.com/474x/9b/5e/f4/9b5ef4aba54a4f6cfdceb9def0445c2c.jpg" alt="Аватар" class="comment-avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-header">
-                                    <a href="{% url 'profile_posts' %}" class="comment-author-link">
-                                        Анна К. <span class="author-badge">Автор</span>
-                                    </a>
-                                    <span class="comment-time">45 минут назад</span>
-                                </div>
-                                <p class="comment-text">
-                                    Спасибо! А как думаешь, стоит параллельно учить SQL или сначала только Python?
-                                </p>
-                                <div class="comment-actions-row">
-                                    <div class="comment-vote-group">
-                                        <button class="comment-vote-btn upvote" aria-label="Лайк">
-                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                        </button>
-                                        <span class="comment-vote-count">5</span>
-                                        <button class="comment-vote-btn downvote" aria-label="Дизлайк">
-                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                        </button>
-                                    </div>
-                                    <button class="comment-report-btn" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
-                                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="reply-form" id="replyForm1" style="display: none;">
-                            <div class="comment-input-wrapper reply-input-wrapper">
+                            <div class="comment-input-wrapper">
                                 <textarea
-                                    class="comment-input reply-input"
-                                    placeholder="Написать ответ..."
+                                    class="comment-input"
+                                    placeholder="Добавить комментарий..."
                                     rows="1"
+                                    id="commentInput"
+                                    name="text"
                                 ></textarea>
+
                                 <div class="comment-input-actions">
-                                    <button class="submit-comment-btn">
+                                    <button type="submit" class="submit-comment-btn" id="submitComment">
                                         <img src="{% static 'images/send.png' %}" alt="Отправить">
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="comment-thread">
-                        <div class="comment-item">
-                            <a href="{% url 'profile_posts' %}" class="comment-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="comment-avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-header">
-                                    <a href="{% url 'profile_posts' %}" class="comment-author-link">Сергей Р.</a>
-                                    <span class="comment-time">3 часа назад</span>
-                                </div>
-                                <p class="comment-text">
-                                    Я бы посоветовал TypeScript если интересует веб-разработка.
-                                    Огромный спрос на фронтенд и фулстек разработчиков.
-                                </p>
-                                <div class="comment-actions-row">
-                                    <div class="comment-vote-group">
-                                        <button class="comment-vote-btn upvote" aria-label="Лайк">
-                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                        </button>
-                                        <span class="comment-vote-count">18</span>
-                                        <button class="comment-vote-btn downvote" aria-label="Дизлайк">
-                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                        </button>
-                                    </div>
-                                    <button class="comment-action-btn reply-toggle" data-comment-id="2">
-                                        <img src="{% static 'images/comment.png' %}" alt="Ответить">
-                                        <span>Ответить</span>
-                                    </button>
-                                    <button class="comment-report-btn" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
-                                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="reply-item">
-                            <a href="{% url 'profile_posts' %}" class="comment-avatar-link">
-                                <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Аватар" class="comment-avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-header">
-                                    <a href="{% url 'profile_posts' %}" class="comment-author-link">Дмитрий</a>
-                                    <span class="comment-time">2 часа назад</span>
-                                </div>
-                                <p class="comment-text">
-                                    Согласен! TypeScript + React = идеальный старт в 2026.
-                                </p>
-                                <div class="comment-actions-row">
-                                    <div class="comment-vote-group">
-                                        <button class="comment-vote-btn upvote" aria-label="Лайк">
-                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                        </button>
-                                        <span class="comment-vote-count">7</span>
-                                        <button class="comment-vote-btn downvote" aria-label="Дизлайк">
-                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                        </button>
-                                    </div>
-                                    <button class="comment-report-btn" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
-                                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="comment-thread">
-                        <div class="comment-item">
-                            <a href="{% url 'profile_posts' %}" class="comment-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="comment-avatar">
-                            </a>
-                            <div class="comment-body">
-                                <div class="comment-header">
-                                    <a href="{% url 'profile_posts' %}" class="comment-author-link">Ольга М.</a>
-                                    <span class="comment-time">5 часов назад</span>
-                                </div>
-                                <p class="comment-text">
-                                    Смотря какие цели. Если Data Science — Python, если системное программирование — Rust,
-                                    если веб — JavaScript/TypeScript. Всё зависит от того, что больше нравится!
-                                </p>
-                                <div class="comment-actions-row">
-                                    <div class="comment-vote-group">
-                                        <button class="comment-vote-btn upvote" aria-label="Лайк">
-                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                        </button>
-                                        <span class="comment-vote-count">12</span>
-                                        <button class="comment-vote-btn downvote" aria-label="Дизлайк">
-                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                        </button>
-                                    </div>
-                                    <button class="comment-action-btn reply-toggle" data-comment-id="3">
-                                        <img src="{% static 'images/comment.png' %}" alt="Ответить">
-                                        <span>Ответить</span>
-                                    </button>
-                                    <button class="comment-report-btn" aria-label="Пожаловаться" onclick="openComplainCommentOverlay()">
-                                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
+                <div class="comments-section">
+                    <h3 class="comments-title">Комментарии ({{ comments.count }})</h3>
+
+                    {% for comment in comments %}
+                        {% include 'comment_item.html' with comment=comment %}
+                    {% empty %}
+                        <p style="color:white;">Комментариев пока нет</p>
+                    {% endfor %}
+                </div>
+
             </div>
         </main>
     </div>

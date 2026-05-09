@@ -1,29 +1,144 @@
-{% block content %}
-<h1>Понравившиеся {{ user.username }}</h1>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль - Понравилось</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
 
-{% if not all_likes %}
-    <p>Пользователь ещё ничего не отметил.</p>
-{% else %}
-    <ul>
-        {% for like in all_likes %}
-            <li>
-                {% if like.question %}
-                    {# Это лайк вопроса #}
-                    <a href="/question/{{ like.question.id }}">
-                        Название: {{ like.question.title }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.question.rating }} | Автор поста: {{ like.question.author.username }}
-                    </a>
-                {% elif like.comment %}
-                    {# Это лайк комментария #}
-                    <p>Текст комментария: {{ like.comment.text }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.comment.rating }}</p>
-                    <a href="/question/{{ like.comment.question.id }}">Ссылка на пост</a>
-                {% elif like.answer %}
-                    {# Это лайк ответа #}
-                    <p>Текст ответа: {{ like.answer.answer }} | Дата лайка: {{ like.created_at }} | Рейтинг: {{ like.answer.rating }}</p>
-                    <a href="/question/{{ like.answer.comment.question.id }}">Ссылка на пост</a>
+    <div class="profile-header-container">
+        <div class="profile-header-wrapper">
+            <div class="profile-avatar-section">
+                {% if user.image %}
+                    <img src="/media/{{ user.image }}" alt="Avatar" class="profile-avatar">
+                {% else %}
+                    <img src="{% static 'images/default.png' %}" alt="Avatar" class="profile-avatar">
                 {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-nick">{{ user.username }}</h1>
+                <div class="profile-id">ID: {{ user.id }}</div>
+            </div>
+        </div>
+    </div>
 
-{% endblock %}
+    <div class="content-wrapper">
+        <main>
+            <div class="profile-container">
+                <div class="profile-nav">
+                    <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
+                    <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
+                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn active">Понравившиеся</a>
+                </div>
+
+                <div class="posts-list">
+                    {% for like in all_likes %}
+
+                        {% if like.question %}
+                            {% include 'question_card.html' with question=like.question question_images=like.question.images.split comments=like.question.comment_set.all %}
+                        {% endif %}
+
+                        {% if like.comment %}
+                            <article class="question-card">
+                                <div class="question-card-content">
+                                    <div class="user-info">
+                                        <a href="{% url 'profile_general' username=like.comment.question.author.username %}" class="user-name-link">
+                                            {{ like.comment.question.author.username }}
+                                        </a>
+
+                                        <span class="time-ago">{{ like.created_at|timesince }} назад</span>
+                                        <span class="time-ago" style="margin-left: 4px;">•</span>
+
+                                        <a href="{% url 'question' like.comment.question.id %}" class="comment-post-link">
+                                            {{ like.comment.question.title }}
+                                        </a>
+                                    </div>
+
+                                    <p class="comment-text">
+                                        {{ like.comment.text }}
+                                    </p>
+
+                                    <div class="actions">
+                                        <div class="vote-group">
+
+                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/"
+                                               class="vote-btn upvote">
+
+                                                <img src="{% static 'images/like.png' %}" alt="Лайк">
+
+                                            </a>
+
+                                            <span class="vote-count">
+                                                {{ like.comment.rating }}
+                                            </span>
+
+                                            <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/"
+                                               class="vote-btn downvote">
+
+                                                <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endif %}
+
+                        {% if like.answer %}
+                            <article class="question-card">
+                                <div class="question-card-content">
+                                    <div class="user-info">
+                                        <a href="{% url 'question' like.answer.comment.question.id %}" class="comment-post-link">
+                                            Ответ к посту: {{ like.answer.comment.question.title }}
+                                        </a>
+                                    </div>
+
+                                    <p class="comment-text">
+                                        {{ like.answer.answer }}
+                                    </p>
+
+                                    <div class="actions">
+                                        <div class="vote-group">
+
+                                            <a href="{% url 'like_answer' %}?id={{ like.answer.id }}"
+                                               class="vote-btn upvote">
+
+                                                <img src="{% static 'images/like.png' %}" alt="Лайк">
+
+                                            </a>
+
+                                            <span class="vote-count">
+                                                {{ like.answer.rating }}
+                                            </span>
+
+                                            <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}"
+                                               class="vote-btn downvote">
+
+                                                <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+
+                                            </a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        {% endif %}
+
+                    {% empty %}
+                        <h3 style="color:white;">Понравившегося пока нет</h3>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

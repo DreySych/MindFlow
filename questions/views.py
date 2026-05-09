@@ -187,3 +187,139 @@ def make_answer_page(request, comment_id):
                 return redirect('/')
         return redirect('/')
     return redirect('/account/login')
+
+def like_comment(request):
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    comment_id = request.GET.get('id')
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    like_obj, created = CommentLike.objects.get_or_create(
+        author=request.user,
+        comment=comment,
+        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+    )
+
+    if like_obj.rating == 1:
+        like_obj.rating = 0
+        comment.rating -= 1
+    elif like_obj.rating == 0:
+        like_obj.rating = 1
+        comment.rating += 1
+    elif like_obj.rating == -1:
+        like_obj.rating = 1
+        comment.rating += 2
+
+    like_obj.save()
+    comment.save()
+
+    return redirect(request.GET.get('to', '/'))
+
+
+def dislike_comment(request):
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    comment_id = request.GET.get('id')
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    like_obj, created = CommentLike.objects.get_or_create(
+        author=request.user,
+        comment=comment,
+        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+    )
+
+    if like_obj.rating == -1:
+        like_obj.rating = 0
+        comment.rating += 1
+    elif like_obj.rating == 0:
+        like_obj.rating = -1
+        comment.rating -= 1
+    elif like_obj.rating == 1:
+        like_obj.rating = 0
+        comment.rating -= 1
+
+    like_obj.save()
+    comment.save()
+
+    return redirect(request.GET.get('to', '/'))
+
+
+def make_answer_page(request, comment_id):
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.method == "POST":
+        text = request.POST.get('text')
+
+        if text:
+            answer = Answer(
+                answer=text,
+                rating=0,
+                author=request.user,
+                creation_date=datetime.datetime.now(),
+                comment=comment
+            )
+            answer.save()
+
+    return redirect('/question/' + str(comment.question.id) + '/')
+
+def like_answer(request):
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    answer_id = request.GET.get('id')
+    answer = get_object_or_404(Answer, id=answer_id)
+
+    like_obj, created = AnswerLike.objects.get_or_create(
+        author=request.user,
+        answer=answer,
+        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+    )
+
+    if like_obj.rating == 1:
+        like_obj.rating = 0
+        answer.rating -= 1
+    elif like_obj.rating == 0:
+        like_obj.rating = 1
+        answer.rating += 1
+    elif like_obj.rating == -1:
+        like_obj.rating = 1
+        answer.rating += 2
+
+    like_obj.save()
+    answer.save()
+
+    return redirect('/question/' + str(answer.comment.question.id) + '/')
+
+
+def dislike_answer(request):
+    if not request.user.is_authenticated:
+        return redirect('/account/login/')
+
+    answer_id = request.GET.get('id')
+    answer = get_object_or_404(Answer, id=answer_id)
+
+    like_obj, created = AnswerLike.objects.get_or_create(
+        author=request.user,
+        answer=answer,
+        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+    )
+
+    if like_obj.rating == -1:
+        like_obj.rating = 0
+        answer.rating += 1
+    elif like_obj.rating == 0:
+        like_obj.rating = -1
+        answer.rating -= 1
+    elif like_obj.rating == 1:
+        like_obj.rating = -1
+        answer.rating -= 2
+
+    like_obj.save()
+    answer.save()
+
+    return redirect('/question/' + str(answer.comment.question.id) + '/')

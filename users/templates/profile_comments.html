@@ -15,12 +15,15 @@
     <div class="profile-header-container">
         <div class="profile-header-wrapper">
             <div class="profile-avatar-section">
-                <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
-                     alt="Avatar" class="profile-avatar">
+                {% if user.image %}
+                    <img src="/media/{{ user.image }}" alt="Avatar" class="profile-avatar">
+                {% else %}
+                    <img src="{% static 'images/default.png' %}" alt="Avatar" class="profile-avatar">
+                {% endif %}
             </div>
             <div class="profile-info">
-                <h1 class="profile-nick">ник</h1>
-                <div class="profile-id">ID: 12345</div>
+                <h1 class="profile-nick">{{ user.username }}</h1>
+                <div class="profile-id">ID: {{ user.id }}</div>
             </div>
         </div>
     </div>
@@ -29,69 +32,62 @@
         <main>
             <div class="profile-container">
                 <div class="profile-nav">
-                    <a href="{% url 'profile_posts' %}" class="nav-btn">Посты</a>
-                    <a href="{% url 'profile_comments' %}" class="nav-btn active">Комментарии</a>
-                    <a href="{% url 'profile_likes' %}" class="nav-btn">Понравилось</a>
+                    <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
+                    <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn active">Комментарии</a>
+                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Понравившиеся</a>
                 </div>
 
                 <div class="posts-list">
-                    <article class="question-card">
-                        <div class="question-card-content">
-                            <div class="user-info">
-                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                    <img src="{% static 'images/default.png' %}"
-                                         alt="Avatar" class="user-avatar">
-                                </a>
-                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
-                                <span class="time-ago">2 часа назад</span>
-                                <span class="time-ago" style="margin-left: 4px;">•</span>
-                                <a href="#" class="comment-post-link">Какой язык программирования лучше всего учить в 2026 году?</a>
-                            </div>
-                            <p class="comment-text">
-                                Отличный вопрос! Я бы посоветовал Python, потому что он универсален и востребован в 2026 году.
-                            </p>
-                            <div class="actions">
-                                <div class="vote-group">
-                                    <button class="vote-btn upvote" aria-label="Лайк">
-                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                    </button>
-                                    <span class="vote-count">12</span>
-                                    <button class="vote-btn downvote" aria-label="Дизлайк">
-                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
+                    {% for comment in comments %}
+                        <article class="question-card">
+                            <div class="question-card-content">
+                                <div class="user-info">
+                                    <a href="{% url 'profile_general' username=comment.question.author.username %}" class="user-avatar-link">
+                                        {% if comment.question.author.image %}
+                                            <img src="/media/{{ comment.question.author.image }}" alt="Avatar" class="user-avatar">
+                                        {% else %}
+                                            <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
+                                        {% endif %}
+                                    </a>
 
-                    <article class="question-card">
-                        <div class="question-card-content">
-                            <div class="user-info">
-                                <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                    <img src="{% static 'images/default.png' %}"
-                                         alt="Avatar" class="user-avatar">
-                                </a>
-                                <a href="{% url 'profile_somelse' %}" class="user-name-link">Автор поста</a>
-                                <span class="time-ago">5 часов назад</span>
-                                <span class="time-ago" style="margin-left: 4px;">•</span>
-                                <a href="#" class="comment-post-link">Как настроить CI/CD для Django-проекта на GitHub Actions?</a>
-                            </div>
-                            <p class="comment-text">
-                                Для CI/CD с Django и GitHub Actions достаточно создать простой workflow файл. Главное — не забыть про переменные окружения.
-                            </p>
-                            <div class="actions">
-                                <div class="vote-group">
-                                    <button class="vote-btn upvote" aria-label="Лайк">
-                                        <img src="{% static 'images/like.png' %}" alt="Лайк">
-                                    </button>
-                                    <span class="vote-count">8</span>
-                                    <button class="vote-btn downvote" aria-label="Дизлайк">
-                                        <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-                                    </button>
+                                    <a href="{% url 'profile_general' username=comment.question.author.username %}" class="user-name-link">
+                                        {{ comment.question.author.username }}
+                                    </a>
+
+                                    <span class="time-ago">{{ comment.creation_date|timesince }} назад</span>
+                                    <span class="time-ago" style="margin-left: 4px;">•</span>
+
+                                    <a href="{% url 'question' comment.question.id %}" class="comment-post-link">
+                                        {{ comment.question.title }}
+                                    </a>
+                                </div>
+
+                                <p class="comment-text">
+                                    {{ comment.text }}
+                                </p>
+
+                                <div class="actions">
+                                    <div class="vote-group">
+                                        <a href="{% url 'like_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/"
+                                           class="vote-btn upvote">
+                                            <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                        </a>
+
+                                        <span class="vote-count">
+                                            {{ comment.rating }}
+                                        </span>
+
+                                        <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/"
+                                           class="vote-btn downvote">
+                                            <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </article>
+                        </article>
+                    {% empty %}
+                        <h3 style="color:white;">Комментариев пока нет</h3>
+                    {% endfor %}
                 </div>
             </div>
         </main>
