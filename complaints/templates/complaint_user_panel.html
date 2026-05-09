@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if complaints %}
+        {% for i in complaints %}
+        Описание: {{i.description}}<br>
+        От: {{i.author}}<br>
+        На: <a href="/"> {{i.user.username}}</a> <br>
+        <a href="/accept/?complaint_id={{i.id}}&to=/complaint/panel/users">Принять</a> |
+        <a href="/decline/?complaint_id={{i.id}}&to=/complaint/panel/users">Отклонить</a>
+        <hr>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

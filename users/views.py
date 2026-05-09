@@ -1,35 +1,62 @@
-from django.shortcuts import render, redirect
-from users.forms import SignUpForm, LoginForm
-from users.models import User
+import os
+import uuid
+from itertools import chain
+from operator import attrgetter
+
+from django.conf import settings
+from django.db.models import Prefetch
+from django.shortcuts import render, redirect, get_object_or_404
+
+from questions.forms import CommentForm
+from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
+from users.forms import ProfileForm
+from users.forms import *
+from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import datetime
-from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from questions.views import get_question_context
 
 # Create your views here.
 
+def logout_page(request):
+    logout(request)
+    return redirect('/')
+
 def signup_page(request):
+    context = {}
+
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
+        form = SignUpForm(request.POST, request.FILES)
         if form.is_valid():
-            user = User(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=make_password(form.cleaned_data['password']),
-                name=form.cleaned_data['name'],
-                surname=form.cleaned_data['surname'],
-                sex=form.cleaned_data['sex'],
-                role=form.cleaned_data.get('role', ''),
-                birth_date=form.cleaned_data['birth_date'],
-                registration_date=datetime.date.today(),
-                level='',
-                reputation=0,
-                image=''
-            )
-            user.save()
-            return redirect('/account/login')
+            password1 = form.cleaned_data['password']
+            password2 = form.cleaned_data['password_confirm']
+            if password1==password2:
+                user = User()
+                user.username = form.cleaned_data['username']
+                user.email = form.cleaned_data['email']
+                user.password = make_password(form.cleaned_data['password'])
+                user.role = ''
+                user.sex = form.cleaned_data['sex']
+                user.birth_date = form.cleaned_data['birth_date']
+                user.registration_date = datetime.date.today()
+                user.reputation = 0
+                user.save()
+                username = user.username
+                user = User.objects.get(username=username)
+                login(request, user)
+                return redirect('/')
+            else:
+                print("Пароли не совпадают")
     else:
         form = SignUpForm()
-    return render(request, template_name='signup.html', context={'form': form})
+
+    context['form'] = form
+
+    return render(request, 'signup.html', context)
 
 def login_page(request):
     if request.method == 'POST':
@@ -56,5 +83,120 @@ def login_page(request):
 def password_restore_page(request):
     return render(request, template_name="password_restore.html")
 
-def profile_page(request):
-    return render(request, template_name="profile.html")
+
+def profile_page_general(request, username):
+    if request.user.is_authenticated:
+        user = request.user
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        is_owner = (request.user.is_authenticated and user == target_user)
+        posts_context = []
+        for post in posts:
+            posts_context.append(get_question_context(post.pk))
+
+        context = {
+            'user': target_user,
+            'posts_context': posts_context,
+            'is_owner': is_owner,
+            'is_friend': is_friend(user, target_user),
+            'comment_form': CommentForm()
+        }
+        return render(request, 'profile_general.html', context)
+
+    else:
+        return redirect('/account/login')
+
+def profile_page_settings(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if request.method == "POST":
+            form = ProfileForm(request.POST, request.FILES)
+            if form.is_valid():
+                user.username = form.cleaned_data['username']
+                user.email = form.cleaned_data['email']
+                user.birth_date = form.cleaned_data['birth_date']
+                user.sex = form.cleaned_data['sex']
+                image_file = form.cleaned_data.get('image')
+                if image_file:
+                    ext = image_file.name.split('.')[-1]
+                    filename = f"avatars/{uuid.uuid4()}.{ext}"
+                    path = default_storage.save(filename, ContentFile(image_file.read()))
+                    user.image = path
+                user.save()
+                return redirect('profile_general', username=user.username)
+        else:
+            initial_data = {
+                'username': user.username,
+                'sex': user.sex,
+                'email': user.email,
+                'birth_date': user.birth_date,
+                'image_photo': user.image
+            }
+            form = ProfileForm(initial=initial_data)
+            context = {
+                'form': form,
+                'user': user,
+            }
+            return render(request, 'profile_settings.html', context=context)
+    else:
+        return redirect('/account/login')
+    return render(request, 'profile_settings.html')
+
+
+def profile_page_comments(request, username):
+    if request.user.is_authenticated:
+        target_user = get_object_or_404(User, username=username)
+        posts = Question.objects.filter(author=target_user)
+        comments = Comment.objects.filter(author=target_user)
+        context = {
+            'user': target_user,
+            'comments': comments,
+            'posts': posts,
+        }
+        return render(request, 'profile_comments.html', context=context)
+
+    else:
+        return redirect('/account/login')
+
+def profile_page_liked(request, username):
+    if request.user.is_authenticated:
+        target_user = get_object_or_404(User, username=username)
+        question_likes = QuestionLike.objects.filter(author=target_user)
+        comments_likes = CommentLike.objects.filter(author=target_user)
+        answers_likes = AnswerLike.objects.filter(author=target_user)
+        all_likes = sorted(chain(question_likes, comments_likes, answers_likes), key=attrgetter('created_at'), reverse=True)
+
+
+        context = {
+            'user': target_user,
+            'all_likes': all_likes,
+            'questions_likes': question_likes,
+            'comments_likes': comments_likes,
+            'answers_likes': answers_likes,
+        }
+        return render(request, 'profile_liked.html', context=context)
+
+    else:
+        return redirect('/account/login')
+
+def add_friend(request, user_id):
+    friend = get_object_or_404(User, id=user_id)
+    current_user = request.user
+    subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
+    if not subscription_exists and current_user != friend:
+        Subscription.objects.create(user1=current_user, user2=friend)
+
+    return redirect(f'/profile/{friend.username}', user_id=friend.id)
+
+def delete_friend(request, user_id):
+    friend = get_object_or_404(User, id=user_id)
+    current_user = request.user
+    subscription = Subscription.objects.filter(user1=current_user, user2=friend).first()
+    if subscription:
+        subscription.delete()
+    return redirect(f'/profile/{friend.username}')
+
+def is_friend(current_user, other_user):
+    if not current_user.is_authenticated or current_user == other_user:
+        return False
+    return Subscription.objects.filter(user1=current_user, user2=other_user).exists()

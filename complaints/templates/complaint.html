@@ -1,8 +1,8 @@
 {% block content %}
-    <h2>Регистрация</h2>
+    <h2>Создание жалобы</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit">Создать</button>
     </form>
 {% endblock %}

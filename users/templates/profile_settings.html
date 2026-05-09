@@ -1,0 +1,20 @@
+{% block content %}
+    <h2>Профиль пользователя {{ user.username }}</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <hr>
+    <h3>Текущие данные:</h3>
+    <p><strong>Пол</strong> {{ user.role|default:"не указана" }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Дата рождения:</strong> {{ user.birth_date|date:"d.m.Y" }}</p>
+    {% if user.image %}
+        <p><strong>Фото:</strong></p>
+        <img src="{{ MEDIA_URL }}{{ user.image }}" alt="аватар" style="max-width:200px;">
+    {% endif %}
+    <a href="{% url 'index' %}">На главную</a>
+{% endblock %}

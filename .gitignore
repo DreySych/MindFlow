@@ -10,6 +10,8 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
+.idea
+**/migrations/*
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
@@ -417,8 +419,27 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+<<<<<<< HEAD
 .idea/
 *.iml
+
+
+=======
+
+
+
+.venv/
+
+__pycache__/
+*.pyc
+
 my_local_model/
 
+node_modules/
+dist/
+build/
+
+media/
+
+>>>>>>> origin/develop/backend
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,django,linux,windows
