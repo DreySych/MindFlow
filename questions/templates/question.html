@@ -1,0 +1,96 @@
+{% block content %}
+    <h1 id="title">{{ question.title }}</h1>
+    <a href="{% url 'profile_general' username=question.author.username %}"><strong>Автор:</strong> {{ question.author.username }}</a>
+    {% if question.author != request.user %}
+    <a href="/complaint/?question_id={{ question.id }}">Пожаловаться</a>
+    {% endif %}
+    <p><strong>Дата создания:</strong> {{ question.creation_date|date:"d.m.Y H:i" }}</p>
+    <p id="rating"><strong>Рейтинг:</strong> {{ question.rating }}</p>
+    <hr>
+    <p id="description"><strong>Описание:</strong> {{ question.description }}</p>
+    <p><strong>Изображения:</strong></p>
+    {% if question_images %}
+        {% for image in question_images %}
+            <img src="{{MEDIA_URL}}{{image}}" width="200px" height="auto">
+        {% endfor %}
+    {% endif %}
+
+    <hr>
+
+    <h2>Комментарии:</h2>
+    {% if user.is_authenticated %}
+    <h3>Оставить комментарий</h3>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="question_id" value="{{ question.id }}">
+        {{ comment_form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+
+    {% else %}
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
+    <div id="comments">
+    {% if comments %}
+        {% for comment in comments %}
+            <div>
+                <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
+                <p>{{ comment.text }}</p>
+                <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
+
+                {% if comment.answer_set.all %}
+                    {% for answer in comment.answer_set.all %}
+                        <div style="margin-left: 20px;">
+                            <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
+                            <p>{{ answer.answer }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'make_answer' comment_id=comment.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="text" placeholder="Ваш ответ...">
+                        <button type="submit">Ответить</button>
+                    </form>
+                {% endif %}
+                <hr>
+            </div>
+        {% endfor %}
+        {% else %}
+        <p>Пока нет комментариев. Будьте первым!</p>
+        {% endif %}
+    </div>
+    <hr>
+
+    <a href="{% url 'index' %}">На главную</a>
+{% endblock %}
+
+<script>
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/data/');
+
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+
+        switch (data.data.event_type) {
+
+            case 'new_comment':
+                const container = document.getElementById('comments');
+                container.innerHTML = data.data.html;
+                break;
+
+            case 'new_data':
+                const description = data.data.question_description;
+                const rating = data.data.question_rating;
+                const title = data.data.question_title;
+
+                document.getElementById('rating').innerHTML = `<strong>Рейтинг:</strong> ${rating}`;
+                document.getElementById('description').innerHTML = `<strong>Описание:</strong> ${description}`;
+                document.getElementById('title').innerHTML = `${title}`;
+                break;
+        }
+    };
+
+    socket.onopen = () => console.log("Соединение установлено");
+    socket.onclose = () => console.log("Соединение разорвано");
+</script>
