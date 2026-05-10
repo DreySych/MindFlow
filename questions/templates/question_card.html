@@ -65,12 +65,12 @@
 
             {% if request.user == question.author %}
                 <a href="{% url 'edit_question' %}?id={{ question.id }}"
-                   class="action-btn cross gradient-border">
+                   type="button" class="action-btn cross gradient-border">
                     <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                 </a>
             {% else %}
                 <a href="/complaint/?question_id={{ question.id }}"
-                   class="action-btn report gradient-border">
+                   type="button" class="action-btn report gradient-border" onclick="openComplainQuestionOverlay()">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </a>
             {% endif %}

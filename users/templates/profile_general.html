@@ -2,10 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Профиль - Понравилось</title>
+    <title>Профиль - Посты</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -16,7 +17,7 @@
         <div class="profile-header-wrapper">
             <div class="profile-avatar-section">
                 {% if user.image %}
-                    <img src="/media/{{ user.image }}" alt="Avatar" class="profile-avatar">
+                    <img src="{{ user.image.url }}" alt="Avatar" class="profile-avatar">
                 {% else %}
                     <img src="{% static 'images/default.png' %}" alt="Avatar" class="profile-avatar">
                 {% endif %}
@@ -25,36 +26,22 @@
                 <h1 class="profile-nick">{{ user.username }}</h1>
                 <div class="profile-id">ID: {{ user.id }}</div>
                 <div class="profile-actions">
-    {% if is_owner %}
-        <a href="{% url 'profile_settings' %}" class="profile-action-btn">
-            Настройки
-        </a>
+                    {% if not is_owner %}
+                        {% if is_friend %}
+                            <form action="{% url 'delete_friend' user.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="profile-action-btn">Удалить из друзей</button>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'add_friend' user.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="profile-action-btn">Добавить в друзья</button>
+                            </form>
+                        {% endif %}
+                        <a href="/complaint/?user_id={{ user.id }}" class="profile-action-btn">Пожаловаться</a>
+                    {% endif %}
+                </div>
 
-        <a href="{% url 'logout' %}" class="profile-action-btn">
-            Выйти
-        </a>
-    {% else %}
-        {% if is_friend %}
-            <form action="{% url 'delete_friend' user.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="profile-action-btn">
-                    Удалить из друзей
-                </button>
-            </form>
-        {% else %}
-            <form action="{% url 'add_friend' user.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="profile-action-btn">
-                    Добавить в друзья
-                </button>
-            </form>
-        {% endif %}
-
-        <a href="/complaint/?user_id={{ user.id }}" class="profile-action-btn">
-            Пожаловаться
-        </a>
-    {% endif %}
-</div>
             </div>
         </div>
     </div>
@@ -65,13 +52,9 @@
                 <div class="profile-nav">
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn active">Посты</a>
 
-                    <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">
-                        Комментарии
-                    </a>
+                    <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
+                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
 
-                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">
-                        Понравилось
-                    </a>
                 </div>
 
                 <div class="posts-list">
@@ -82,7 +65,7 @@
 
                     {% empty %}
 
-                        <h3 style="color:white;">Постов пока нет</h3>
+                        <h3>Постов пока нет</h3>
 
                     {% endfor %}
 
@@ -92,5 +75,8 @@
     </div>
 
     {% include 'footer.html' %}
+    {% include 'complain_question.html' %}
+    {% include 'complain_comment.html' %}
+
 </body>
 </html>

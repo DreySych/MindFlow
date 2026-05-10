@@ -16,7 +16,7 @@
         <div class="profile-header-wrapper">
             <div class="profile-avatar-section">
                 {% if user.image %}
-                    <img src="/media/{{ user.image }}" alt="Avatar" class="profile-avatar">
+                    <img src="{{ user.image.url }}" alt="Avatar" class="profile-avatar">
                 {% else %}
                     <img src="{% static 'images/default.png' %}" alt="Avatar" class="profile-avatar">
                 {% endif %}
@@ -24,6 +24,7 @@
             <div class="profile-info">
                 <h1 class="profile-nick">{{ user.username }}</h1>
                 <div class="profile-id">ID: {{ user.id }}</div>
+                <div class="profile-actions"></div>
             </div>
         </div>
     </div>
@@ -34,22 +35,67 @@
                 <div class="profile-nav">
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
-                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn active">Понравившиеся</a>
+                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn active">Оценки "понравившиеся"</a>
                 </div>
 
                 <div class="posts-list">
                     {% for like in all_likes %}
 
                         {% if like.question %}
-                            {% include 'question_card.html' with question=like.question question_images=like.question.images.split comments=like.question.comment_set.all %}
+                            <article class="question-card">
+                                <div class="question-card-content">
+                                    <div class="user-info">
+                                        <a href="{% url 'profile_general' username=like.question.author.username %}" class="user-avatar-link">
+                                            {% if like.question.author.image %}
+                                                <img src="{{ like.question.author.image.url }}" alt="Avatar" class="user-avatar">
+                                            {% else %}
+                                                <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
+                                            {% endif %}
+                                        </a>
+                                        <a href="{% url 'profile_general' username=like.question.author.username %}" class="user-name-link">
+                                            {{ like.question.author.username }}
+                                        </a>
+                                        <span class="time-ago">{{ like.question.creation_date|timesince }} назад</span>
+                                    </div>
+                                    <p class="question-text">{{ like.question.title }}</p>
+                                    {% if like.question.images %}
+                                    <div class="question-image-placeholder">
+                                        <img src="/media/{{ like.question.images.split.0 }}" alt="{{ like.question.title }}">
+                                    </div>
+                                    {% endif %}
+                                    <div class="actions">
+                                        <div class="vote-group">
+                                            <a href="/like/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote">
+                                                <img src="{% static 'images/like.png' %}" alt="Лайк">
+                                            </a>
+                                            <span class="vote-count">{{ like.question.rating }}</span>
+                                            <a href="/dislike/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote">
+                                                <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
+                                            </a>
+                                        </div>
+                                        <a href="{% url 'question' like.question.id %}" class="action-btn comment">
+                                            <img src="{% static 'images/comment.png' %}" alt="Комментарий">
+                                            <span>{{ like.question.comment_set.count }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </article>
                         {% endif %}
 
                         {% if like.comment %}
                             <article class="question-card">
                                 <div class="question-card-content">
                                     <div class="user-info">
-                                        <a href="{% url 'profile_general' username=like.comment.question.author.username %}" class="user-name-link">
-                                            {{ like.comment.question.author.username }}
+                                        <a href="{% url 'profile_general' username=like.comment.author.username %}" class="user-avatar-link">
+                                            {% if like.comment.author.image %}
+                                                <img src="{{ like.comment.author.image.url }}" alt="Avatar" class="user-avatar">
+                                            {% else %}
+                                                <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
+                                            {% endif %}
+                                        </a>
+                                        <a href="{% url 'profile_general' username=like.comment.author.username %}" class="user-name-link">
+                                            {{ like.comment.author.username }}
+
                                         </a>
 
                                         <span class="time-ago">{{ like.created_at|timesince }} назад</span>
@@ -60,26 +106,20 @@
                                         </a>
                                     </div>
 
-                                    <p class="comment-text">
-                                        {{ like.comment.text }}
-                                    </p>
+                                    <p class="comment-text">{{ like.comment.text }}</p>
 
                                     <div class="actions">
                                         <div class="vote-group">
 
-                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/"
-                                               class="vote-btn upvote">
+                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote">
 
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
 
                                             </a>
 
-                                            <span class="vote-count">
-                                                {{ like.comment.rating }}
-                                            </span>
+                                            <span class="vote-count">{{ like.comment.rating }}</span>
+                                            <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote">
 
-                                            <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/"
-                                               class="vote-btn downvote">
 
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
 
@@ -95,14 +135,25 @@
                             <article class="question-card">
                                 <div class="question-card-content">
                                     <div class="user-info">
+                                        <a href="{% url 'profile_general' username=like.answer.author.username %}" class="user-avatar-link">
+                                            {% if like.answer.author.image %}
+                                                <img src="{{ like.answer.author.image.url }}" alt="Avatar" class="user-avatar">
+                                            {% else %}
+                                                <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
+                                            {% endif %}
+                                        </a>
+                                        <a href="{% url 'profile_general' username=like.answer.author.username %}" class="user-name-link">
+                                            {{ like.answer.author.username }}
+                                        </a>
+                                        <span class="time-ago">{{ like.created_at|timesince }} назад</span>
+                                        <span class="time-ago" style="margin-left: 4px;">•</span>
+
                                         <a href="{% url 'question' like.answer.comment.question.id %}" class="comment-post-link">
-                                            Ответ к посту: {{ like.answer.comment.question.title }}
+                                            {{ like.answer.comment.question.title }}
                                         </a>
                                     </div>
 
-                                    <p class="comment-text">
-                                        {{ like.answer.answer }}
-                                    </p>
+                                    <p class="comment-text">{{ like.answer.answer }}</p>
 
                                     <div class="actions">
                                         <div class="vote-group">
@@ -114,12 +165,9 @@
 
                                             </a>
 
-                                            <span class="vote-count">
-                                                {{ like.answer.rating }}
-                                            </span>
+                                            <span class="vote-count">{{ like.answer.rating }}</span>
+                                            <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}" class="vote-btn downvote">
 
-                                            <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}"
-                                               class="vote-btn downvote">
 
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
 
@@ -132,7 +180,7 @@
                         {% endif %}
 
                     {% empty %}
-                        <h3 style="color:white;">Понравившегося пока нет</h3>
+                        <h3>Понравившегося пока нет</h3>
                     {% endfor %}
                 </div>
             </div>
