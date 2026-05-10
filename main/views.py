@@ -68,7 +68,6 @@ def index_page(request):
         "page1": 'Логин',
         "link2": "account/signup/",
         "page2": 'Регистрация',
-        'subscriptions': Subscription.objects.filter(user1=request.user),
     }
     if request.user.is_authenticated:
         context['link1'] = "account/logout/"
@@ -88,9 +87,12 @@ def index_page(request):
         images[f'{i.id}'] = i.images.split(',')[0]
     context['images'] = images
     context['len'] = len(results)
-    context['notifications'] = Notification.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:20]
+    if request.user.is_authenticated:
+        context['notifications'] = Notification.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:20]
+    else:
+        context['notifications'] = []
     return render(request, template_name="index.html", context=context)
 
 def get_subscribed_authors(user):
@@ -292,8 +294,13 @@ def dislike(request):
 def sidebar_page(request):
     context = {}
 
-    subscriptions = Subscription.objects.filter(user1=request.user)
+    if request.user.is_authenticated:
+        subscriptions = Subscription.objects.filter(user1=request.user)
+    else:
+        subscriptions = []
+
     context['subscriptions'] = subscriptions
+
 
     return render(request, template_name="sidebar.html", context=context)
 

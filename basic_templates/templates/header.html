@@ -57,9 +57,11 @@
       </button>
 
       <div class="profile-overlay" id="profileOverlay">
+        {% if request.user.is_authenticated %}
         <a href="{% url 'profile_posts' %}" class="overlay-item">
           <span>Профиль</span>
         </a>
+        {% endif %}
         {% if request.user.is_superuser %}
 
         <a href="{% url 'complains_panel_page_c' %}" class="overlay-item">
@@ -67,12 +69,20 @@
         </a>
 
         {% endif %}
+        {% if request.user.is_authenticated %}
         <a href="{% url 'settings' %}" class="overlay-item">
           <span>Настройки</span>
         </a>
-        <a href="{% url 'login' %}" class="overlay-item overlay-item-exit">
+        {% endif %}
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="overlay-item overlay-item-exit">
           <span>Выйти</span>
         </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="overlay-item overlay-item-exit">
+          <span>Войти</span>
+        </a>
+        {% endif %}
       </div>
     </div>
   </div>
