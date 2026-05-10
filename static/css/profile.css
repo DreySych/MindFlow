@@ -275,6 +275,7 @@
 .action-btn.cross img { width: 18px; height: 18px; opacity: 1; }
 .action-btn.edit {
     width: auto;
+    max-width: 200px;
     height: 44px;
     gap: 6px;
     padding: 0 16px;
@@ -290,10 +291,33 @@
     font-family: 'Mallanna', sans-serif;
     color: #1671FE;
     text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
 }
 .action-btn.edit:hover { background: #e3f2fd; border-color: #1671FE; }
 .action-btn.edit img { width: 18px; height: 18px; opacity: 1; }
-.action-btn.edit span { font-size: 16px; font-weight: 400; font-family: 'Mallanna', sans-serif; color: #1671FE; }
+.action-btn.edit {
+    width: auto;
+    max-width: 200px;
+    height: 44px;
+    gap: 6px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .vote-btn.upvote.active { background: rgba(76, 175, 80, 0.15); }
 .vote-btn.downvote.active { background: rgba(244, 67, 54, 0.15); }
 @media (max-width: 768px) {

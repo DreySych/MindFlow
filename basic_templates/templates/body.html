@@ -7,12 +7,12 @@
     <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input" id="friendSearchInput">
   </div>
 
-  {% for friend in friends %}
+  {% for subscription in subscriptions %}
       <div class="friend-item">
           <img src="{% static 'images/default.png' %}" alt="">
-          <span>{{ friend.username }}</span>
+          <span>{{ subscription.user2.username }}</span>
 
-          <a href="{% url 'chat_page' friend.id %}">
+          <a href="{% url 'chat_page' subscription.user2.id %}">
               <img src="{% static 'images/chat.png' %}" alt="Чат">
           </a>
       </div>

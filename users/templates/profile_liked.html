@@ -35,14 +35,16 @@
                 <div class="profile-nav">
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
-                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn active">Оценки "понравившиеся"</a>
+                    {% if request.user == user %}
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                    {% endif %}
                 </div>
 
                 <div class="posts-list">
                     {% for like in all_likes %}
 
                         {% if like.question %}
-                            <article class="question-card">
+                            <article class="question-card liked-card">
                                 <div class="question-card-content">
                                     <div class="user-info">
                                         <a href="{% url 'profile_general' username=like.question.author.username %}" class="user-avatar-link">
@@ -65,11 +67,11 @@
                                     {% endif %}
                                     <div class="actions">
                                         <div class="vote-group">
-                                            <a href="/like/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote">
+                                            <a href="/like/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn">
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
                                             </a>
                                             <span class="vote-count">{{ like.question.rating }}</span>
-                                            <a href="/dislike/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote">
+                                            <a href="/dislike/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote liked-vote-btn">
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                             </a>
                                         </div>
@@ -83,7 +85,7 @@
                         {% endif %}
 
                         {% if like.comment %}
-                            <article class="question-card">
+                            <article class="question-card liked-card">
                                 <div class="question-card-content">
                                     <div class="user-info">
                                         <a href="{% url 'profile_general' username=like.comment.author.username %}" class="user-avatar-link">
@@ -111,14 +113,14 @@
                                     <div class="actions">
                                         <div class="vote-group">
 
-                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote">
+                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn">
 
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
 
                                             </a>
 
                                             <span class="vote-count">{{ like.comment.rating }}</span>
-                                            <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote">
+                                            <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote liked-vote-btn">
 
 
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
@@ -132,7 +134,7 @@
                         {% endif %}
 
                         {% if like.answer %}
-                            <article class="question-card">
+                            <article class="question-card liked-card">
                                 <div class="question-card-content">
                                     <div class="user-info">
                                         <a href="{% url 'profile_general' username=like.answer.author.username %}" class="user-avatar-link">
@@ -158,15 +160,16 @@
                                     <div class="actions">
                                         <div class="vote-group">
 
-                                            <a href="{% url 'like_answer' %}?id={{ like.answer.id }}"
-                                               class="vote-btn upvote">
+                                            <a href="{% url 'like_answer' %}?id={{ like.answer.id }}&to=/profile/{{ user.username }}/liked/"
+                                                class="vote-btn upvote liked-vote-btn">
 
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
 
                                             </a>
 
                                             <span class="vote-count">{{ like.answer.rating }}</span>
-                                            <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}" class="vote-btn downvote">
+                                            <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}&to=/profile/{{ user.username }}/liked/"
+                                                class="vote-btn downvote liked-vote-btn">
 
 
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
@@ -188,5 +191,39 @@
     </div>
 
     {% include 'footer.html' %}
+<script>
+document.addEventListener('click', function(event) {
+    const button = event.target.closest('.liked-vote-btn');
+
+    if (!button) {
+        return;
+    }
+
+    event.preventDefault();
+
+    fetch(button.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (!data.ok) {
+            if (data.login) {
+                window.location.href = data.login;
+            }
+            return;
+        }
+
+        const group = button.closest('.vote-group');
+        const count = group.querySelector('.vote-count');
+        count.textContent = data.rating;
+
+
+    });
+});
+</script>
 </body>
 </html>

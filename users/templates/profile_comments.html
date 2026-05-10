@@ -35,7 +35,9 @@
                 <div class="profile-nav">
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn active">Комментарии</a>
-                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                    {% if request.user == user %}
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                    {% endif %}
                 </div>
 
                 <div class="posts-list">

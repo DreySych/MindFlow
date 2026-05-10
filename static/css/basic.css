@@ -435,3 +435,9 @@ footer {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+.header-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: fill;
+}

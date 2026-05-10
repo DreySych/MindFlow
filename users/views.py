@@ -128,40 +128,46 @@ def profile_page_general(request, username):
         return redirect('/account/login')
 
 def profile_page_settings(request):
-    if request.user.is_authenticated:
-        user = request.user
-        if request.method == "POST":
-            form = ProfileForm(request.POST, request.FILES)
-            if form.is_valid():
-                user.username = form.cleaned_data['username']
-                user.email = form.cleaned_data['email']
-                user.birth_date = form.cleaned_data['birth_date']
-                user.sex = form.cleaned_data['sex']
-                image_file = form.cleaned_data.get('image')
-                if image_file:
-                    ext = image_file.name.split('.')[-1]
-                    filename = f"avatars/{uuid.uuid4()}.{ext}"
-                    path = default_storage.save(filename, ContentFile(image_file.read()))
-                    user.image = path
-                user.save()
-                return redirect('profile_general', username=user.username)
-        else:
-            initial_data = {
-                'username': user.username,
-                'sex': user.sex,
-                'email': user.email,
-                'birth_date': user.birth_date,
-                'image_photo': user.image
-            }
-            form = ProfileForm(initial=initial_data)
-            context = {
-                'form': form,
-                'user': user,
-            }
-            return render(request, 'profile_settings.html', context=context)
-    else:
+    if not request.user.is_authenticated:
         return redirect('/account/login')
-    return render(request, 'profile_settings.html')
+
+    user = request.user
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            user.username = form.cleaned_data['username']
+            user.email = form.cleaned_data['email']
+            user.birth_date = form.cleaned_data['birth_date']
+            user.sex = form.cleaned_data['sex']
+
+            image_file = request.FILES.get('image')
+
+            if image_file:
+                ext = image_file.name.split('.')[-1]
+                filename = f"avatars/{uuid.uuid4()}.{ext}"
+                path = default_storage.save(filename, ContentFile(image_file.read()))
+                user.image = path
+
+            user.save()
+
+            return redirect('profile_general', username=user.username)
+
+    else:
+        form = ProfileForm(initial={
+            'username': user.username,
+            'email': user.email,
+            'sex': user.sex,
+            'birth_date': user.birth_date,
+        })
+
+    context = {
+        'form': form,
+        'user': user,
+    }
+
+    return render(request, 'profile_settings.html', context)
 
 
 def profile_page_comments(request, username):
@@ -182,11 +188,31 @@ def profile_page_comments(request, username):
 def profile_page_liked(request, username):
     if request.user.is_authenticated:
         target_user = get_object_or_404(User, username=username)
-        question_likes = QuestionLike.objects.filter(author=target_user)
-        comments_likes = CommentLike.objects.filter(author=target_user)
-        answers_likes = AnswerLike.objects.filter(author=target_user)
-        all_likes = sorted(chain(question_likes, comments_likes, answers_likes), key=attrgetter('created_at'), reverse=True)
 
+        question_likes = Like.objects.filter(user=target_user, rating=1)
+        comments_likes = CommentLike.objects.filter(author=target_user, rating=1)
+        answers_likes = AnswerLike.objects.filter(author=target_user, rating=1)
+
+        def get_like_date(like):
+            if hasattr(like, 'created_at'):
+                return like.created_at
+
+            if hasattr(like, 'question'):
+                return like.question.creation_date
+
+            if hasattr(like, 'comment'):
+                return like.comment.creation_date
+
+            if hasattr(like, 'answer'):
+                return like.answer.creation_date
+
+            return datetime.datetime.now()
+
+        all_likes = sorted(
+            chain(question_likes, comments_likes, answers_likes),
+            key=get_like_date,
+            reverse=True
+        )
 
         context = {
             'user': target_user,
@@ -195,10 +221,10 @@ def profile_page_liked(request, username):
             'comments_likes': comments_likes,
             'answers_likes': answers_likes,
         }
+
         return render(request, 'profile_liked.html', context=context)
 
-    else:
-        return redirect('/account/login')
+    return redirect('/account/login')
 
 def add_friend(request, user_id):
     friend = get_object_or_404(User, id=user_id)

@@ -53,7 +53,9 @@
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn active">Посты</a>
 
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
-                    <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                    {% if request.user == user %}
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                    {% endif %}
 
                 </div>
 

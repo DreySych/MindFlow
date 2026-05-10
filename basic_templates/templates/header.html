@@ -10,13 +10,22 @@
   </a>
 
   <div class="header-search">
-    <div class="search-wrapper" onclick="toggleSearchOverlay(event)">
-      <input type="text" placeholder="Поиск..." id="searchInput">
+    <form class="search-wrapper" method="get" action="{% url 'index' %}">
+
+        <input
+            type="text"
+            placeholder="Поиск..."
+            id="searchInput"
+            name="q"
+            value="{{ request.GET.q }}"
+        >
+
       <span class="search-divider"></span>
-      <button>
+
+      <button type="submit">
         <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
       </button>
-    </div>
+    </form>
     <a href="" class="ii-button">
       <span class="ii-text">ИИ Поиск</span>
       <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
@@ -40,10 +49,10 @@
 
     <div class="profile-dropdown">
       <button class="icon-button profile-trigger" onclick="toggleProfileOverlay()">
-        {% if question.author.image %}
-            <img src="{{ question.author.image.url }}" alt="Аватар" class="user-avatar">
+        {% if request.user.image %}
+            <img src="{{ user.image.url }}" alt="Аватар" class="header-avatar">
         {% else %}
-            <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar">
+            <img src="{% static 'images/default.png' %}" alt="Аватар" class="header-avatar">
         {% endif %}
       </button>
 
@@ -51,9 +60,13 @@
         <a href="{% url 'profile_posts' %}" class="overlay-item">
           <span>Профиль</span>
         </a>
+        {% if request.user.is_superuser %}
+
         <a href="{% url 'complains_panel_page_c' %}" class="overlay-item">
           <span>Панель жалоб</span>
         </a>
+
+        {% endif %}
         <a href="{% url 'settings' %}" class="overlay-item">
           <span>Настройки</span>
         </a>

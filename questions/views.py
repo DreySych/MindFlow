@@ -234,7 +234,12 @@ def like_comment(request):
     comment.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True, 'rating': comment.rating})
+        return JsonResponse({
+            'ok': True,
+            'rating': comment.rating,
+            'user_rating': like_obj.rating
+
+        })
 
     return redirect(request.GET.get('to', '/'))
 
@@ -268,7 +273,13 @@ def dislike_comment(request):
     comment.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True, 'rating': comment.rating})
+        return JsonResponse({
+
+            'ok': True,
+            'rating': comment.rating,
+            'user_rating': like_obj.rating
+
+            })
 
     return redirect(request.GET.get('to', '/'))
 
@@ -329,7 +340,11 @@ def like_answer(request):
     answer.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True, 'rating': answer.rating})
+        return JsonResponse({
+            'ok': True,
+            'rating': answer.rating,
+            'user_rating': like_obj.rating,
+        })
 
     return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
 
@@ -363,6 +378,11 @@ def dislike_answer(request):
     answer.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True, 'rating': answer.rating})
+        return JsonResponse({
+            'ok': True,
+            'rating': answer.rating,
+            'user_rating': like_obj.rating
+
+        })
 
     return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))

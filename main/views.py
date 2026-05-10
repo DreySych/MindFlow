@@ -17,7 +17,6 @@ from django.http import JsonResponse
 def index_page(request):
     username = request.user.username if request.user.is_authenticated else "Профиль"
     all_users = User.objects .all()
-    model = get_model()
     if request.method == "POST" and 'question_id' in request.POST:
         question_id = request.POST.get('question_id')
         question = get_object_or_404(Question, pk=question_id)
@@ -34,24 +33,26 @@ def index_page(request):
             comment.save()
         return redirect('index')
 
-    if request.method == "POST":
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            model = get_model()
-            input_text = model.encode([form.cleaned_data['input_text']])[0]
-            questions = Question.objects.all()
-            results = []
-            for question in questions:
-                question_vec = question.get_embedding()
-                if question_vec is not None:
-                    sim = model.similarity([question_vec], [input_text])[0][0]
-                    results.append((question, sim))
-                else:
-                    results.append((question, -1))
-            results = sorted(results, key=lambda x: x[1], reverse=True)
-            results = [q for q, _ in results]
-        else:
-            results = get_default_questions(request)
+    search_text = request.GET.get('q', '').strip()
+    if search_text:
+        model = get_model()
+        input_text = model.encode([search_text])[0]
+
+        questions = Question.objects.all()
+        results = []
+
+        for question in questions:
+            question_vec = question.get_embedding()
+
+            if question_vec is not None:
+                sim = model.similarity([question_vec], [input_text])[0][0]
+                results.append((question, sim))
+            else:
+                results.append((question, -1))
+
+        results = sorted(results, key=lambda x: x[1], reverse=True)
+        results = [q for q, _ in results]
+
     else:
         results = get_default_questions(request)
 
@@ -75,6 +76,10 @@ def index_page(request):
         context["page2"] = ''
 
 
+    if request.user.is_authenticated:
+        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
+    else:
+        context['subscriptions'] = []
     context['posts_context'] = posts_context
     context['user'] = request.user
     images = {}
@@ -239,7 +244,8 @@ def like(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,
-            'rating': question.rating
+            'rating': question.rating,
+            'user_rating': like_obj.rating,
         })
 
     return redirect(request.GET.get('to', '/'))
@@ -276,7 +282,8 @@ def dislike(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,
-            'rating': question.rating
+            'rating': question.rating,
+            'user_rating': like_obj.rating,
         })
 
     return redirect(request.GET.get('to', '/'))

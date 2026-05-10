@@ -1,3 +1,4 @@
+/* settings.css */
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +6,7 @@
 }
 
 body {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Mallanna', sans-serif;
     background: #ffffff;
     min-height: 100vh;
     color: #1a1a2e;
@@ -19,7 +20,7 @@ body {
 
 .settings-title {
     font-size: 35px;
-    font-weight: 700;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 30px;
 }
@@ -30,7 +31,7 @@ body {
 
 .settings-section-title {
     font-size: 21px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 16px;
     padding-left: 4px;
@@ -67,7 +68,7 @@ body {
 
 .settings-item-label {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 4px;
 }
@@ -83,7 +84,7 @@ body {
     gap: 12px;
     font-size: 17px;
     color: #6B7280;
-    font-weight: 500;
+    font-weight: 400;
     margin-left: auto;
 }
 
@@ -114,13 +115,13 @@ body {
     background: linear-gradient(135deg, #E8F1FF 0%, #D4E4FF 100%);
     flex-shrink: 0;
     overflow: hidden;
-    border: 3px solid #4A90E2;
+    border: 3px solid #1671FE;
 }
 
 .avatar-preview img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
 }
 
 .avatar-info {
@@ -129,13 +130,13 @@ body {
 
 .avatar-title {
     font-size: 19px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 6px;
 }
 
 .avatar-description {
-    font-size: 14.6px;
+    font-size: 15px;
     color: #9CA3AF;
 }
 
@@ -165,7 +166,7 @@ body {
 .form-label {
     display: block;
     font-size: 18px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 8px;
 }
@@ -188,23 +189,23 @@ body {
     border-radius: 20px;
     background: #F0F4F8;
     color: #1a1a2e;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Mallanna', sans-serif;
     font-size: 17px;
     outline: none;
     transition: all 0.2s;
 }
 
 .form-input:focus {
-    border-color: #4A90E2;
+    border-color: #1671FE;
     background: #ffffff;
-    box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+    box-shadow: 0 2px 8px rgba(22,113,254,0.2);
 }
 
 .btn {
     padding: 8px 18px;
     border-radius: 20px;
-    font-family: 'Manrope', sans-serif;
-    font-weight: 600;
+    font-family: 'Mallanna', sans-serif;
+    font-weight: 400;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.2s;
@@ -214,15 +215,15 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+    background: linear-gradient(135deg, #1671FE 0%, #0047AB 100%);
     color: #ffffff;
-    box-shadow: 0 2px 6px rgba(74,144,226,0.3);
+    box-shadow: 0 2px 6px rgba(22,113,254,0.3);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #357ABD 0%, #2E6BAA 100%);
+    background: linear-gradient(135deg, #0047AB 0%, #003380 100%);
     transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(74,144,226,0.4);
+    box-shadow: 0 3px 10px rgba(22,113,254,0.4);
 }
 
 .btn-secondary {
@@ -232,8 +233,8 @@ body {
 }
 
 .btn-secondary:hover {
-    border-color: #4A90E2;
-    color: #4A90E2;
+    border-color: #1671FE;
+    color: #1671FE;
 }
 
 .save-section {
@@ -278,7 +279,7 @@ body {
 
 .modal-title {
     font-size: 25px;
-    font-weight: 700;
+    font-weight: 400;
     color: #1a1a2e;
 }
 
@@ -302,7 +303,7 @@ body {
 .modal-label {
     display: block;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 400;
     color: #1a1a2e;
     margin-bottom: 8px;
 }
@@ -314,16 +315,16 @@ body {
     border-radius: 20px;
     background: #F0F4F8;
     color: #1a1a2e;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Mallanna', sans-serif;
     font-size: 18px;
     outline: none;
     transition: all 0.2s;
 }
 
 .modal-input:focus {
-    border-color: #4A90E2;
+    border-color: #1671FE;
     background: #ffffff;
-    box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+    box-shadow: 0 2px 8px rgba(22,113,254,0.2);
 }
 
 .modal-input::placeholder {
@@ -347,13 +348,13 @@ body {
 }
 
 .gender-option:hover {
-    border-color: #4A90E2;
+    border-color: #1671FE;
     background: #F0F4F8;
 }
 
 .gender-option.selected {
-    border-color: #4A90E2;
-    background: rgba(74,144,226,0.1);
+    border-color: #1671FE;
+    background: rgba(22,113,254,0.1);
 }
 
 .gender-radio {
@@ -369,7 +370,7 @@ body {
 }
 
 .gender-option.selected .gender-radio {
-    border-color: #4A90E2;
+    border-color: #1671FE;
 }
 
 .gender-option.selected .gender-radio::after {
@@ -377,12 +378,12 @@ body {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #4A90E2;
+    background: #1671FE;
 }
 
 .gender-label {
     font-size: 18px;
-    font-weight: 500;
+    font-weight: 400;
     color: #1a1a2e;
 }
 
@@ -403,7 +404,6 @@ body {
     border-radius: 12px;
     color: #1a1a2e;
     font-size: 17px;
-    font-weight: 600;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;

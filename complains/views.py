@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 def complain_question_page(request):
@@ -12,6 +12,8 @@ def complain_comment_page(request):
 
 
 def complains_panel_page_c(request):
+    if not request.user.is_superuser:
+        return redirect('/')
     return render(request, template_name="complains_panel_comment.html")
 
 def complains_panel_page_p(request):
