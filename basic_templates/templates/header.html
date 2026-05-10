@@ -81,6 +81,7 @@
     event.stopPropagation();
     document.getElementById('notificationsOverlay').classList.toggle('active');
     document.getElementById('profileOverlay').classList.remove('active');
+    loadNotifications();
   }
 
   document.addEventListener('click', function(event) {
@@ -94,4 +95,49 @@
       document.getElementById('notificationsOverlay').classList.remove('active');
     }
   });
+</script>
+<script>
+function loadNotifications() {
+    fetch('/notifications/list/')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            const list = document.querySelector('.notifications-list');
+
+            if (!list) {
+                return;
+            }
+
+            list.innerHTML = '';
+
+            if (data.notifications.length === 0) {
+                list.innerHTML = `
+                    <div class="notification-item">
+                        <div class="notification-content">
+                            <p class="notification-text">Уведомлений пока нет</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            data.notifications.forEach(function(notification) {
+                list.innerHTML += `
+                    <a href="/notifications/read/${notification.id}/" class="notification-item">
+                        <img src="/static/images/default.png" alt="Аватар" class="notification-avatar">
+
+                        <div class="notification-content">
+                            <p class="notification-text">${notification.text}</p>
+                            <span class="notification-time">${notification.created_at}</span>
+                        </div>
+                    </a>
+                `;
+            });
+        });
+}
+
+
+setInterval(loadNotifications, 5000);
+document.addEventListener('DOMContentLoaded', loadNotifications);
 </script>

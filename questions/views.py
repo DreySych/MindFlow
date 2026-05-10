@@ -4,7 +4,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
 from sentence_transformers import SentenceTransformer
-
+from notifications.models import Notification
 from questions.forms import *
 from questions.models import *
 from channels.layers import get_channel_layer
@@ -44,6 +44,12 @@ def question_page(request, question_id, template_name='question.html'):
                 rating=0
             )
             comment.save()
+            if question.author != request.user:
+                Notification.objects.create(
+                    user=question.author,
+                    text=f'{request.user.username} оставил комментарий к вашему посту',
+                    link=f'/question/{question.id}/'
+                )
         return redirect('question', question_id=question_id)
     else:
         form = CommentForm()
@@ -285,6 +291,12 @@ def make_answer_page(request, comment_id):
                 comment=comment
             )
             answer.save()
+            if comment.author != request.user:
+                Notification.objects.create(
+                    user=comment.author,
+                    text=f'{request.user.username} ответил на ваш комментарий',
+                    link=f'/question/{comment.question.id}/#comment-{comment.id}'
+                )
 
     return redirect('/question/' + str(comment.question.id) + '/')
 

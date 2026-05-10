@@ -6,7 +6,7 @@ from operator import attrgetter
 from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
-
+from notifications.models import Notification
 from questions.forms import CommentForm
 from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
 from users.forms import ProfileForm
@@ -79,7 +79,27 @@ def login_page(request):
                 print("ОШИБКА. НЕВЕРНЫЙ ПАРОЛЬ")
     else:
         form = LoginForm()
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            user_obj = User.objects.get(username=username)
+        except User.DoesNotExist:
+            messages.error(request, 'Пользователь с таким логином не найден')
+            return redirect('login')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is None:
+            messages.error(request, 'Неверный пароль')
+            return redirect('login')
+
+        login(request, user)
+        return redirect('index')
     return render(request, 'login.html', {'form': form})
+
 
 def password_restore_page(request):
     return render(request, template_name="password_restore.html")
@@ -186,6 +206,11 @@ def add_friend(request, user_id):
     subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
     if not subscription_exists and current_user != friend:
         Subscription.objects.create(user1=current_user, user2=friend)
+        Notification.objects.create(
+            user=friend,
+            text=f'{current_user.username} подписался на вас',
+            link=f'/profile/{current_user.username}/'
+        )
 
     return redirect(f'/profile/{friend.username}', user_id=friend.id)
 

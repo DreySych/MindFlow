@@ -3,7 +3,7 @@ import datetime
 
 from django.template.context_processors import request
 
-
+from notifications.models import Notification
 from main.forms import SearchForm
 from main.model_loader import get_model
 from questions.forms import CommentForm
@@ -82,7 +82,9 @@ def index_page(request):
         images[f'{i.id}'] = i.images.split(',')[0]
     context['images'] = images
     context['len'] = len(results)
-
+    context['notifications'] = Notification.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:20]
     return render(request, template_name="index.html", context=context)
 
 def get_subscribed_authors(user):
@@ -226,6 +228,12 @@ def like(request):
         question.rating += 2
 
     like_obj.save()
+    if question.author != request.user and like_obj.rating == 1:
+        Notification.objects.create(
+            user=question.author,
+            text=f'{request.user.username} оценил ваш пост',
+            link=f'/question/{question.id}/'
+        )
     question.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':

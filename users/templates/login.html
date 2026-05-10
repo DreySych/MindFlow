@@ -19,7 +19,7 @@
                 {% csrf_token %}
 
                 <div class="input-group">
-                    <input type="email" class="input-field" name="email" placeholder="Введите почту" required>
+                    <input type="text" class="input-field" name="username" placeholder="Введите логин" required>
                 </div>
 
                 <div class="input-group">
@@ -73,13 +73,20 @@
         {% endif %}
 
         loginForm.addEventListener('submit', function(e) {
-            const email = document.querySelector('[name="email"]').value.trim();
+            const username = document.querySelector('[name="username"]').value.trim();
             const password = document.querySelector('[name="password"]').value.trim();
 
-            if (!email || !password) {
+            if (!username || !password) {
                 e.preventDefault();
-                if (!email) showError(document.querySelector('[name="email"]'));
-                if (!password) showError(document.querySelector('[name="password"]'));
+
+                if (!username) {
+                    showError(document.querySelector('[name="username"]'));
+                }
+
+                if (!password) {
+                    showError(document.querySelector('[name="password"]'));
+                }
+
                 showNotification('Заполните все поля');
             }
         });

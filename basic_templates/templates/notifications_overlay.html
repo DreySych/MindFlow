@@ -4,104 +4,36 @@
     <span class="notifications-title">Уведомления</span>
   </div>
   <div class="notifications-list">
-    <a href="{% url 'notifications_list' %}" class="notification-item">
+    {% for notification in notifications %}
+
+    <a href="{{ notification.link }}" class="notification-item">
+
       <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+
       <div class="notification-content">
+
         <p class="notification-text">
-          <span class="notification-username">Анна К.</span> ответила на ваш комментарий
+          {{ notification.text }}
         </p>
-        <span class="notification-time">2 мин назад</span>
+
+        <span class="notification-time">
+          {{ notification.created_at|timesince }} назад
+        </span>
+
       </div>
+
     </a>
 
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Максим П.</span> оценил ваш вопрос
-        </p>
-        <span class="notification-time">15 мин назад</span>
-      </div>
-    </a>
+    {% empty %}
 
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
+    <div class="notification-item">
       <div class="notification-content">
         <p class="notification-text">
-          <span class="notification-username">Сергей Р.</span> подписался на вас
+          Уведомлений пока нет
         </p>
-        <span class="notification-time">1 час назад</span>
       </div>
-    </a>
+    </div>
 
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Елена В.</span> упомянула вас в комментарии
-        </p>
-        <span class="notification-time">2 часа назад</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Дмитрий</span> оценил ваш комментарий
-        </p>
-        <span class="notification-time">3 часа назад</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Ольга М.</span> ответила на ваш вопрос
-        </p>
-        <span class="notification-time">5 часов назад</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Игорь В.</span> оценил ваш ответ
-        </p>
-        <span class="notification-time">вчера</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Павел</span> подписался на вас
-        </p>
-        <span class="notification-time">вчера</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Мария</span> упомянула вас в вопросе
-        </p>
-        <span class="notification-time">2 дня назад</span>
-      </div>
-    </a>
-
-    <a href="{% url 'notifications' %}" class="notification-item">
-      <img src="{% static 'images/default.png' %}" alt="Аватар" class="notification-avatar">
-      <div class="notification-content">
-        <p class="notification-text">
-          <span class="notification-username">Александр</span> ответил на ваш комментарий
-        </p>
-        <span class="notification-time">3 дня назад</span>
-      </div>
-    </a>
+    {% endfor %}
   </div>
 </div>
