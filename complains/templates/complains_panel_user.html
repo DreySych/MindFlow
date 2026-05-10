@@ -23,97 +23,44 @@
                 </div>
 
                 <div class="complaints-list">
+                    {% for i in complaints %}
                     <div class="complaint-card user-complaint-card">
                         <div class="user-info-row">
-                            <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
+                            <a href="{% url 'profile_general' username=i.user.username %}" class="user-avatar-link">
+                                {% if i.user.image %}
+                                    <img src="{{ i.user.image.url }}" alt="Аватар" class="user-avatar-complaint">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
+                                {% endif %}
                             </a>
-                            <a href="{% url 'profile_somelse' %}" class="user-name-link-complaint">User</a>
-                        </div>
-                        <div class="complaint-info-complaint">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Оскорбительное поведение</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card user-complaint-card">
-                        <div class="user-info-row">
-                            <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
+                            <a href="{% url 'profile_general' username=i.user.username %}" class="user-name-link-complaint">
+                                {{ i.user.username }}
                             </a>
-                            <a href="{% url 'profile_somelse' %}" class="user-name-link-complaint">Елена В.</a>
                         </div>
-                        <div class="complaint-info-complaint">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Спам / реклама</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card user-complaint-card">
-                        <div class="user-info-row">
-                            <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
-                            </a>
-                            <a href="{% url 'profile_somelse' %}" class="user-name-link-complaint">Алексей М.</a>
-                        </div>
                         <div class="complaint-info-complaint">
                             <div class="complaint-type">
                                 <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Нецензурная лексика</span>
+                                <span class="complaint-value">{{ i.description }}</span>
                             </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card user-complaint-card">
-                        <div class="user-info-row">
-                            <a href="{% url 'profile_somelse' %}" class="user-avatar-link">
-                                <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
-                            </a>
-                            <a href="{% url 'profile_somelse' %}" class="user-name-link-complaint">Максим Д.</a>
-                        </div>
-                        <div class="complaint-info-complaint">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Выдача себя за другого человека</span>
-                            </div>
                             <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
+                                   class="verdict-btn approve">
                                     <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                </a>
+
+                                <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
+                                   class="verdict-btn reject">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                        <h3>Жалоб на пользователей пока нет</h3>
+                    {% endfor %}
                 </div>
             </div>
         </main>

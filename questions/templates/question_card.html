@@ -71,7 +71,7 @@
             {% else %}
                 <button type="button"
                     class="action-btn report gradient-border"
-                    onclick="openComplainQuestionOverlay()">
+                    onclick="openComplainQuestionOverlay({{ question.id }})">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </button>
             {% endif %}

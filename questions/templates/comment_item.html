@@ -63,7 +63,7 @@
                 </button>
 
                 {% if request.user != comment.author %}
-                    <button type="button" class="comment-report-btn" onclick="openComplainCommentOverlay()">
+                    <button type="button" class="comment-report-btn" onclick="openComplainCommentOverlay({{ comment.id }})">
                         <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                     </button>
                 {% endif %}
@@ -135,7 +135,7 @@
                     </div>
 
                     {% if request.user != answer.author %}
-                        <button type="button" class="comment-report-btn" onclick="openComplainCommentOverlay()">
+                        <button type="button" class="comment-report-btn" onclick="openComplainCommentOverlay({{ answer.id }})">
                             <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                         </button>
                     {% endif %}

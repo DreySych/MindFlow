@@ -31,16 +31,12 @@
 </div>
 
 <script>
-window.openComplainCommentOverlay = function() {
+window.openComplainCommentOverlay = function(commentId) {
+    window.currentComplainCommentId = commentId;
     document.getElementById('complainCommentOverlay').classList.add('active');
     document.getElementById('complainCommentForm').style.display = 'block';
     document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-};
-
-window.closeComplainCommentOverlay = function() {
-    document.getElementById('complainCommentOverlay').classList.remove('active');
-    document.body.style.overflow = '';
 };
 
 window.submitComplainComment = function() {
@@ -51,7 +47,26 @@ window.submitComplainComment = function() {
         return;
     }
 
-    document.getElementById('complainCommentForm').style.display = 'none';
-    document.getElementById('complainCommentThanks').style.display = 'block';
+    fetch('/complaint/?comment_id=' + window.currentComplainCommentId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'description=' + encodeURIComponent(textarea.value)
+    }).then(function(response) {
+        if (response.ok) {
+            document.getElementById('complainCommentForm').style.display = 'none';
+            document.getElementById('complainCommentThanks').style.display = 'block';
+            textarea.value = '';
+        }
+    });
 };
+
+window.closeComplainCommentOverlay = function() {
+    document.getElementById('complainCommentOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+};
+
+
 </script>

@@ -61,7 +61,7 @@
                                 <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                             </a>
                         {% else %}
-                            <button type="button" class="action-btn report" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay()">
+                            <button type="button" class="action-btn report" aria-label="Пожаловаться" onclick="openComplainQuestionOverlay({{ question.id }})"">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
                         {% endif %}

@@ -32,16 +32,12 @@
 </div>
 
 <script>
-window.openComplainQuestionOverlay = function() {
+window.openComplainQuestionOverlay = function(questionId) {
+    window.currentComplainQuestionId = questionId;
     document.getElementById('complainQuestionOverlay').classList.add('active');
     document.getElementById('complainQuestionForm').style.display = 'block';
     document.getElementById('complainQuestionThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-};
-
-window.closeComplainQuestionOverlay = function() {
-    document.getElementById('complainQuestionOverlay').classList.remove('active');
-    document.body.style.overflow = '';
 };
 
 window.submitComplainQuestion = function() {
@@ -52,7 +48,26 @@ window.submitComplainQuestion = function() {
         return;
     }
 
-    document.getElementById('complainQuestionForm').style.display = 'none';
-    document.getElementById('complainQuestionThanks').style.display = 'block';
+    fetch('/complaint/?question_id=' + window.currentComplainQuestionId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: 'description=' + encodeURIComponent(textarea.value)
+    }).then(function(response) {
+        if (response.ok) {
+            document.getElementById('complainQuestionForm').style.display = 'none';
+            document.getElementById('complainQuestionThanks').style.display = 'block';
+            textarea.value = '';
+        }
+    });
 };
+
+window.closeComplainQuestionOverlay = function() {
+    document.getElementById('complainQuestionOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+};
+
+
 </script>

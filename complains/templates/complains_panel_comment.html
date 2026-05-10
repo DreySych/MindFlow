@@ -23,71 +23,41 @@
                 </div>
 
                 <div class="complaints-list">
+                    {% for i in complaints %}
                     <div class="complaint-card">
                         <div class="complaint-comment">
                             <p class="complaint-comment-text">
-                                Однозначно Python! С него легче всего начинать, и рынок вакансий огромный.
+                                {{ i.comment.text }}
                             </p>
-                        </div>
-                        <div class="complaint-info">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Спам</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card">
-                        <div class="complaint-comment">
-                            <p class="complaint-comment-text">
-                                Я бы посоветовал TypeScript если интересует веб-разработка. Огромный спрос на фронтенд.
-                            </p>
+                            <a href="{% url 'question' i.comment.question.id %}#comment-{{ i.comment.id }}"
+                               class="complaint-detail-btn">
+                                К посту
+                            </a>
                         </div>
-                        <div class="complaint-info">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Оскорбление</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card">
-                        <div class="complaint-comment">
-                            <p class="complaint-comment-text">
-                                Согласен! TypeScript + React = идеальный старт в 2026.
-                            </p>
-                        </div>
                         <div class="complaint-info">
                             <div class="complaint-type">
                                 <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Нецензурная лексика</span>
+                                <span class="complaint-value">{{ i.description }}</span>
                             </div>
+
                             <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
+                                <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/comments/"
+                                   class="verdict-btn approve">
                                     <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
+                                </a>
+
+                                <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/comments/"
+                                   class="verdict-btn reject">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
+                    {% empty %}
+                        <h3>Жалоб на комментарии пока нет</h3>
+                    {% endfor %}
                 </div>
             </div>
         </main>

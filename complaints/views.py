@@ -1,7 +1,7 @@
 from complaints.forms import *
 from complaints.models import *
 from django.shortcuts import render, redirect, get_object_or_404
-
+from notifications.models import Notification
 def accept(request):
 	complaint = Complaint.objects.filter(id=request.GET.get('complaint_id'))[0]
 	if complaint.question:
@@ -49,6 +49,14 @@ def complaint_page(request):
 				comment=Comment.objects.filter(id=comment_id).first() if comment_id else None,
 			)
 			complaint.save()
+			admins = User.objects.filter(is_staff=True)
+
+			for admin in admins:
+				Notification.objects.create(
+					user=admin,
+					text=f'{request.user.username} отправил жалобу',
+					link='/complaint/panel/questions/'
+				)
 	else:
 		form = ComplaintForm()
 
@@ -75,7 +83,7 @@ def complaint_user_panel_page(request):
 	else:
 		context['subscriptions'] = []
 
-	return render(request, "complaint_user_panel.html", context)
+	return render(request, "complains_panel_user.html", context)
 
 def complaint_question_panel_page(request):
 	if not request.user.is_staff:
@@ -90,7 +98,7 @@ def complaint_question_panel_page(request):
 		context['subscriptions'] = Subscription.objects.filter(user1=request.user)
 	else:
 		context['subscriptions'] = []
-	return render(request, "complaint_question_panel.html", context)
+	return render(request, "complains_panel_post.html", context)
 
 def complaint_comment_panel_page(request):
 	if not request.user.is_staff:
@@ -106,4 +114,4 @@ def complaint_comment_panel_page(request):
 	else:
 		context['subscriptions'] = []
 
-	return render(request, "complaint_comment_panel.html", context)
+	return render(request, "complains_panel_comment.html", context)

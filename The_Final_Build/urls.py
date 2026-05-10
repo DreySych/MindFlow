@@ -42,9 +42,9 @@ urlpatterns = [
     path('delete_friend/<int:user_id>/', users_views.delete_friend, name='delete_friend'),
     path('profile/<str:username>/comments/', users_views.profile_page_comments, name='profile_comments'),
 
-    path('complaint/panel/users', complaint_views.complaint_user_panel_page, name='complaint_user_panel'),
-    path('complaint/panel/questions', complaint_views.complaint_question_panel_page, name='complaint_question_panel'),
-    path('complaint/panel/comments', complaint_views.complaint_comment_panel_page, name='complaint_comment_panel'),
+    path('complaint/panel/users/', complaint_views.complaint_user_panel_page, name='complains_panel_page_u'),
+    path('complaint/panel/questions/', complaint_views.complaint_question_panel_page, name='complains_panel_page_p'),
+    path('complaint/panel/comments/', complaint_views.complaint_comment_panel_page, name='complains_panel_page_c'),
     path('complaint/', complaint_views.complaint_page, name='complaint'),
     path('accept/', complaint_views.accept, name='accept_complaint'),
     path('decline/', complaint_views.decline, name='decline_complaint'),
@@ -106,11 +106,6 @@ urlpatterns = [
 
 
 
-    path(
-        'complaints/panel/',
-        complaints_views.complaint_question_panel_page,
-        name='complains_panel_page_c'
-    ),
 
 
     path(

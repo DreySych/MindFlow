@@ -22,79 +22,38 @@
                     <a href="{% url 'complains_panel_page_u' %}" class="admin-tab">Пользователи</a>
                 </div>
 
-                <div class="complaints-list">
-                    <div class="complaint-card">
-                        <div class="complaint-post">
-                            <div class="complaint-post-title">Какой язык программирования лучше всего учить в 2026 году?</div>
-                            <p class="complaint-post-text">
-                                Друзья, я серьёзно задумалась о смене профессии. Сейчас активно развиваются Python, Rust и Go...
-                            </p>
-                            <a href="#" class="complaint-detail-btn">Подробнее</a>
-                        </div>
-                        <div class="complaint-info">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Спам</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
+                {% for i in complaints %}
+                <div class="complaint-card">
+                    <div class="complaint-post">
+                        <div class="complaint-post-title">{{ i.question.title }}</div>
+                        <p class="complaint-post-text">
+                            {{ i.question.description }}
+                        </p>
+                        <a href="{% url 'question' i.question.id %}" class="complaint-detail-btn">Подробнее</a>
                     </div>
 
-                    <div class="complaint-card">
-                        <div class="complaint-post">
-                            <div class="complaint-post-title">Как настроить CI/CD для Django-проекта на GitHub Actions?</div>
-                            <p class="complaint-post-text">
-                                Поделитесь опытом настройки CI/CD пайплайна для Django проекта...
-                            </p>
-                            <a href="#" class="complaint-detail-btn">Подробнее</a>
+                    <div class="complaint-info">
+                        <div class="complaint-type">
+                            <span class="complaint-label">Причина жалобы:</span>
+                            <span class="complaint-value">{{ i.description }}</span>
                         </div>
-                        <div class="complaint-info">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Оскорбление</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="complaint-card">
-                        <div class="complaint-post">
-                            <div class="complaint-post-title">React или Vue — что выбрать новичку в 2026?</div>
-                            <p class="complaint-post-text">
-                                Не могу определиться между React и Vue. Слышал много разных мнений...
-                            </p>
-                            <a href="#" class="complaint-detail-btn">Подробнее</a>
-                        </div>
-                        <div class="complaint-info">
-                            <div class="complaint-type">
-                                <span class="complaint-label">Причина жалобы:</span>
-                                <span class="complaint-value">Нецензурная лексика</span>
-                            </div>
-                            <div class="complaint-verdict">
-                                <button class="verdict-btn approve" aria-label="Одобрить">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </button>
-                                <button class="verdict-btn reject" aria-label="Отклонить">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </button>
-                            </div>
+                        <div class="complaint-verdict">
+                            <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions"
+                               class="verdict-btn approve">
+                                <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                            </a>
+
+                            <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions"
+                               class="verdict-btn reject">
+                                <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                            </a>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                    <h3>Жалоб на посты пока нет</h3>
+                {% endfor %}
             </div>
         </main>
     </div>

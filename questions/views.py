@@ -14,9 +14,14 @@ from users.models import Subscription
 # Create your views here.
 
 def get_question_context(question_id):
-    question = get_object_or_404(Question, pk=question_id)
+    question = Question.objects.filter(pk=question_id).first()
+
+    if question is None:
+        return None
+
     comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
     question_images = list(question.images.split(",")) if question.images else []
+
     return {
         'question': question,
         'question_images': question_images,
@@ -30,7 +35,11 @@ def question_themes_page(request):
 
 def question_page(request, question_id, template_name='question.html'):
     context = get_question_context(question_id)
-    question = get_object_or_404(Question, pk=question_id)
+
+    if context is None:
+        return redirect('/')
+
+    question = context['question']
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
