@@ -174,7 +174,29 @@
                 });
             });
             </script>
+    <script>
+    const csrfToken = '{{ csrf_token }}';
+    </script>
 <script>
+function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
 const commentsSocket = new WebSocket(
     (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
     window.location.host +
@@ -192,26 +214,47 @@ commentsSocket.onmessage = function(event) {
                 <h3 class="comments-title">Комментарии</h3>
                 ${data.data.html}
             `;
+            document.querySelectorAll('.comment-input').forEach(function(textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        });
         }
     }
 };
+
+
 </script>
 <script>
-document.getElementById('commentForm').addEventListener('submit', function(event) {
+document.addEventListener('submit', function(event) {
+
+    const form = event.target;
+
+    if (form.id !== 'commentForm' &&
+        !form.classList.contains('answerForm')) {
+        return;
+    }
 
     event.preventDefault();
 
-    const form = this;
     const formData = new FormData(form);
 
-    fetch(window.location.href, {
+    const csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
+
+    fetch(form.action || window.location.href, {
         method: 'POST',
         body: formData,
         headers: {
-            'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': csrfToken
         }
-    }).then(function() {
-        form.reset();
+    }).then(function(response) {
+
+        if (response.ok) {
+            form.reset();
+        }
+
     });
 
 });
