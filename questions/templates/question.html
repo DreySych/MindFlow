@@ -70,7 +70,7 @@
                 </article>
 
                 <div class="comment-create-section">
-                    <form method="post" style="width: 100%;">
+                    <form method="post" style="width: 100%;" id="commentForm">
                         {% csrf_token %}
                         <div class="comment-input-wrapper">
                             <textarea class="comment-input" placeholder="Добавить комментарий..." rows="1" id="commentInput" name="text"></textarea>
@@ -84,7 +84,7 @@
 
 
                 </div>
-                <div class="comments-section">
+                <div class="comments-section" id="commentsSection">
                     <h3 class="comments-title">Комментарии ({{ comments.count }})</h3>
 
                     {% for comment in comments %}
@@ -174,5 +174,47 @@
                 });
             });
             </script>
+<script>
+const commentsSocket = new WebSocket(
+    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+    window.location.host +
+    '/ws/data/'
+);
+
+commentsSocket.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+
+    if (data.data && (data.data.event_type === 'new_comment' || data.data.event_type === 'new_answer')) {
+        const commentsSection = document.getElementById('commentsSection');
+
+        if (commentsSection) {
+            commentsSection.innerHTML = `
+                <h3 class="comments-title">Комментарии</h3>
+                ${data.data.html}
+            `;
+        }
+    }
+};
+</script>
+<script>
+document.getElementById('commentForm').addEventListener('submit', function(event) {
+
+    event.preventDefault();
+
+    const form = this;
+    const formData = new FormData(form);
+
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    }).then(function() {
+        form.reset();
+    });
+
+});
+</script>
 </body>
 </html>

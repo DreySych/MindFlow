@@ -5,11 +5,11 @@
   <div class="complain-modal">
     <div id="complainQuestionForm">
       <div class="complain-header">
-        <span class="complain-title">Пожаловаться на вопрос</span>
+        <span class="complain-title">Пожаловаться на пост</span>
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Введите причину жалобы:</p>
-        <textarea class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+        <textarea class="complain-textarea" placeholder="Опишите её здесь"required></textarea>
       </div>
       <div class="complain-footer">
         <button type="button" class="complain-cancel-btn" onclick="closeComplainQuestionOverlay()">Отмена</button>
@@ -45,6 +45,13 @@ window.closeComplainQuestionOverlay = function() {
 };
 
 window.submitComplainQuestion = function() {
+    const textarea = document.querySelector('#complainQuestionOverlay textarea');
+
+    if (!textarea.value.trim()) {
+        textarea.style.border = '1px solid red';
+        return;
+    }
+
     document.getElementById('complainQuestionForm').style.display = 'none';
     document.getElementById('complainQuestionThanks').style.display = 'block';
 };

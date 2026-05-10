@@ -5,7 +5,7 @@
   <div class="complain-modal">
     <div id="complainQuestionForm">
       <div class="complain-header">
-        <span class="complain-title">Пожаловаться на вопрос</span>
+        <span class="complain-title">Пожаловаться на пост</span>
       </div>
 
       <div class="complain-body">
@@ -47,7 +47,14 @@
   };
 
   window.submitComplainQuestion = function() {
+    const textarea = document.querySelector('#complainQuestionOverlay textarea');
+
+    if (!textarea.value.trim()) {
+        textarea.style.border = '1px solid red';
+        return;
+    }
+
     document.getElementById('complainQuestionForm').style.display = 'none';
     document.getElementById('complainQuestionThanks').style.display = 'block';
-  };
+};
 </script>

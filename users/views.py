@@ -120,7 +120,8 @@ def profile_page_general(request, username):
             'posts_context': posts_context,
             'is_owner': is_owner,
             'is_friend': is_friend(user, target_user),
-            'comment_form': CommentForm()
+            'comment_form': CommentForm(),
+            'subscriptions': Subscription.objects.filter(user1=request.user),
         }
         return render(request, 'profile_general.html', context)
 
@@ -165,6 +166,7 @@ def profile_page_settings(request):
     context = {
         'form': form,
         'user': user,
+        'subscriptions': Subscription.objects.filter(user1=request.user),
     }
 
     return render(request, 'profile_settings.html', context)
@@ -179,7 +181,14 @@ def profile_page_comments(request, username):
             'user': target_user,
             'comments': comments,
             'posts': posts,
+            'subscriptions': Subscription.objects.filter(user1=request.user),
         }
+        context['is_owner'] = request.user == target_user
+
+        context['is_friend'] = Subscription.objects.filter(
+            user1=request.user,
+            user2=target_user
+        ).exists()
         return render(request, 'profile_comments.html', context=context)
 
     else:
@@ -220,6 +229,7 @@ def profile_page_liked(request, username):
             'questions_likes': question_likes,
             'comments_likes': comments_likes,
             'answers_likes': answers_likes,
+            'subscriptions': Subscription.objects.filter(user1=request.user),
         }
 
         return render(request, 'profile_liked.html', context=context)

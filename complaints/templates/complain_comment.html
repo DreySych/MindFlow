@@ -9,7 +9,7 @@
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Введите причину жалобы:</p>
-        <textarea class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+        <textarea class="complain-textarea" placeholder="Опишите её здесь"required></textarea>
       </div>
       <div class="complain-footer">
         <button type="button" class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
@@ -44,6 +44,13 @@ window.closeComplainCommentOverlay = function() {
 };
 
 window.submitComplainComment = function() {
+    const textarea = document.querySelector('#complainCommentOverlay textarea');
+
+    if (!textarea.value.trim()) {
+        textarea.style.border = '1px solid red';
+        return;
+    }
+
     document.getElementById('complainCommentForm').style.display = 'none';
     document.getElementById('complainCommentThanks').style.display = 'block';
 };

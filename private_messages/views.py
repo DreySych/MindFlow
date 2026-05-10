@@ -3,7 +3,7 @@ from django.db.models import Q
 
 from users.models import User
 from .models import Message
-
+from django.http import JsonResponse
 
 def chat_page(request, user_id):
     if not request.user.is_authenticated:
@@ -37,4 +37,28 @@ def chat_page(request, user_id):
     return render(request, 'PM.html', {
         'other_user': other_user,
         'messages': messages
+    })
+def chat_messages(request, user_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'ok': False})
+
+    other_user = get_object_or_404(User, id=user_id)
+
+    messages = Message.objects.filter(
+        Q(sender=request.user, receiver=other_user) |
+        Q(sender=other_user, receiver=request.user)
+    ).order_by('created_at')
+
+    data = []
+
+    for message in messages:
+        data.append({
+            'text': message.text,
+            'sender_id': message.sender.id,
+            'time': message.created_at.strftime('%H:%M'),
+        })
+
+    return JsonResponse({
+        'ok': True,
+        'messages': data
     })

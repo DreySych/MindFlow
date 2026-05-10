@@ -5,7 +5,7 @@
     <div class="chat-modal-header">
       <div class="chat-user-info">
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="chat-modal-avatar">
-        <span class="chat-modal-username">{{ other_user.username }}</span>
+        <span class="chat-modal-username" id="chatUserName">Выберите чат</span>
       </div>
       <button class="chat-modal-close" onclick="closeChatOverlay()">
         <img src="{% static 'images/close_cross.png' %}" alt="Закрыть">
@@ -13,27 +13,7 @@
     </div>
 
     <div class="chat-modal-messages">
-        {% for message in messages %}
-
-            {% if message.sender.id == request.user.id %}
-                <div class="chat-message chat-message-my">
-            {% else %}
-                <div class="chat-message chat-message-other">
-            {% endif %}
-
-                    <div class="chat-message-bubble">
-                        <p>{{ message.text }}</p>
-
-                        <span class="chat-message-time">
-                            {{ message.created_at|date:"H:i" }}
-                        </span>
-                    </div>
-
-                </div>
-
-        {% empty %}
-            <p class="chat-empty-text">Сообщений пока нет</p>
-        {% endfor %}
+        <p class="chat-empty-text">Выберите друга, чтобы открыть чат</p>
     </div>
 
     <div class="chat-modal-input-area">
@@ -56,53 +36,131 @@
     </div>
 
 <script>
-    const userId = "{{ other_user.id|default:'' }}";
-    const currentUserId = "{{ request.user.id }}";
+let chatSocket = null;
+let selectedUserId = null;
+const currentUserId = "{{ request.user.id }}";
 
-    if (userId !== "") {
-        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+function openChatOverlay(userId, username) {
+    selectedUserId = userId;
+    localStorage.setItem('chatOpen', 'true');
+    localStorage.setItem('chatUserId', userId);
+    localStorage.setItem('chatUsername', username);
+    document.getElementById('chatOverlay').classList.add('active');
+    document.getElementById('chatUserName').textContent = username;
+    document.body.style.overflow = '';
 
-        const chatSocket = new WebSocket(
-            protocol + window.location.host + "/ws/chat/" + userId + "/"
-        );
+    loadChatMessages(userId);
+    connectChatSocket(userId);
+}
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
+function closeChatOverlay() {
+    document.getElementById('chatOverlay').classList.remove('active');
+    localStorage.removeItem('chatOpen');
+    localStorage.removeItem('chatUserId');
+    localStorage.removeItem('chatUsername');
+    if (chatSocket) {
+        chatSocket.close();
+        chatSocket = null;
+    }
+}
+
+function loadChatMessages(userId) {
+    fetch('/messages/' + userId + '/messages/')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
             const messagesContainer = document.querySelector('.chat-modal-messages');
+            messagesContainer.innerHTML = '';
 
-            let messageClass = 'chat-message-other';
-
-            if (data.sender_id == currentUserId) {
-                messageClass = 'chat-message-my';
-            }
-
-            const messageHtml = `
-                <div class="chat-message ${messageClass}">
-                    <div class="chat-message-bubble">
-                        <p>${data.message}</p>
-                        <span class="chat-message-time">${data.time}</span>
-                    </div>
-                </div>
-            `;
-
-            messagesContainer.innerHTML += messageHtml;
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        };
-
-        document.querySelector('#chat-message-submit').onclick = function() {
-            const input = document.querySelector('#chat-message-input');
-            const message = input.value;
-
-            if (message.trim() === '') {
+            if (!data.ok || data.messages.length === 0) {
+                messagesContainer.innerHTML = '<p class="chat-empty-text">Сообщений пока нет</p>';
                 return;
             }
 
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
+            data.messages.forEach(function(message) {
+                addMessageToChat(message.text, message.sender_id, message.time);
+            });
 
-            input.value = '';
-        };
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+}
+
+function connectChatSocket(userId) {
+    if (chatSocket) {
+        chatSocket.close();
     }
+
+    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+
+    chatSocket = new WebSocket(
+        protocol + window.location.host + "/ws/chat/" + userId + "/"
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        addMessageToChat(data.message, data.sender_id, data.time);
+    };
+}
+
+function addMessageToChat(text, senderId, time) {
+    const messagesContainer = document.querySelector('.chat-modal-messages');
+
+    if (messagesContainer.querySelector('.chat-empty-text')) {
+        messagesContainer.innerHTML = '';
+    }
+
+    let messageClass = 'chat-message-other';
+
+    if (senderId == currentUserId) {
+        messageClass = 'chat-message-my';
+    }
+
+    const messageHtml = `
+        <div class="chat-message ${messageClass}">
+            <div class="chat-message-bubble">
+                <p>${text}</p>
+                <span class="chat-message-time">${time}</span>
+            </div>
+        </div>
+    `;
+
+    messagesContainer.innerHTML += messageHtml;
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+document.getElementById('chat-message-submit').onclick = function() {
+    const input = document.getElementById('chat-message-input');
+    const message = input.value;
+
+    if (!chatSocket || message.trim() === '') {
+        return;
+    }
+
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }));
+
+    input.value = '';
+};
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+
+    const chatId = params.get('open_chat');
+    const chatUsername = params.get('chat_username');
+
+    if (chatId) {
+        openChatOverlay(chatId, chatUsername);
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('chatOpen') === 'true') {
+        const userId = localStorage.getItem('chatUserId');
+        const username = localStorage.getItem('chatUsername');
+
+        if (userId && username) {
+            openChatOverlay(userId, username);
+        }
+    }
+});
 </script>
-</div>

@@ -49,8 +49,8 @@
 
     <div class="profile-dropdown">
       <button class="icon-button profile-trigger" onclick="toggleProfileOverlay()">
-        {% if request.user.image %}
-            <img src="{{ user.image.url }}" alt="Аватар" class="header-avatar">
+        {% if request.user.image and request.user.image.name %}
+            <img src="{{ request.user.image.url }}" alt="Аватар" class="header-avatar">
         {% else %}
             <img src="{% static 'images/default.png' %}" alt="Аватар" class="header-avatar">
         {% endif %}

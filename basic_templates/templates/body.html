@@ -7,18 +7,27 @@
     <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input" id="friendSearchInput">
   </div>
 
-  {% for subscription in subscriptions %}
+  <div class="friends-list">
+    {% for subscription in subscriptions %}
       <div class="friend-item">
-          <img src="{% static 'images/default.png' %}" alt="">
-          <span>{{ subscription.user2.username }}</span>
-
-          <a href="{% url 'chat_page' subscription.user2.id %}">
-              <img src="{% static 'images/chat.png' %}" alt="Чат">
-          </a>
+        {% if subscription.user2.image %}
+          <img src="{{ subscription.user2.image.url }}" alt="" class="friend-avatar">
+        {% else %}
+          <img src="{% static 'images/default.png' %}" alt="" class="friend-avatar">
+        {% endif %}
+        <a href="{% url 'profile_general' username=subscription.user2.username %}" class="friend-button">
+          <span class="friend-nick">{{ subscription.user2.username }}</span>
+        </a>
+        <button type="button"
+                class="chat-button"
+                onclick="openChatOverlay({{ subscription.user2.id }}, '{{ subscription.user2.username }}')">
+            <img src="{% static 'images/chat.png' %}" alt="Чат" class="chat-icon">
+        </button>
       </div>
-  {% empty %}
-      <p>Друзей пока нет</p>
-  {% endfor %}
+    {% empty %}
+      <p style="padding: 12px; color: #888; font-family: 'Mallanna', sans-serif;">Друзей пока нет</p>
+    {% endfor %}
+  </div>
 
   <div class="sidebar-divider"></div>
 </div>
@@ -27,22 +36,3 @@
 
 <script src="{% static 'js/sidebar_search.js' %}"></script>
 
-<script>
-  function openChatOverlay() {
-    document.getElementById('chatOverlay').classList.add('active');
-    document.body.style.overflow = '';
-    localStorage.setItem('chatOpen', 'true');
-  }
-
-  function closeChatOverlay() {
-    document.getElementById('chatOverlay').classList.remove('active');
-    document.body.style.overflow = '';
-    localStorage.removeItem('chatOpen');
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.getItem('chatOpen') === 'true') {
-      document.getElementById('chatOverlay').classList.add('active');
-    }
-  });
-</script>

@@ -67,7 +67,8 @@ def index_page(request):
         "link1": "account/login/",
         "page1": 'Логин',
         "link2": "account/signup/",
-        "page2": 'Регистрация'
+        "page2": 'Регистрация',
+        'subscriptions': Subscription.objects.filter(user1=request.user),
     }
     if request.user.is_authenticated:
         context['link1'] = "account/logout/"

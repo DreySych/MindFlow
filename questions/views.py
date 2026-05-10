@@ -10,7 +10,7 @@ from questions.models import *
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
-
+from users.models import Subscription
 # Create your views here.
 
 def get_question_context(question_id):
@@ -50,6 +50,9 @@ def question_page(request, question_id, template_name='question.html'):
                     text=f'{request.user.username} оставил комментарий к вашему посту',
                     link=f'/question/{question.id}/'
                 )
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': True})
+
         return redirect('question', question_id=question_id)
     else:
         form = CommentForm()
@@ -68,6 +71,7 @@ def question_page(request, question_id, template_name='question.html'):
             "message": context_for_update
         }
     )
+    context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     return render(request, template_name=template_name, context=context)
 
 
@@ -124,7 +128,7 @@ def question_make_page(request):
             return redirect('/')
     else:
         return redirect('/account/login')
-
+    context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     return render(request, template_name='make_edit_question.html', context=context)
 
 def question_edit_page(request):
@@ -172,11 +176,13 @@ def question_edit_page(request):
         'question': question,
         'is_edit': True,
     }
-
+    context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     return render(request, 'make_edit_question.html', context)
 
 
 def themes_page(request):
+
+
     return render(request, template_name="themes.html")
 
 def make_comment_page(request, question_id):

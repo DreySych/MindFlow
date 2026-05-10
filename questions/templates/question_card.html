@@ -69,10 +69,11 @@
                     <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                 </a>
             {% else %}
-                <a href="/complaint/?question_id={{ question.id }}"
-                   type="button" class="action-btn report gradient-border" onclick="openComplainQuestionOverlay()">
+                <button type="button"
+                    class="action-btn report gradient-border"
+                    onclick="openComplainQuestionOverlay()">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                </a>
+                </button>
             {% endif %}
 
         </div>

@@ -1,18 +1,5 @@
 {% for comment in comments %}
-    <div class="comment">
-        <p><strong>{{ comment.author.username }}</strong> ({{ comment.creation_date|date:"d.m.Y H:i" }})</p>
-        <p>{{ comment.text|linebreaks }}</p>
-        <p>Рейтинг: {{ comment.rating }}</p>
-        <a href="/complaint/?comment_id={{ comment.id }}">Пожаловаться</a>
-        <a href="answer/make/{{ comment.id }}">Ответить</a>
-
-        {% for answer in comment.answer_set.all %}
-            <div class="answer" style="margin-left: 20px;">
-                <p><strong>{{ answer.author.username }}</strong> ({{ answer.creation_date|date:"d.m.Y H:i" }})</p>
-                <p>{{ answer.answer|linebreaks }}</p>
-                <p>Рейтинг: {{ answer.rating }}</p>
-            </div>
-        {% endfor %}
-    </div>
-    <hr>
+    {% include 'comment_item.html' with comment=comment %}
+{% empty %}
+    <p>Комментариев пока нет</p>
 {% endfor %}

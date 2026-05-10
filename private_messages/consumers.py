@@ -5,7 +5,7 @@ from channels.db import database_sync_to_async
 
 from users.models import User
 from .models import Message
-
+from notifications.models import Notification
 
 class PersonalMessageConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -61,8 +61,16 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
     def save_message(self, text):
         receiver = User.objects.get(id=self.other_user_id)
 
-        return Message.objects.create(
+        message = Message.objects.create(
             sender=self.user,
             receiver=receiver,
             text=text
         )
+
+        Notification.objects.create(
+            user=receiver,
+            text=f'{self.user.username} написал вам сообщение',
+            link=f'/profile/{self.user.username}/?open_chat={self.user.id}&chat_username={self.user.username}'
+        )
+
+        return message
