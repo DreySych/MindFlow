@@ -18,7 +18,12 @@
     <main>
         <div class="feed">
             <article class="post-detail-card" style="max-width: 800px; margin: 0 auto;">
-                <h1 style="font-size: 32px; margin-bottom: 30px; color: #333; font-family: 'Mallanna', sans-serif;">Создать пост</h1>
+                <h1 style="font-size: 32px; margin-bottom: 30px; color: #333; font-family: 'Mallanna', sans-serif;">{% if is_edit %}
+                                    Редактировать пост
+                                {% else %}
+                                    Создать пост
+                                {% endif %}
+                </h1>
 
                 <form id="createPostForm" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -34,6 +39,7 @@
                             name="title"
                             maxlength="200"
                             required
+                            value="{{ form.title.value|default:'' }}"
                             style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
                         >
                     </div>
@@ -63,11 +69,16 @@
                             name="description" 
                             maxlength="5000"
                             style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; resize: vertical; min-height: 120px;"
-                        ></textarea>
+                        >{{ form.description.value|default:'' }}</textarea>
                     </div>
 
                     <div style="display: flex; justify-content: flex-end;">
-                        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Опубликовать</button>
+                        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">{% if is_edit %}
+                                                            Сохранить
+                                                        {% else %}
+                                                            Опубликовать
+                                                        {% endif %}
+                        </button>
                     </div>
                 </form>
             </article>

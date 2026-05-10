@@ -40,7 +40,11 @@
 
     <div class="profile-dropdown">
       <button class="icon-button profile-trigger" onclick="toggleProfileOverlay()">
-        <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false" alt="Профиль" class="icon-profile">
+        {% if question.author.image %}
+            <img src="{{ question.author.image.url }}" alt="Аватар" class="user-avatar">
+        {% else %}
+            <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar">
+        {% endif %}
       </button>
 
       <div class="profile-overlay" id="profileOverlay">

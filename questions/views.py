@@ -9,7 +9,7 @@ from questions.forms import *
 from questions.models import *
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -122,35 +122,52 @@ def question_make_page(request):
     return render(request, template_name='make_edit_question.html', context=context)
 
 def question_edit_page(request):
-    context = {}
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            form = QuestionForm(request.POST)
-            if form.is_valid():
-                title = form.cleaned_data['title']
-                description = form.cleaned_data['description']
-                images = request.FILES.getlist('images')
+    if not request.user.is_authenticated:
+        return redirect('/account/login')
+
+    question_id = request.GET.get('id')
+    question = get_object_or_404(Question, id=question_id)
+
+    if question.author != request.user:
+        return redirect('/')
+
+    if request.method == "POST":
+        form = QuestionForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            question.title = form.cleaned_data['title']
+            question.description = form.cleaned_data['description']
+
+            images = request.FILES.getlist('images')
+
+            if images:
                 image_paths = []
+
                 for image in images:
                     ext = image.name.split('.')[-1]
                     filename = f"question_images/{uuid.uuid4()}.{ext}"
                     path = default_storage.save(filename, ContentFile(image.read()))
                     image_paths.append(path)
-                images_str = ','.join(image_paths)
 
-                question = Question.objects.filter(id=request.GET.get('id'))[0]
-                question.title = title
-                question.description = description
-                question.images = images_str
-                question.save()
-        else:
-            form = QuestionForm()
+                question.images = ','.join(image_paths)
 
-        context['form'] = form
+            question.save()
+
+            return redirect('question', question_id=question.id)
+
     else:
-        return redirect('/account/login')
+        form = QuestionForm(initial={
+            'title': question.title,
+            'description': question.description,
+        })
 
-    return render(request, template_name='make_edit_question.html', context=context)
+    context = {
+        'form': form,
+        'question': question,
+        'is_edit': True,
+    }
+
+    return render(request, 'make_edit_question.html', context)
 
 
 def themes_page(request):
@@ -184,6 +201,8 @@ def make_comment_page(request, question_id):
 
 def like_comment(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     comment_id = request.GET.get('id')
@@ -208,11 +227,16 @@ def like_comment(request):
     like_obj.save()
     comment.save()
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True, 'rating': comment.rating})
+
     return redirect(request.GET.get('to', '/'))
 
 
 def dislike_comment(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     comment_id = request.GET.get('id')
@@ -231,11 +255,14 @@ def dislike_comment(request):
         like_obj.rating = -1
         comment.rating -= 1
     elif like_obj.rating == 1:
-        like_obj.rating = 0
-        comment.rating -= 1
+        like_obj.rating = -1
+        comment.rating -= 2
 
     like_obj.save()
     comment.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True, 'rating': comment.rating})
 
     return redirect(request.GET.get('to', '/'))
 
@@ -263,6 +290,8 @@ def make_answer_page(request, comment_id):
 
 def like_answer(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     answer_id = request.GET.get('id')
@@ -287,11 +316,16 @@ def like_answer(request):
     like_obj.save()
     answer.save()
 
-    return redirect('/question/' + str(answer.comment.question.id) + '/')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True, 'rating': answer.rating})
+
+    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
 
 
 def dislike_answer(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     answer_id = request.GET.get('id')
@@ -316,4 +350,7 @@ def dislike_answer(request):
     like_obj.save()
     answer.save()
 
-    return redirect('/question/' + str(answer.comment.question.id) + '/')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True, 'rating': answer.rating})
+
+    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))

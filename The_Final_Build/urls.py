@@ -56,7 +56,7 @@ urlpatterns = [
     path('answer/dislike/', question_views.dislike_answer, name='dislike_answer'),
     path('comment/like/', question_views.like_comment, name='like_comment'),
     path('comment/dislike/', question_views.dislike_comment, name='dislike_comment'),
-
+    path('messages/', include('private_messages.urls')),
 
     path('profile/', users_views.my_profile_redirect, name='profile_posts'),
 

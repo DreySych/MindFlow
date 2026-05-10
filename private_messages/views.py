@@ -11,12 +11,30 @@ def chat_page(request, user_id):
 
     other_user = get_object_or_404(User, id=user_id)
 
+    if request.method == 'POST':
+        text = request.POST.get('text')
+
+        if text:
+            Message.objects.create(
+                sender=request.user,
+                receiver=other_user,
+                text=text
+            )
+
+        return redirect('chat_page', user_id=other_user.id)
+
     messages = Message.objects.filter(
         Q(sender=request.user, receiver=other_user) |
         Q(sender=other_user, receiver=request.user)
     ).order_by('created_at')
 
-    return render(request, 'chat.html', {
+    Message.objects.filter(
+        sender=other_user,
+        receiver=request.user,
+        is_read=False
+    ).update(is_read=True)
+
+    return render(request, 'PM.html', {
         'other_user': other_user,
         'messages': messages
     })

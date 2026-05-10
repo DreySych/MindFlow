@@ -5,7 +5,7 @@
     <div class="chat-modal-header">
       <div class="chat-user-info">
         <img src="{% static 'images/default.png' %}" alt="Аватар" class="chat-modal-avatar">
-        <span class="chat-modal-username">Александр</span>
+        <span class="chat-modal-username">{{ other_user.username }}</span>
       </div>
       <button class="chat-modal-close" onclick="closeChatOverlay()">
         <img src="{% static 'images/close_cross.png' %}" alt="Закрыть">
@@ -13,47 +13,96 @@
     </div>
 
     <div class="chat-modal-messages">
-      <div class="chat-message chat-message-other">
-        <div class="chat-message-bubble">
-          <p>Привет! Как дела?</p>
-          <span class="chat-message-time">12:34</span>
-        </div>
-      </div>
+        {% for message in messages %}
 
-      <div class="chat-message chat-message-my">
-        <div class="chat-message-bubble">
-          <p>Привет! Всё отлично, спасибо!</p>
-          <span class="chat-message-time">12:35</span>
-        </div>
-      </div>
+            {% if message.sender.id == request.user.id %}
+                <div class="chat-message chat-message-my">
+            {% else %}
+                <div class="chat-message chat-message-other">
+            {% endif %}
 
-      <div class="chat-message chat-message-other">
-        <div class="chat-message-bubble">
-          <p>Чем занимаешься?</p>
-          <span class="chat-message-time">12:36</span>
-        </div>
-      </div>
+                    <div class="chat-message-bubble">
+                        <p>{{ message.text }}</p>
 
-      <div class="chat-message chat-message-my">
-        <div class="chat-message-bubble">
-          <p>Изучаю Django, очень интересно!</p>
-          <span class="chat-message-time">12:38</span>
-        </div>
-      </div>
+                        <span class="chat-message-time">
+                            {{ message.created_at|date:"H:i" }}
+                        </span>
+                    </div>
 
-      <div class="chat-message chat-message-other">
-        <div class="chat-message-bubble">
-          <p>Это круто! Можешь помочь с одним вопросом?</p>
-          <span class="chat-message-time">12:40</span>
-        </div>
-      </div>
+                </div>
+
+        {% empty %}
+            <p class="chat-empty-text">Сообщений пока нет</p>
+        {% endfor %}
     </div>
 
     <div class="chat-modal-input-area">
-      <input type="text" placeholder="Напишите сообщение...">
-      <button type="button" class="chat-modal-send-btn">
-        <img src="{% static 'images/send.png' %}" alt="Отправить">
+
+      <input type="text"
+             id="chat-message-input"
+             placeholder="Напишите сообщение..."
+             autocomplete="off">
+
+      <button type="button"
+              id="chat-message-submit"
+              class="chat-modal-send-btn">
+
+          <img src="{% static 'images/send.png' %}" alt="Отправить">
+
       </button>
-    </div>
+
   </div>
+  </div>
+    </div>
+
+<script>
+    const userId = "{{ other_user.id|default:'' }}";
+    const currentUserId = "{{ request.user.id }}";
+
+    if (userId !== "") {
+        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+
+        const chatSocket = new WebSocket(
+            protocol + window.location.host + "/ws/chat/" + userId + "/"
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const messagesContainer = document.querySelector('.chat-modal-messages');
+
+            let messageClass = 'chat-message-other';
+
+            if (data.sender_id == currentUserId) {
+                messageClass = 'chat-message-my';
+            }
+
+            const messageHtml = `
+                <div class="chat-message ${messageClass}">
+                    <div class="chat-message-bubble">
+                        <p>${data.message}</p>
+                        <span class="chat-message-time">${data.time}</span>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.innerHTML += messageHtml;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function() {
+            const input = document.querySelector('#chat-message-input');
+            const message = input.value;
+
+            if (message.trim() === '') {
+                return;
+            }
+
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+
+            input.value = '';
+        };
+    }
+</script>
 </div>

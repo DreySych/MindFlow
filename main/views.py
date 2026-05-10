@@ -11,7 +11,7 @@ from questions.models import Question, Like, Comment
 from questions.views import get_question_context
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
-
+from django.http import JsonResponse
 
 # Create your views here.
 def index_page(request):
@@ -91,26 +91,50 @@ def get_subscribed_authors(user):
     return Subscription.objects.filter(user1=user).values_list('user2', flat=True)
 
 def get_default_questions(request):
-    questions = []
+    if not request.user.is_authenticated:
+        return Question.objects.all().order_by('-rating', '-creation_date')
 
-    if request.user.is_authenticated:
-        subscriptions = get_subscribed_authors(request.user)
-        authors = []
-        for i in subscriptions:
-            authors.append(i.user2)
-        question = Question.objects.filter(author__in=authors).order_by('-creation_date')
-        for j in question:
-            questions.append(j)
-        question = Question.objects.exclude(author__in=authors).order_by('-creation_date')
-        for j in question:
-            questions.append(j)
+    friends_ids = Subscription.objects.filter(
+        user1=request.user
+    ).values_list('user2_id', flat=True)
 
-    else:
-        question = Question.objects.all().order_by('-creation_date')
-        for i in question:
-            questions.append(i)
+    fresh_friends_posts = Question.objects.filter(
+        author_id__in=friends_ids
+    ).order_by('-creation_date')[:5]
 
-    return questions
+    popular_all_posts = Question.objects.exclude(
+        id__in=[post.id for post in fresh_friends_posts]
+    ).order_by('-rating', '-creation_date')
+
+    popular_friends_posts = Question.objects.filter(
+        author_id__in=friends_ids
+    ).exclude(
+        id__in=[post.id for post in fresh_friends_posts]
+    ).order_by('-rating', '-creation_date')
+
+    result = list(fresh_friends_posts)
+
+    all_posts = list(popular_all_posts)
+    friends_posts = list(popular_friends_posts)
+
+    max_len = max(len(all_posts), len(friends_posts))
+
+    for i in range(max_len):
+        if i < len(friends_posts):
+            result.append(friends_posts[i])
+
+        if i < len(all_posts):
+            result.append(all_posts[i])
+
+    final_result = []
+    used_ids = []
+
+    for post in result:
+        if post.id not in used_ids:
+            final_result.append(post)
+            used_ids.append(post.id)
+
+    return final_result
 
 def delete_post(request):
     if request.user.is_authenticated:
@@ -178,6 +202,8 @@ def _vote(request, delta):
 
 def like(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     question_id = request.GET.get('id')
@@ -197,16 +223,24 @@ def like(request):
         question.rating += 1
     elif like_obj.rating == -1:
         like_obj.rating = 1
-        question.rating += 1
+        question.rating += 2
 
     like_obj.save()
     question.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'ok': True,
+            'rating': question.rating
+        })
 
     return redirect(request.GET.get('to', '/'))
 
 
 def dislike(request):
     if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
     question_id = request.GET.get('id')
@@ -225,11 +259,17 @@ def dislike(request):
         like_obj.rating = -1
         question.rating -= 1
     elif like_obj.rating == 1:
-        like_obj.rating = 0
-        question.rating -= 1
+        like_obj.rating = -1
+        question.rating -= 2
 
     like_obj.save()
     question.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'ok': True,
+            'rating': question.rating
+        })
 
     return redirect(request.GET.get('to', '/'))
 

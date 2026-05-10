@@ -43,12 +43,18 @@ class Comment(models.Model):
     creation_date = models.DateTimeField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['-rating', '-creation_date']
+
 class Answer(models.Model):
     answer = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
     creation_date = models.DateTimeField()
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['-rating', 'creation_date']
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -45,6 +45,7 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
                 "message": message.text,
                 "sender": self.user.username,
                 "sender_id": self.user.id,
+                "time": message.created_at.strftime("%H:%M"),
             }
         )
 
@@ -53,6 +54,7 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "sender": event["sender"],
             "sender_id": event["sender_id"],
+            "time": event["time"],
         }))
 
     @database_sync_to_async

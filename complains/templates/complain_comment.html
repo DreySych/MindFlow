@@ -1,8 +1,9 @@
+<!-- complain_comment.html -->
 {% load static %}
 <div class="complain-overlay" id="complainCommentOverlay">
   <div class="complain-backdrop" onclick="closeComplainCommentOverlay()"></div>
   <div class="complain-modal">
-    <!-- Форма жалобы -->
+
     <div id="complainCommentForm">
       <div class="complain-header">
         <span class="complain-title">Пожаловаться на комментарий</span>
@@ -14,8 +15,8 @@
       </div>
 
       <div class="complain-footer">
-        <button class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
-        <button class="complain-submit-btn" onclick="submitComplainComment()">Отправить жалобу</button>
+        <button type="button" class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
+        <button type="button" class="complain-submit-btn" onclick="submitComplainComment()">Отправить жалобу</button>
       </div>
     </div>
 
@@ -27,27 +28,27 @@
         <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
       </div>
       <div class="complain-footer">
-        <button class="complain-submit-btn" onclick="closeComplainCommentOverlay()">Закрыть</button>
+        <button type="button" class="complain-submit-btn" onclick="closeComplainCommentOverlay()">Закрыть</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  function openComplainCommentOverlay() {
+  window.openComplainCommentOverlay = function() {
     document.getElementById('complainCommentOverlay').classList.add('active');
     document.getElementById('complainCommentForm').style.display = 'block';
     document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-  }
+  };
 
-  function closeComplainCommentOverlay() {
+  window.closeComplainCommentOverlay = function() {
     document.getElementById('complainCommentOverlay').classList.remove('active');
     document.body.style.overflow = '';
-  }
+  };
 
-  function submitComplainComment() {
+  window.submitComplainComment = function() {
     document.getElementById('complainCommentForm').style.display = 'none';
     document.getElementById('complainCommentThanks').style.display = 'block';
-  }
+  };
 </script>
