@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-
+from django.utils.timesince import timesince
 from .models import Notification
 
 
@@ -17,6 +17,7 @@ def notifications_list(request):
             'text': notification.text,
             'link': notification.link,
             'is_read': notification.is_read,
+            'created_at': timesince(notification.created_at) + ' назад',
         })
 
     return JsonResponse({

@@ -124,7 +124,7 @@ function loadNotifications() {
 
             data.notifications.forEach(function(notification) {
                 list.innerHTML += `
-                    <a href="/notifications/read/${notification.id}/" class="notification-item">
+                    <a href="${notification.link}" class="notification-item">
                         <img src="/static/images/default.png" alt="Аватар" class="notification-avatar">
 
                         <div class="notification-content">
