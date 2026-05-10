@@ -236,6 +236,7 @@ def profile_page_liked(request, username):
 
     return redirect('/account/login')
 
+
 def add_friend(request, user_id):
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
@@ -248,7 +249,9 @@ def add_friend(request, user_id):
             link=f'/profile/{current_user.username}/'
         )
 
-    return redirect(f'/profile/{friend.username}', user_id=friend.id)
+    next_url = request.POST.get('next', request.GET.get('next', f'/profile/{friend.username}'))
+    return redirect(next_url)
+
 
 def delete_friend(request, user_id):
     friend = get_object_or_404(User, id=user_id)
@@ -256,7 +259,9 @@ def delete_friend(request, user_id):
     subscription = Subscription.objects.filter(user1=current_user, user2=friend).first()
     if subscription:
         subscription.delete()
-    return redirect(f'/profile/{friend.username}')
+
+    next_url = request.POST.get('next', request.GET.get('next', f'/profile/{friend.username}'))
+    return redirect(next_url)
 
 def is_friend(current_user, other_user):
     if not current_user.is_authenticated or current_user == other_user:

@@ -60,6 +60,74 @@
     white-space: nowrap;
 }
 .profile-action-btn:hover { background: #e3f2fd; border-color: #1671FE; }
+
+.friend-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.friend-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: fill;
+}
+
+/* Кнопка "Добавить в друзья" */
+.add-friend-btn {
+    background: #1671FE;
+    color: #fff;
+    border: none;
+}
+
+.add-friend-btn:hover {
+    background: #1258cc;
+    border-color: transparent;
+}
+
+.add-friend-btn img {
+    filter: brightness(0) invert(1);
+}
+
+/* Кнопка "Начать чат" */
+.pm-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pm-btn img {
+    width: 18px;
+    height: 18px;
+    object-fit: fill;
+}
+
+/* Кнопка жалобы (только иконка) */
+.report-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.report-btn:hover {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+.report-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+}
+
 .content-wrapper {
     margin-left: 10vw;
     padding-top: 130px;
@@ -336,6 +404,7 @@
 
 .vote-btn.upvote.active { background: rgba(76, 175, 80, 0.15); }
 .vote-btn.downvote.active { background: rgba(244, 67, 54, 0.15); }
+
 @media (max-width: 768px) {
     .profile-header-wrapper {
         padding: 16px 20px 8px 20px;
@@ -374,4 +443,25 @@
     .action-btn.edit { height: 40px; padding: 0 12px; font-size: 14px; }
     .action-btn.edit img { width: 16px; height: 16px; }
     .action-btn.edit span { font-size: 14px; }
+
+    /* Адаптив для кнопок в header */
+    .profile-action-btn {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .profile-action-btn img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .report-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .report-btn img {
+        width: 18px;
+        height: 18px;
+    }
 }

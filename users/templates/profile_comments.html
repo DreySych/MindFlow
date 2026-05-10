@@ -6,6 +6,9 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_user.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_comment.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -25,26 +28,36 @@
                 <h1 class="profile-nick">{{ user.username }}</h1>
                 <div class="profile-id">ID: {{ user.id }}</div>
             </div>
-                {% if not is_owner %}
-                    <div class="profile-actions-header">
-                        {% if is_friend %}
-                            <form action="{% url 'delete_friend' user.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="profile-action-btn">Удалить из друзей</button>
-                            </form>
-                        {% else %}
-                            <form action="{% url 'add_friend' user.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="profile-action-btn">Добавить в друзья</button>
-                            </form>
-                        {% endif %}
-
-                        <a href="/complaint/?user_id={{ user.id }}" class="profile-action-btn">
-                            Пожаловаться
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
+            {% if not is_owner %}
+                <div class="profile-actions-header">
+                    {% if is_friend %}
+                        <form action="{% url 'delete_friend' user.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'profile_comments' username=user.username %}">
+                            <button type="submit" class="profile-action-btn friend-btn">
+                                <img src="{% static 'images/delete_friend.png' %}" alt="Удалить">
+                                Удалить из друзей
+                            </button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'add_friend' user.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'profile_comments' username=user.username %}">
+                            <button type="submit" class="profile-action-btn friend-btn add-friend-btn">
+                                <img src="{% static 'images/add_friend.png' %}" alt="Добавить">
+                                Добавить в друзья
+                            </button>
+                        </form>
+                    {% endif %}
+                    <a href="#" class="profile-action-btn pm-btn" onclick="event.stopPropagation(); openChatOverlay({{ user.id }}, '{{ user.username }}'); return false;">
+                        <img src="{% static 'images/chat.png' %}" alt="ЛС">
+                        Начать чат
+                    </a>
+                    <button type="button" class="profile-action-btn report-btn" onclick="event.stopPropagation(); openComplainUserOverlay(); return false;">
+                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                    </button>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -87,24 +100,20 @@
 
                                 <div class="actions">
                                     <div class="vote-group">
-
                                         <a href="{% url 'like_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn upvote">
                                             <img src="{% static 'images/like.png' %}" alt="Лайк">
                                         </a>
 
-
                                         <span class="vote-count">{{ comment.rating }}</span>
 
                                         <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn downvote">
-
                                             <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                         </a>
                                     </div>
                                     {% if request.user != comment.author %}
-                                        <a href="/complaint/comment/?comment_id={{ comment.id }}"
-                                           class="action-btn report">
+                                        <button type="button" class="action-btn report" onclick="event.stopPropagation(); openComplainCommentOverlay({{ comment.id }}); return false;">
                                             <img src="{% static 'images/report.png' %}" alt="Жалоба">
-                                        </a>
+                                        </button>
                                     {% endif %}
                                 </div>
                             </div>
@@ -118,5 +127,8 @@
     </div>
 
     {% include 'footer.html' %}
+    {% include 'complain_user.html' %}
+    {% include 'complain_comment.html' %}
+
 </body>
 </html>

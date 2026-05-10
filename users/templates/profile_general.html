@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_user.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -31,15 +32,27 @@
                         {% if is_friend %}
                             <form action="{% url 'delete_friend' user.id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="profile-action-btn">Удалить из друзей</button>
+                                <button type="submit" class="profile-action-btn friend-btn">
+                                    <img src="{% static 'images/delete_friend.png' %}" alt="Удалить">
+                                    Удалить из друзей
+                                </button>
                             </form>
                         {% else %}
                             <form action="{% url 'add_friend' user.id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="profile-action-btn">Добавить в друзья</button>
+                                <button type="submit" class="profile-action-btn friend-btn add-friend-btn">
+                                    <img src="{% static 'images/add_friend.png' %}" alt="Добавить">
+                                    Добавить в друзья
+                                </button>
                             </form>
                         {% endif %}
-                        <a href="/complaint/?user_id={{ user.id }}" class="profile-action-btn">Пожаловаться</a>
+                        <a href="#" class="profile-action-btn pm-btn" onclick="openChatOverlay({{ user.id }}, '{{ user.username }}'); return false;">
+                            <img src="{% static 'images/chat.png' %}" alt="ЛС">
+                            Начать чат
+                        </a>
+                        <button class="profile-action-btn report-btn" onclick="openComplainUserOverlay()">
+                            <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                        </button>
                     </div>
                     {% endif %}
 
@@ -80,6 +93,7 @@
     {% include 'footer.html' %}
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
+    {% include 'complain_user.html' %}
 
 </body>
 </html>
