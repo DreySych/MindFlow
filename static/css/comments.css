@@ -259,6 +259,26 @@
 .comment-vote-btn img {
     width: 16px;
     height: 16px;
+    transition: filter 0.2s ease;
+}
+
+/* Активные состояния для кнопок голосования комментариев */
+.comment-vote-btn.upvote.active {
+    background: rgba(76, 175, 80, 0.25) !important;
+    border-radius: 50%;
+}
+
+.comment-vote-btn.upvote.active img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg) brightness(119%) contrast(119%);
+}
+
+.comment-vote-btn.downvote.active {
+    background: rgba(244, 67, 54, 0.25) !important;
+    border-radius: 50%;
+}
+
+.comment-vote-btn.downvote.active img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
 }
 
 .comment-vote-count {

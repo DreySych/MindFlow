@@ -37,7 +37,7 @@
                 <div class="comment-vote-group">
 
                     <a href="{% url 'like_comment' %}?id={{ comment.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
-                        class="comment-vote-btn upvote ajax-comment-vote">
+                        class="comment-vote-btn upvote ajax-comment-vote {% if comment.user_rating == 1 %}active{% endif %}">
                         <img src="{% static 'images/like.png' %}" alt="Лайк">
                     </a>
 
@@ -46,7 +46,7 @@
                     </span>
 
                     <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
-                        class="comment-vote-btn downvote ajax-comment-vote">
+                        class="comment-vote-btn downvote ajax-comment-vote {% if comment.user_rating == -1 %}active{% endif %}">
                         <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                     </a>
 

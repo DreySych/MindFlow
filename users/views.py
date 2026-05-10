@@ -20,11 +20,13 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from questions.views import get_question_context
 
+
 # Create your views here.
 
 def logout_page(request):
     logout(request)
     return redirect('/')
+
 
 def signup_page(request):
     context = {}
@@ -35,7 +37,7 @@ def signup_page(request):
         if form.is_valid():
             password1 = form.cleaned_data['password']
             password2 = form.cleaned_data['password_confirm']
-            if password1==password2:
+            if password1 == password2:
                 user = User()
                 user.username = form.cleaned_data['username']
                 user.email = form.cleaned_data['email']
@@ -58,6 +60,7 @@ def signup_page(request):
     context['form'] = form
 
     return render(request, 'signup.html', context)
+
 
 def login_page(request):
     if request.method == 'POST':
@@ -109,11 +112,20 @@ def profile_page_general(request, username):
     if request.user.is_authenticated:
         user = request.user
         target_user = get_object_or_404(User, username=username)
-        posts = Question.objects.filter(author=target_user)
+        posts = Question.objects.filter(author=target_user).order_by('-creation_date')
         is_owner = (request.user.is_authenticated and user == target_user)
         posts_context = []
         for post in posts:
-            posts_context.append(get_question_context(post.pk))
+            post_context = get_question_context(post.pk)
+
+            # Добавляем информацию о лайке ТЕКУЩЕГО пользователя
+            if request.user.is_authenticated:
+                user_like = Like.objects.filter(user=request.user, question=post).first()
+                post_context['user_rating'] = user_like.rating if user_like else 0
+            else:
+                post_context['user_rating'] = 0
+
+            posts_context.append(post_context)
 
         context = {
             'user': target_user,
@@ -127,6 +139,7 @@ def profile_page_general(request, username):
 
     else:
         return redirect('/account/login')
+
 
 def profile_page_settings(request):
     if not request.user.is_authenticated:
@@ -177,9 +190,23 @@ def profile_page_comments(request, username):
         target_user = get_object_or_404(User, username=username)
         posts = Question.objects.filter(author=target_user)
         comments = Comment.objects.filter(author=target_user)
+
+        # Создаем список с данными о комментариях и рейтингах пользователя
+        comments_data = []
+        for comment in comments:
+            user_rating = 0
+            if request.user.is_authenticated:
+                comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+                user_rating = comment_like.rating if comment_like else 0
+
+            comments_data.append({
+                'comment': comment,
+                'user_rating': user_rating,
+            })
+
         context = {
             'user': target_user,
-            'comments': comments,
+            'comments_data': comments_data,
             'posts': posts,
             'subscriptions': Subscription.objects.filter(user1=request.user),
         }
@@ -193,6 +220,7 @@ def profile_page_comments(request, username):
 
     else:
         return redirect('/account/login')
+
 
 def profile_page_liked(request, username):
     if request.user.is_authenticated:
@@ -263,10 +291,12 @@ def delete_friend(request, user_id):
     next_url = request.POST.get('next', request.GET.get('next', f'/profile/{friend.username}'))
     return redirect(next_url)
 
+
 def is_friend(current_user, other_user):
     if not current_user.is_authenticated or current_user == other_user:
         return False
     return Subscription.objects.filter(user1=current_user, user2=other_user).exists()
+
 
 def my_profile_redirect(request):
     if request.user.is_authenticated:

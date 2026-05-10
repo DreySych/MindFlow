@@ -13,10 +13,11 @@ from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 
+
 # Create your views here.
 def index_page(request):
     username = request.user.username if request.user.is_authenticated else "Профиль"
-    all_users = User.objects .all()
+    all_users = User.objects.all()
     if request.method == "POST" and 'question_id' in request.POST:
         question_id = request.POST.get('question_id')
         question = get_object_or_404(Question, pk=question_id)
@@ -60,7 +61,16 @@ def index_page(request):
     for post in results:
         post_context = get_question_context(post.pk)
         post_context['comment_form'] = CommentForm()
+
+        # Добавляем информацию о лайке пользователя
+        if request.user.is_authenticated:
+            user_like = Like.objects.filter(user=request.user, question=post).first()
+            post_context['user_rating'] = user_like.rating if user_like else 0
+        else:
+            post_context['user_rating'] = 0
+
         posts_context.append(post_context)
+
     context = {
         "username": username,
         "users": all_users,
@@ -68,35 +78,28 @@ def index_page(request):
         "page1": 'Логин',
         "link2": "account/signup/",
         "page2": 'Регистрация',
-        'subscriptions': Subscription.objects.filter(user1=request.user),
+        'subscriptions': Subscription.objects.filter(user1=request.user) if request.user.is_authenticated else [],
+        'posts_context': posts_context,
+        'user': request.user,
+        'notifications': Notification.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:20] if request.user.is_authenticated else [],
     }
+
     if request.user.is_authenticated:
         context['link1'] = "account/logout/"
         context["page1"] = 'Выход'
         context['link2'] = ""
         context["page2"] = ''
 
-
-    if request.user.is_authenticated:
-        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
-    else:
-        context['subscriptions'] = []
-    context['posts_context'] = posts_context
-    context['user'] = request.user
-    images = {}
-    for i in results:
-        images[f'{i.id}'] = i.images.split(',')[0]
-    context['images'] = images
-    context['len'] = len(results)
-    context['notifications'] = Notification.objects.filter(
-        user=request.user
-    ).order_by('-created_at')[:20]
     return render(request, template_name="index.html", context=context)
+
 
 def get_subscribed_authors(user):
     if not user.is_authenticated:
         return []
     return Subscription.objects.filter(user1=user).values_list('user2', flat=True)
+
 
 def get_default_questions(request):
     if not request.user.is_authenticated:
@@ -144,6 +147,7 @@ def get_default_questions(request):
 
     return final_result
 
+
 def delete_post(request):
     if request.user.is_authenticated:
         question = Question.objects.filter(id=request.GET.get('id'))[0]
@@ -189,6 +193,7 @@ def change_rating(request, question, x):
             question.rating += 1
             question.save()
 
+
 def _vote(request, delta):
     question_id = request.GET.get('id')
     if not question_id:
@@ -207,6 +212,7 @@ def _vote(request, delta):
     question.save()
     page = request.GET.get('to', 'index')
     return redirect('/#question-' + str(question_id))
+
 
 def like(request):
     if not request.user.is_authenticated:
@@ -242,6 +248,7 @@ def like(request):
         )
     question.save()
 
+    # ВСЕГДА возвращаем JSON для AJAX запросов
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,
@@ -280,6 +287,7 @@ def dislike(request):
     like_obj.save()
     question.save()
 
+    # ВСЕГДА возвращаем JSON для AJAX запросов
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,
@@ -289,6 +297,7 @@ def dislike(request):
 
     return redirect(request.GET.get('to', '/'))
 
+
 def sidebar_page(request):
     context = {}
 
@@ -296,6 +305,3 @@ def sidebar_page(request):
     context['subscriptions'] = subscriptions
 
     return render(request, template_name="sidebar.html", context=context)
-
-
-

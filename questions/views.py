@@ -11,6 +11,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from users.models import Subscription
+
+
 # Create your views here.
 
 def get_question_context(question_id):
@@ -57,6 +59,22 @@ def question_page(request, question_id, template_name='question.html'):
     else:
         form = CommentForm()
     context['comment_form'] = form
+
+    # Добавляем информацию о лайке пользователя для вопроса
+    if request.user.is_authenticated:
+        user_like = Like.objects.filter(user=request.user, question=question).first()
+        context['user_rating'] = user_like.rating if user_like else 0
+    else:
+        context['user_rating'] = 0
+
+    # Добавляем user_rating для каждого комментария
+    for comment in context['comments']:
+        if request.user.is_authenticated:
+            comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+            comment.user_rating = comment_like.rating if comment_like else 0
+        else:
+            comment.user_rating = 0
+
     context_for_update = {
         'question_rating': context['question'].rating,
         'question_title': context['question'].title,
@@ -131,6 +149,7 @@ def question_make_page(request):
     context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     return render(request, template_name='make_edit_question.html', context=context)
 
+
 def question_edit_page(request):
     if not request.user.is_authenticated:
         return redirect('/account/login')
@@ -181,9 +200,8 @@ def question_edit_page(request):
 
 
 def themes_page(request):
-
-
     return render(request, template_name="themes.html")
+
 
 def make_comment_page(request, question_id):
     if request.user.is_authenticated:
@@ -208,7 +226,6 @@ def make_comment_page(request, question_id):
             return render(request, 'make_comment_answer.html', {'form': form})
     else:
         return redirect('/account/login')
-
 
 
 def like_comment(request):
@@ -285,7 +302,7 @@ def dislike_comment(request):
             'rating': comment.rating,
             'user_rating': like_obj.rating
 
-            })
+        })
 
     return redirect(request.GET.get('to', '/'))
 
@@ -319,6 +336,7 @@ def make_answer_page(request, comment_id):
         return JsonResponse({'ok': True})
 
     return redirect('/question/' + str(comment.question.id) + '/')
+
 
 def like_answer(request):
     if not request.user.is_authenticated:

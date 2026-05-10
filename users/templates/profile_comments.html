@@ -73,45 +73,45 @@
                 </div>
 
                 <div class="posts-list">
-                    {% for comment in comments %}
+                    {% for comment_data in comments_data %}
                         <article class="question-card">
                             <div class="question-card-content">
                                 <div class="user-info">
-                                    <a href="{% url 'profile_general' username=comment.question.author.username %}" class="user-avatar-link">
-                                        {% if comment.question.author.image %}
-                                            <img src="{{ comment.question.author.image.url }}" alt="Avatar" class="user-avatar">
+                                    <a href="{% url 'profile_general' username=comment_data.comment.question.author.username %}" class="user-avatar-link">
+                                        {% if comment_data.comment.question.author.image %}
+                                            <img src="{{ comment_data.comment.question.author.image.url }}" alt="Avatar" class="user-avatar">
                                         {% else %}
                                             <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
                                         {% endif %}
                                     </a>
 
-                                    <a href="{% url 'profile_general' username=comment.question.author.username %}" class="user-name-link">
-                                        {{ comment.question.author.username }}
+                                    <a href="{% url 'profile_general' username=comment_data.comment.question.author.username %}" class="user-name-link">
+                                        {{ comment_data.comment.question.author.username }}
                                     </a>
 
-                                    <span class="time-ago">{{ comment.creation_date|timesince }} назад</span>
+                                    <span class="time-ago">{{ comment_data.comment.creation_date|timesince }} назад</span>
                                     <span class="time-ago" style="margin-left: 4px;">•</span>
 
-                                    <a href="{% url 'question' comment.question.id %}" class="comment-post-link">
-                                        {{ comment.question.title }}
+                                    <a href="{% url 'question' comment_data.comment.question.id %}" class="comment-post-link">
+                                        {{ comment_data.comment.question.title }}
                                     </a>
                                 </div>
-                                <p class="comment-text">{{ comment.text }}</p>
+                                <p class="comment-text">{{ comment_data.comment.text }}</p>
 
                                 <div class="actions">
                                     <div class="vote-group">
-                                        <a href="{% url 'like_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn upvote">
+                                        <a href="{% url 'like_comment' %}?id={{ comment_data.comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn upvote {% if comment_data.user_rating == 1 %}active{% endif %}">
                                             <img src="{% static 'images/like.png' %}" alt="Лайк">
                                         </a>
 
-                                        <span class="vote-count">{{ comment.rating }}</span>
+                                        <span class="vote-count">{{ comment_data.comment.rating }}</span>
 
-                                        <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn downvote">
+                                        <a href="{% url 'dislike_comment' %}?id={{ comment_data.comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn downvote {% if comment_data.user_rating == -1 %}active{% endif %}">
                                             <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                         </a>
                                     </div>
-                                    {% if request.user != comment.author %}
-                                        <button type="button" class="action-btn report" onclick="event.stopPropagation(); openComplainCommentOverlay({{ comment.id }}); return false;">
+                                    {% if request.user != comment_data.comment.author %}
+                                        <button type="button" class="action-btn report" onclick="event.stopPropagation(); openComplainCommentOverlay({{ comment_data.comment.id }}); return false;">
                                             <img src="{% static 'images/report.png' %}" alt="Жалоба">
                                         </button>
                                     {% endif %}
@@ -130,5 +130,52 @@
     {% include 'complain_user.html' %}
     {% include 'complain_comment.html' %}
 
+    <script>
+    document.addEventListener('click', function(event) {
+        const button = event.target.closest('.vote-btn.upvote, .vote-btn.downvote');
+
+        if (!button) {
+            return;
+        }
+
+        event.preventDefault();
+
+        fetch(button.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.ok) {
+                if (data.login) {
+                    window.location.href = data.login;
+                }
+                return;
+            }
+
+            const group = button.closest('.vote-group');
+            const count = group.querySelector('.vote-count');
+            const upvoteBtn = group.querySelector('.upvote');
+            const downvoteBtn = group.querySelector('.downvote');
+
+            count.textContent = data.rating;
+
+            // Обновляем активные классы
+            if (data.user_rating === 1) {
+                upvoteBtn.classList.add('active');
+                downvoteBtn.classList.remove('active');
+            } else if (data.user_rating === -1) {
+                downvoteBtn.classList.add('active');
+                upvoteBtn.classList.remove('active');
+            } else {
+                upvoteBtn.classList.remove('active');
+                downvoteBtn.classList.remove('active');
+            }
+        });
+    });
+    </script>
 </body>
 </html>

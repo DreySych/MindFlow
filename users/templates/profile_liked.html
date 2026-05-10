@@ -36,7 +36,7 @@
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
                     {% if request.user == user %}
-                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn active">Оценки "понравившиеся"</a>
                     {% endif %}
                 </div>
 
@@ -67,7 +67,7 @@
                                     {% endif %}
                                     <div class="actions">
                                         <div class="vote-group">
-                                            <a href="/like/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn">
+                                            <a href="/like/?id={{ like.question.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn active">
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
                                             </a>
                                             <span class="vote-count">{{ like.question.rating }}</span>
@@ -97,7 +97,6 @@
                                         </a>
                                         <a href="{% url 'profile_general' username=like.comment.author.username %}" class="user-name-link">
                                             {{ like.comment.author.username }}
-
                                         </a>
 
                                         <span class="time-ago">{{ like.created_at|timesince }} назад</span>
@@ -112,21 +111,13 @@
 
                                     <div class="actions">
                                         <div class="vote-group">
-
-                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn">
-
+                                            <a href="{% url 'like_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn upvote liked-vote-btn active">
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
-
                                             </a>
-
                                             <span class="vote-count">{{ like.comment.rating }}</span>
                                             <a href="{% url 'dislike_comment' %}?id={{ like.comment.id }}&to=/profile/{{ user.username }}/liked/" class="vote-btn downvote liked-vote-btn">
-
-
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-
                                             </a>
-
                                         </div>
                                     </div>
                                 </div>
@@ -159,23 +150,15 @@
 
                                     <div class="actions">
                                         <div class="vote-group">
-
                                             <a href="{% url 'like_answer' %}?id={{ like.answer.id }}&to=/profile/{{ user.username }}/liked/"
-                                                class="vote-btn upvote liked-vote-btn">
-
+                                                class="vote-btn upvote liked-vote-btn active">
                                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
-
                                             </a>
-
                                             <span class="vote-count">{{ like.answer.rating }}</span>
                                             <a href="{% url 'dislike_answer' %}?id={{ like.answer.id }}&to=/profile/{{ user.username }}/liked/"
                                                 class="vote-btn downvote liked-vote-btn">
-
-
                                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
-
                                             </a>
-
                                         </div>
                                     </div>
                                 </div>
@@ -191,39 +174,53 @@
     </div>
 
     {% include 'footer.html' %}
-<script>
-document.addEventListener('click', function(event) {
-    const button = event.target.closest('.liked-vote-btn');
 
-    if (!button) {
-        return;
-    }
+    <script>
+    document.addEventListener('click', function(event) {
+        const button = event.target.closest('.liked-vote-btn');
 
-    event.preventDefault();
-
-    fetch(button.href, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(data) {
-        if (!data.ok) {
-            if (data.login) {
-                window.location.href = data.login;
-            }
+        if (!button) {
             return;
         }
 
-        const group = button.closest('.vote-group');
-        const count = group.querySelector('.vote-count');
-        count.textContent = data.rating;
+        event.preventDefault();
 
+        fetch(button.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (!data.ok) {
+                if (data.login) {
+                    window.location.href = data.login;
+                }
+                return;
+            }
 
+            const group = button.closest('.vote-group');
+            const count = group.querySelector('.vote-count');
+            const upvoteBtn = group.querySelector('.upvote');
+            const downvoteBtn = group.querySelector('.downvote');
+
+            count.textContent = data.rating;
+
+            // Обновляем активные классы
+            if (data.user_rating === 1) {
+                upvoteBtn.classList.add('active');
+                downvoteBtn.classList.remove('active');
+            } else if (data.user_rating === -1) {
+                downvoteBtn.classList.add('active');
+                upvoteBtn.classList.remove('active');
+            } else {
+                upvoteBtn.classList.remove('active');
+                downvoteBtn.classList.remove('active');
+            }
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>

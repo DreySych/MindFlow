@@ -5,6 +5,7 @@
     <title>Пост - MindFlow</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/post.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
@@ -20,7 +21,7 @@
             <div class="feed">
                 <article class="post-detail-card" id="question-{{ question.id }}">
                     <div class="user-info">
-                        <a href="{% url 'profile_posts' %}" class="user-avatar-link">
+                        <a href="{% url 'profile_general' username=question.author.username %}" class="user-avatar-link">
                             {% if question.author.image %}
                             <img src="{{ question.author.image.url }}" alt="Аватар" class="user-avatar">
                         {% else %}
@@ -28,7 +29,7 @@
                         {% endif %}
 
                         </a>
-                        <a href="{% url 'profile_posts' %}" class="user-name-link">{{ question.author.username }}</a>
+                        <a href="{% url 'profile_general' username=question.author.username %}" class="user-name-link">{{ question.author.username }}</a>
                         <span class="time-ago">{{ question.creation_date }}</span>
                     </div>
                     <p class="question-text">
@@ -45,12 +46,12 @@
                     <div class="actions">
                         <div class="vote-group">
 
-                            <a href="/like/?id={{ question.id }}&to=/question/{{ question.id }}/" class="vote-btn upvote question-vote-btn">
+                            <a href="/like/?id={{ question.id }}&to=/question/{{ question.id }}/" class="vote-btn upvote question-vote-btn {% if user_rating == 1 %}active{% endif %}">
                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
                             </a>
 
                             <span class="vote-count">{{ question.rating }}</span>
-                            <a href="/dislike/?id={{ question.id }}&to=/question/{{ question.id }}/" class="vote-btn downvote question-vote-btn">
+                            <a href="/dislike/?id={{ question.id }}&to=/question/{{ question.id }}/" class="vote-btn downvote question-vote-btn {% if user_rating == -1 %}active{% endif %}">
                                 <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                             </a>
 
@@ -111,153 +112,209 @@
         });
     });
     </script>
-        <script>
-            document.addEventListener('click', function(event) {
-                const button = event.target.closest('.ajax-comment-vote');
 
-                if (!button) {
+    <script>
+        document.addEventListener('click', function(event) {
+            const button = event.target.closest('.ajax-comment-vote');
+
+            if (!button) {
+                return;
+            }
+
+            event.preventDefault();
+
+            fetch(button.href, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Comment vote response:', data);
+
+                if (!data.ok) {
+                    if (data.login) {
+                        window.location.href = data.login;
+                    }
                     return;
                 }
 
-                event.preventDefault();
-
-                fetch(button.href, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.ok) {
-                        if (data.login) {
-                            window.location.href = data.login;
-                        }
-                        return;
-                    }
-
-                    const group = button.closest('.comment-vote-group');
-                    const count = group.querySelector('.comment-vote-count');
-
-                    count.textContent = data.rating;
-                });
-            });
-        </script>
-
-            <script>
-            document.addEventListener('click', function(event) {
-                const button = event.target.closest('.question-vote-btn');
-
-                if (!button) {
+                const group = button.closest('.comment-vote-group');
+                if (!group) {
+                    console.error('comment-vote-group not found');
                     return;
                 }
 
-                event.preventDefault();
+                const count = group.querySelector('.comment-vote-count');
+                const upvoteBtn = group.querySelector('.upvote');
+                const downvoteBtn = group.querySelector('.downvote');
 
-                fetch(button.href, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.ok) {
-                        if (data.login) {
-                            window.location.href = data.login;
-                        }
-                        return;
-                    }
-
-                    const group = button.closest('.vote-group');
-                    const count = group.querySelector('.vote-count');
-
+                if (count) {
                     count.textContent = data.rating;
-                });
+                }
+
+                // Обновляем активные классы для комментариев
+                if (data.user_rating === 1) {
+                    if (upvoteBtn) upvoteBtn.classList.add('active');
+                    if (downvoteBtn) downvoteBtn.classList.remove('active');
+                } else if (data.user_rating === -1) {
+                    if (downvoteBtn) downvoteBtn.classList.add('active');
+                    if (upvoteBtn) upvoteBtn.classList.remove('active');
+                } else {
+                    if (upvoteBtn) upvoteBtn.classList.remove('active');
+                    if (downvoteBtn) downvoteBtn.classList.remove('active');
+                }
+            })
+            .catch(error => {
+                console.error('Comment vote error:', error);
             });
-            </script>
+        });
+    </script>
+
+    <script>
+        document.addEventListener('click', function(event) {
+            const button = event.target.closest('.question-vote-btn');
+
+            if (!button) {
+                return;
+            }
+
+            event.preventDefault();
+
+            fetch(button.href, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Question vote response:', data);
+
+                if (!data.ok) {
+                    if (data.login) {
+                        window.location.href = data.login;
+                    }
+                    return;
+                }
+
+                const group = button.closest('.vote-group');
+                if (!group) {
+                    console.error('vote-group not found');
+                    return;
+                }
+
+                const count = group.querySelector('.vote-count');
+                const upvoteBtn = group.querySelector('.upvote');
+                const downvoteBtn = group.querySelector('.downvote');
+
+                if (count) {
+                    count.textContent = data.rating;
+                }
+
+                // Обновляем активные классы
+                if (data.user_rating === 1) {
+                    if (upvoteBtn) upvoteBtn.classList.add('active');
+                    if (downvoteBtn) downvoteBtn.classList.remove('active');
+                } else if (data.user_rating === -1) {
+                    if (downvoteBtn) downvoteBtn.classList.add('active');
+                    if (upvoteBtn) upvoteBtn.classList.remove('active');
+                } else {
+                    if (upvoteBtn) upvoteBtn.classList.remove('active');
+                    if (downvoteBtn) downvoteBtn.classList.remove('active');
+                }
+            })
+            .catch(error => {
+                console.error('Question vote error:', error);
+            });
+        });
+    </script>
+
     <script>
     const csrfToken = '{{ csrf_token }}';
     </script>
-<script>
-function getCookie(name) {
-    let cookieValue = null;
 
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+    <script>
+    function getCookie(name) {
+        let cookieValue = null;
 
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
 
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
+
+        return cookieValue;
     }
 
-    return cookieValue;
-}
+    const commentsSocket = new WebSocket(
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        window.location.host +
+        '/ws/data/'
+    );
 
-const commentsSocket = new WebSocket(
-    (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
-    window.location.host +
-    '/ws/data/'
-);
+    commentsSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
 
-commentsSocket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
+        if (data.data && (data.data.event_type === 'new_comment' || data.data.event_type === 'new_answer')) {
+            const commentsSection = document.getElementById('commentsSection');
 
-    if (data.data && (data.data.event_type === 'new_comment' || data.data.event_type === 'new_answer')) {
-        const commentsSection = document.getElementById('commentsSection');
-
-        if (commentsSection) {
-            commentsSection.innerHTML = `
-                <h3 class="comments-title">Комментарии</h3>
-                ${data.data.html}
-            `;
-            document.querySelectorAll('.comment-input').forEach(function(textarea) {
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            if (commentsSection) {
+                commentsSection.innerHTML = `
+                    <h3 class="comments-title">Комментарии</h3>
+                    ${data.data.html}
+                `;
+                document.querySelectorAll('.comment-input').forEach(function(textarea) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                });
             });
+            }
+        }
+    };
+
+
+    </script>
+
+    <script>
+    document.addEventListener('submit', function(event) {
+
+        const form = event.target;
+
+        if (form.id !== 'commentForm' &&
+            !form.classList.contains('answerForm')) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        const csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
+
+        fetch(form.action || window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken
+            }
+        }).then(function(response) {
+
+            if (response.ok) {
+                form.reset();
+            }
+
         });
-        }
-    }
-};
-
-
-</script>
-<script>
-document.addEventListener('submit', function(event) {
-
-    const form = event.target;
-
-    if (form.id !== 'commentForm' &&
-        !form.classList.contains('answerForm')) {
-        return;
-    }
-
-    event.preventDefault();
-
-    const formData = new FormData(form);
-
-    const csrfInput = form.querySelector('[name=csrfmiddlewaretoken]');
-
-    fetch(form.action || window.location.href, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': csrfToken
-        }
-    }).then(function(response) {
-
-        if (response.ok) {
-            form.reset();
-        }
 
     });
-
-});
-</script>
+    </script>
 </body>
 </html>
