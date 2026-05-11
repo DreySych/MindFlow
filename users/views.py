@@ -116,18 +116,12 @@ def password_restore_page(request):
         form = PasswordRestoreEmailForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
-
-
             user = User.objects.filter(email=email).first()
-
             if user:
-
                 recovery = RecoveryCode.create_for_user(user)
-
 
                 try:
                     send_recovery_code(email, recovery.code)
-
 
                     request.session['restore_email'] = email
                     request.session['restore_user_id'] = user.id
@@ -143,10 +137,10 @@ def password_restore_page(request):
                     print(f"❌ ОШИБКА ОТПРАВКИ: {str(e)}")
                     print(f"❌ Traceback: {traceback.format_exc()}")
                     messages.error(request, f'Ошибка отправки письма: {str(e)}')
-            else:
 
-                messages.success(request, 'Если почта существует, код отправлен на неё.')
-                return redirect('password_restore_code')
+                else:
+                    messages.success(request, 'Если почта существует, код отправлен на неё.')
+                    return redirect('password_restore')
     else:
         form = PasswordRestoreEmailForm()
 
@@ -176,6 +170,7 @@ def password_restore_code_page(request):
 
                     recovery.is_used = True
                     recovery.save()
+                    request.session['restore_code_verified'] = True
 
                     messages.success(request, 'Код подтверждён! Теперь придумайте новый пароль.')
                     return redirect('password_restore_new')
@@ -188,32 +183,32 @@ def password_restore_code_page(request):
 
 
 def password_restore_new_page(request):
+    if not request.session.get('restore_code_verified'):
+        messages.error(request, 'Сначала подтвердите код')
+        return redirect('password_restore_code')
 
-        if 'restore_email' not in request.session:
-            messages.error(request, 'Сначала введите почту')
-            return redirect('password_restore')
+    if request.method == 'POST':
+        form = PasswordRestoreNewForm(request.POST)
 
-        if request.method == 'POST':
-            form = PasswordRestoreNewForm(request.POST)
-            if form.is_valid():
-                password = form.cleaned_data['password1']
-                user_id = request.session.get('restore_user_id')
+        if form.is_valid():
+            password = form.cleaned_data['password1']
+            user_id = request.session.get('restore_user_id')
 
+            user = User.objects.get(id=user_id)
+            user.set_password(password)
+            user.save()
 
-                user = User.objects.get(id=user_id)
-                user.set_password(password)
-                user.save()
+            del request.session['restore_email']
+            del request.session['restore_user_id']
+            del request.session['restore_code_verified']
 
+            messages.success(request, 'Пароль успешно изменён! Теперь войдите.')
+            return redirect('login')
 
-                del request.session['restore_email']
-                del request.session['restore_user_id']
+    else:
+        form = PasswordRestoreNewForm()
 
-                messages.success(request, 'Пароль успешно изменён! Теперь войдите.')
-                return redirect('login')
-        else:
-            form = PasswordRestoreNewForm()
-
-        return render(request, 'password_restore_new.html', {'form': form})
+    return render(request, 'password_restore_new.html', {'form': form})
 
 
 def profile_page_general(request, username):

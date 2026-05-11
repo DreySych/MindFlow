@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск с ИИ</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/post.css' %}">
+    <link rel="stylesheet" href="{% static 'css/comments.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain_question.css' %}">
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/ai.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+
+{% include 'header.html' %}
+{% include 'body.html' %}
+
+<div class="content-wrapper" style="margin-left: 10vw; padding-top: 140px; padding-bottom: 100px; min-height: 100vh; box-sizing: border-box;">
+  <main>
+    <div class="feed">
+      <article class="post-detail-card" style="max-width: 800px; margin: 0 auto;">
+        <div class="ai-response-card">
+          <div class="ai-response-header">
+            <span class="ai-icon">
+              <img src="{% static 'images/lamp.png' %}" class="img-ai">
+            </span>
+            <span class="ai-label">MindFlow AI</span>
+            <button class="ai-copy" type="button">
+              <img src="{% static 'images/copy.png' %}" class="img-copy">
+            </button>
+          </div>
+
+          <div class="ai-response-body" id="aiResponseBody">
+            {% if query %}
+              <p class="ai-text" id="aiStatus">Ответ от ИИ</p>
+            {% else %}
+              <p class="ai-text ai-text-placeholder">
+                Введите запрос в строке поиска сверху и нажмите «ИИ Поиск», чтобы получить ответ.
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    responseBody = document.getElementById("aiResponseBody");
+    statusEl = document.getElementById("aiStatus");
+
+    // Берём запрос из контекста
+    query = "{{ query|escapejs }}";
+    console.log("query:", query);
+    if (query) {
+        // Если есть запрос, то показываем статус и шлём запрос к API
+        statusEl.textContent = "ИИ думает над ответом...";
+
+        fetch("{% url 'ai_search_api' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            body: JSON.stringify({ q: query }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("response:", data);
+            if (data.error) {
+                if (statusEl) statusEl.textContent = data.error;
+                return;
+            }
+
+            if (statusEl) statusEl.remove();
+            const p = document.createElement("p");
+            p.className = "ai-text";
+            p.textContent = data.answer;
+            responseBody.appendChild(p);
+        })
+        .catch(err => {
+            console.error("fetch error:", err);
+            if (statusEl) statusEl.textContent = "Произошла ошибка при получении ответа ИИ.";
+        });
+    }
+
+    // Функционал кнопки копирования
+    copyBtn = document.querySelector(".ai-copy");
+    let copyImg;
+    if (copyBtn) {
+        copyImg = copyBtn.querySelector("img");
+    } else {
+        copyImg = null;
+    }
+
+    if (copyBtn && copyImg && responseBody) {
+        originalSrc = copyImg.getAttribute("src");
+        successSrc = "{% static 'images/check_mark.png' %}";
+
+        copyBtn.addEventListener("click", async function () {
+            text = responseBody.innerText.trim();
+            if (!text) return;
+
+            try {
+                await navigator.clipboard.writeText(text);
+                copyImg.setAttribute("src", successSrc);
+                copyBtn.classList.add("copied");
+                setTimeout(() => {
+                    copyImg.setAttribute("src", originalSrc);
+                    copyBtn.classList.remove("copied");
+                }, 500);
+            } catch (e) {
+                console.error("Не удалось скопировать текст:", e);
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>
