@@ -11,8 +11,6 @@ from private_messages import views as private_messages_views
 from django.urls import path, include
 import users.views as users_views
 import complaints.views as complaints_views
-import users.views as users_views
-import complaints.views as complaints_views
 import notifications.views as notifications_views
 import private_messages.views as pm_views
 
@@ -27,7 +25,7 @@ urlpatterns = [
     path('account/signup/', users_views.signup_page, name='signup'),
     path('account/login/', users_views.login_page, name='login'),
     path('account/logout/', users_views.logout_page, name='logout'),
-    path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
+
     path('profile/<str:username>/', users_views.profile_page_general, name='profile_general'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
 
@@ -60,11 +58,11 @@ urlpatterns = [
 
     path('profile/', users_views.my_profile_redirect, name='profile_posts'),
 
-    path(
-        'profile/<str:username>/',
-        users_views.profile_page_general,
-        name='profile_general'
-    ),
+    path('account/password-restore/', users_views.password_restore_page, name='password_restore'),
+    path('account/password-restore/code/', users_views.password_restore_code_page, name='password_restore_code'),
+    path('account/password-restore/new/', users_views.password_restore_new_page, name='password_restore_new'),
+
+
 
     path(
         'profile/someone/',
@@ -78,17 +76,6 @@ urlpatterns = [
         name='settings'
     ),
 
-    path(
-        'profile/<str:username>/comments/',
-        users_views.profile_page_comments,
-        name='profile_comments'
-    ),
-
-    path(
-        'profile/<str:username>/liked/',
-        users_views.profile_page_liked,
-        name='profile_liked'
-    ),
 
 
 
@@ -104,15 +91,6 @@ urlpatterns = [
         name='notifications_list'
     ),
 
-
-
-
-
-    path(
-        'messages/',
-        pm_views.chat_page,
-        name='PM'
-    ),
 ]
 
 
@@ -121,8 +99,4 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-from django.conf import settings
-from django.conf.urls.static import static
-
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

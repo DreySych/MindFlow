@@ -2,6 +2,9 @@ import os
 import uuid
 from itertools import chain
 from operator import attrgetter
+from .models import RecoveryCode
+from .forms import PasswordRestoreEmailForm, PasswordRestoreCodeForm, PasswordRestoreNewForm
+from .utils import send_recovery_code
 
 from django.conf import settings
 from django.db.models import Prefetch
@@ -19,6 +22,8 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from questions.views import get_question_context
+import json
+import traceback
 
 
 # Create your views here.
@@ -107,7 +112,108 @@ def login_page(request):
 
 
 def password_restore_page(request):
-    return render(request, template_name="password_restore.html")
+    if request.method == 'POST':
+        form = PasswordRestoreEmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+
+
+            user = User.objects.filter(email=email).first()
+
+            if user:
+
+                recovery = RecoveryCode.create_for_user(user)
+
+
+                try:
+                    send_recovery_code(email, recovery.code)
+
+
+                    request.session['restore_email'] = email
+                    request.session['restore_user_id'] = user.id
+
+                    print(f"✅ Письмо с кодом {recovery.code} отправлено на {email}")
+                    print(f"✅ Email настройки: {settings.EMAIL_HOST}:{settings.EMAIL_PORT}")
+                    print(f"✅ От: {settings.DEFAULT_FROM_EMAIL}")
+
+                    messages.success(request, 'Код восстановления отправлен на вашу почту!')
+                    return redirect('password_restore_code')
+
+                except Exception as e:
+                    print(f"❌ ОШИБКА ОТПРАВКИ: {str(e)}")
+                    print(f"❌ Traceback: {traceback.format_exc()}")
+                    messages.error(request, f'Ошибка отправки письма: {str(e)}')
+            else:
+
+                messages.success(request, 'Если почта существует, код отправлен на неё.')
+                return redirect('password_restore_code')
+    else:
+        form = PasswordRestoreEmailForm()
+
+    return render(request, 'password_restore.html', {'form': form})
+
+
+def password_restore_code_page(request):
+
+        if 'restore_email' not in request.session:
+            messages.error(request, 'Сначала введите почту')
+            return redirect('password_restore')
+
+        if request.method == 'POST':
+            form = PasswordRestoreCodeForm(request.POST)
+            if form.is_valid():
+                code = form.cleaned_data['code']
+                user_id = request.session.get('restore_user_id')
+
+
+                recovery = RecoveryCode.objects.filter(
+                    user_id=user_id,
+                    code=code,
+                    is_used=False
+                ).first()
+
+                if recovery and recovery.is_valid():
+
+                    recovery.is_used = True
+                    recovery.save()
+
+                    messages.success(request, 'Код подтверждён! Теперь придумайте новый пароль.')
+                    return redirect('password_restore_new')
+                else:
+                    messages.error(request, 'Неверный или истёкший код')
+        else:
+            form = PasswordRestoreCodeForm()
+
+        return render(request, 'password_restore_code.html', {'form': form})
+
+
+def password_restore_new_page(request):
+
+        if 'restore_email' not in request.session:
+            messages.error(request, 'Сначала введите почту')
+            return redirect('password_restore')
+
+        if request.method == 'POST':
+            form = PasswordRestoreNewForm(request.POST)
+            if form.is_valid():
+                password = form.cleaned_data['password1']
+                user_id = request.session.get('restore_user_id')
+
+
+                user = User.objects.get(id=user_id)
+                user.set_password(password)
+                user.save()
+
+
+                del request.session['restore_email']
+                del request.session['restore_user_id']
+
+                messages.success(request, 'Пароль успешно изменён! Теперь войдите.')
+                return redirect('login')
+        else:
+            form = PasswordRestoreNewForm()
+
+        return render(request, 'password_restore_new.html', {'form': form})
 
 
 def profile_page_general(request, username):
@@ -120,7 +226,7 @@ def profile_page_general(request, username):
         for post in posts:
             post_context = get_question_context(post.pk)
 
-            # Добавляем информацию о лайке ТЕКУЩЕГО пользователя
+
             if request.user.is_authenticated:
                 user_like = Like.objects.filter(user=request.user, question=post).first()
                 post_context['user_rating'] = user_like.rating if user_like else 0

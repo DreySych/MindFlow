@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import User
+from datetime import timedelta
+from django.utils import timezone
+import random
 
 
 class MyUserManager(BaseUserManager):
@@ -46,3 +50,37 @@ class User(AbstractBaseUser, PermissionsMixin ):
 class Subscription(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+
+
+class RecoveryCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.username} - {self.code}'
+
+    @staticmethod
+    def generate_code():
+        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+
+    @staticmethod
+    def create_for_user(user):
+        RecoveryCode.objects.filter(user=user, is_used=False).update(is_used=True)
+
+        code = RecoveryCode.generate_code()
+        recovery = RecoveryCode.objects.create(user=user, code=code)
+        return recovery
+
+    def is_valid(self):
+        if self.is_used:
+            return False
+
+        if timezone.now() > self.created_at + timedelta(minutes=10):
+            return False
+
+        return True
