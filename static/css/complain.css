@@ -1,10 +1,11 @@
+/* Основные стили жалоб */
 .complain-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 100;
+  z-index: 1000;
   display: none;
   align-items: center;
   justify-content: center;
@@ -21,108 +22,137 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
 }
 
 .complain-modal {
   position: relative;
   background: #ffffff;
   border-radius: 16px;
-  width: 480px;
-  max-width: 90vw;
-  max-height: 90vh;
-  overflow-y: auto;
+  padding: 30px;
+  width: 90%;
+  max-width: 480px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  font-family: 'Mallanna', sans-serif;
+  z-index: 1001;
 }
 
 .complain-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #E0E0E0;
+  margin-bottom: 20px;
 }
 
 .complain-title {
   font-family: 'Mallanna', sans-serif;
-  font-size: 18px;
+  font-size: 22px;
+  font-weight: 600;
   color: #1a1a1a;
-  font-weight: 400;
 }
 
 .complain-body {
-  padding: 20px;
+  margin-bottom: 24px;
 }
 
 .complain-subtitle {
   font-family: 'Mallanna', sans-serif;
-  font-size: 16px;
-  color: #1a1a1a;
-  margin: 0 0 16px 0;
+  font-size: 15px;
+  color: #666;
+  margin: 0 0 12px 0;
 }
 
 .complain-textarea {
   width: 100%;
-  height: 80px;
-  padding: 10px 14px;
+  min-height: 120px;
+  padding: 12px 16px;
+  border: 2px solid #D1D9E6;
+  border-radius: 12px;
+  background: #F0F4F8;
   font-family: 'Mallanna', sans-serif;
-  font-size: 14px;
-  border: 1px solid #C6C6C6;
-  border-radius: 10px;
-  outline: none;
-  resize: vertical;
-  box-sizing: border-box;
+  font-size: 15px;
   color: #1a1a1a;
-  transition: border-color 0.2s ease;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
 }
 
 .complain-textarea:focus {
-  border-color: #1671FE;
+  border-color: #4A90E2;
+  background: #ffffff;
 }
 
-.complain-textarea::placeholder {
-  color: #999;
+.complain-textarea.complain-error {
+  border-color: #e53935;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.complain-char-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.complain-error-text {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 13px;
+  color: #e53935;
+}
+
+.complain-char-count {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 12px;
+  color: #888;
+  transition: color 0.2s ease;
+  margin-left: auto;
 }
 
 .complain-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
-  padding: 16px 20px;
-  border-top: 1px solid #E0E0E0;
+  gap: 12px;
 }
 
 .complain-cancel-btn {
-  padding: 8px 20px;
-  border-radius: 20px;
-  border: 1px solid #C6C6C6;
+  padding: 10px 24px;
+  border-radius: 25px;
+  border: 1px solid #D1D9E6;
   background: #ffffff;
-  cursor: pointer;
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
   color: #666;
-  transition: background 0.15s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .complain-cancel-btn:hover {
-  background: #F6F6F6;
+  background: #f5f5f5;
 }
 
 .complain-submit-btn {
-  padding: 8px 20px;
-  border-radius: 20px;
+  padding: 10px 24px;
+  border-radius: 25px;
   border: none;
-  background: #1671FE;
-  cursor: pointer;
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
   color: #ffffff;
-  transition: background 0.15s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .complain-submit-btn:hover {
-  background: #0D5DD6;
+  background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.complain-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

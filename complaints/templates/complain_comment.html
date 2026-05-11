@@ -9,7 +9,11 @@
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Введите причину жалобы:</p>
-        <textarea class="complain-textarea" placeholder="Опишите её здесь"required></textarea>
+        <textarea class="complain-textarea" id="complainCommentText" placeholder="Опишите её здесь" maxlength="500"></textarea>
+        <div class="complain-char-row">
+          <span class="complain-error-text" id="complainCommentError" style="display: none;"></span>
+          <span class="complain-char-count" id="complainCommentCharCount">0/500</span>
+        </div>
       </div>
       <div class="complain-footer">
         <button type="button" class="complain-cancel-btn" onclick="closeComplainCommentOverlay()">Отмена</button>
@@ -18,10 +22,11 @@
     </div>
     <div id="complainCommentThanks" style="display: none;">
       <div class="complain-header">
-        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+        <span class="complain-title">Спасибо, что помогаете улучшать сообщество! ❤️</span>
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+        <p class="complain-subtitle">Спасибо за ваш вклад в безопасность платформы!</p>
       </div>
       <div class="complain-footer">
         <button type="button" class="complain-submit-btn" onclick="closeComplainCommentOverlay()">Закрыть</button>
@@ -31,36 +36,40 @@
 </div>
 
 <script>
+// Счетчик символов
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'complainCommentText') {
+        var len = e.target.value.length;
+        var cc = document.getElementById('complainCommentCharCount');
+        var et = document.getElementById('complainCommentError');
+
+        if (cc) {
+            cc.textContent = len + '/500';
+            if (len > 450) cc.style.color = '#e53935';
+            else if (len > 400) cc.style.color = '#ff9800';
+            else cc.style.color = '#888';
+        }
+
+        if (et && e.target.value.trim()) {
+            et.style.display = 'none';
+        }
+    }
+});
+
 window.openComplainCommentOverlay = function(commentId) {
     window.currentComplainCommentId = commentId;
     document.getElementById('complainCommentOverlay').classList.add('active');
     document.getElementById('complainCommentForm').style.display = 'block';
     document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-};
 
-window.submitComplainComment = function() {
-    const textarea = document.querySelector('#complainCommentOverlay textarea');
+    var ta = document.getElementById('complainCommentText');
+    var cc = document.getElementById('complainCommentCharCount');
+    var et = document.getElementById('complainCommentError');
 
-    if (!textarea.value.trim()) {
-        textarea.style.border = '1px solid red';
-        return;
-    }
-
-    fetch('/complaint/?comment_id=' + window.currentComplainCommentId, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: 'description=' + encodeURIComponent(textarea.value)
-    }).then(function(response) {
-        if (response.ok) {
-            document.getElementById('complainCommentForm').style.display = 'none';
-            document.getElementById('complainCommentThanks').style.display = 'block';
-            textarea.value = '';
-        }
-    });
+    if (ta) ta.value = '';
+    if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
+    if (et) et.style.display = 'none';
 };
 
 window.closeComplainCommentOverlay = function() {
@@ -68,5 +77,52 @@ window.closeComplainCommentOverlay = function() {
     document.body.style.overflow = '';
 };
 
+window.submitComplainComment = function() {
+    var ta = document.getElementById('complainCommentText');
+    var et = document.getElementById('complainCommentError');
+    var btn = document.querySelector('#complainCommentOverlay .complain-submit-btn');
 
+    if (!ta.value.trim()) {
+        if (et) { et.textContent = 'Введите текст жалобы'; et.style.display = 'block'; }
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    fetch('/complaint/?comment_id=' + window.currentComplainCommentId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'description=' + encodeURIComponent(ta.value)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        if (d.ok) {
+            document.getElementById('complainCommentForm').style.display = 'none';
+            document.getElementById('complainCommentThanks').style.display = 'block';
+        } else {
+            if (et) { et.textContent = d.error || 'Ошибка'; et.style.display = 'block'; }
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        if (et) { et.textContent = 'Ошибка сети'; et.style.display = 'block'; }
+    });
+};
+
+function getCSRF() {
+    var c = document.cookie.split(';');
+    for (var i = 0; i < c.length; i++) {
+        var p = c[i].trim();
+        if (p.startsWith('csrftoken=')) return p.substring(10);
+    }
+    return '';
+}
 </script>
