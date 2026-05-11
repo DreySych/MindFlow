@@ -36,7 +36,7 @@
 </div>
 
 <script>
-// Счетчик символов
+
 document.addEventListener('input', function(e) {
     if (e.target.id === 'complainCommentText') {
         var len = e.target.value.length;
@@ -57,6 +57,7 @@ document.addEventListener('input', function(e) {
 });
 
 window.openComplainCommentOverlay = function(commentId) {
+    window.currentComplainAnswerId = null;
     window.currentComplainCommentId = commentId;
     document.getElementById('complainCommentOverlay').classList.add('active');
     document.getElementById('complainCommentForm').style.display = 'block';
@@ -70,6 +71,17 @@ window.openComplainCommentOverlay = function(commentId) {
     if (ta) ta.value = '';
     if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
     if (et) et.style.display = 'none';
+};
+window.openComplainAnswerOverlay = function(answerId) {
+    window.currentComplainCommentId = null;
+    window.currentComplainAnswerId = answerId;
+
+    document.getElementById('complainCommentOverlay').classList.add('active');
+    document.getElementById('complainCommentForm').style.display = 'block';
+    document.getElementById('complainCommentThanks').style.display = 'none';
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('complainCommentText').value = '';
 };
 
 window.closeComplainCommentOverlay = function() {
@@ -90,7 +102,15 @@ window.submitComplainComment = function() {
     btn.disabled = true;
     btn.textContent = 'Отправка...';
 
-    fetch('/complaint/?comment_id=' + window.currentComplainCommentId, {
+    let url = '/complaint/?';
+
+    if (window.currentComplainAnswerId) {
+        url += 'answer_id=' + window.currentComplainAnswerId;
+    } else {
+        url += 'comment_id=' + window.currentComplainCommentId;
+    }
+
+    fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -103,11 +123,18 @@ window.submitComplainComment = function() {
     .then(function(d) {
         btn.disabled = false;
         btn.textContent = 'Отправить жалобу';
+
         if (d.ok) {
             document.getElementById('complainCommentForm').style.display = 'none';
             document.getElementById('complainCommentThanks').style.display = 'block';
+
+            window.currentComplainAnswerId = null;
+            window.currentComplainCommentId = null;
         } else {
-            if (et) { et.textContent = d.error || 'Ошибка'; et.style.display = 'block'; }
+            if (et) {
+                et.textContent = d.error || 'Ошибка';
+                et.style.display = 'block';
+            }
         }
     })
     .catch(function() {

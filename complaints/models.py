@@ -8,3 +8,4 @@ class Complaint(models.Model):
     question = models.ForeignKey(Question, on_delete=CASCADE, null=True, related_name='question')
     user = models.ForeignKey(User, on_delete=CASCADE, null=True, related_name='user')
     comment = models.ForeignKey(Comment, on_delete=CASCADE, null=True, related_name='comment')
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, blank=True)

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Профиль - Комментарии</title>
     {% load static %}
+    {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile_somelse.css' %}">
@@ -39,7 +40,7 @@
                     <div class="profile-action-buttons">
                         <button class="add-friend-btn">
                             <img src="{% static 'images/add_friend.png' %}" alt="Добавить">
-                            Добавить в друзья
+                            Подписаться
                         </button>
                         <a href="{% url 'PM' %}" class="pm-btn" onclick="openChatOverlay(); return false;">
                             <img src="{% static 'images/chat.png' %}" alt="ЛС">

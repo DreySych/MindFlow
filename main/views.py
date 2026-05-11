@@ -12,7 +12,10 @@ from questions.views import get_question_context
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
+from django.utils import timezone
 
+def can_act(user):
+    return user.is_authenticated and user.active
 # Create your views here.
 def index_page(request):
     username = request.user.username if request.user.is_authenticated else "Профиль"
@@ -21,13 +24,13 @@ def index_page(request):
         question_id = request.POST.get('question_id')
         question = get_object_or_404(Question, pk=question_id)
         form = CommentForm(request.POST)
-        if form.is_valid() and request.user.is_authenticated:
+        if form.is_valid() and can_act(request.user):
             text = form.cleaned_data['text']
             comment = Comment(
                 text=text,
                 author=request.user,
                 question=question,
-                creation_date=datetime.datetime.now(),
+                creation_date=timezone.now(),
                 rating=0
             )
             comment.save()
@@ -101,7 +104,7 @@ def get_subscribed_authors(user):
     return Subscription.objects.filter(user1=user).values_list('user2', flat=True)
 
 def get_default_questions(request):
-    if not request.user.is_authenticated:
+    if not can_act(request.user):
         return Question.objects.all().order_by('-rating', '-creation_date')
 
     friends_ids = Subscription.objects.filter(
@@ -147,13 +150,13 @@ def get_default_questions(request):
     return final_result
 
 def delete_post(request):
-    if request.user.is_authenticated:
-        question = Question.objects.filter(id=request.GET.get('id'))[0]
-        question.delete()
-        page = request.GET.get('to')
+    if can_act(request.user):
+        question = Question.objects.filter(id=request.GET.get('id')).first()
+        if question:
+            question.delete()
+        page = request.GET.get('to', '/')
         return redirect(page)
-    else:
-        return redirect('/account/login')
+    return redirect('/')
 
 
 def change_rating(request, question, x):
@@ -216,6 +219,11 @@ def like(request):
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
     question_id = request.GET.get('id')
     question = get_object_or_404(Question, id=question_id)
 
@@ -259,6 +267,11 @@ def dislike(request):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
+
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
 
     question_id = request.GET.get('id')
     question = get_object_or_404(Question, id=question_id)

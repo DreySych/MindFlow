@@ -1,29 +1,26 @@
 import json
-
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-
 from users.models import User
 from .models import Message
 from notifications.models import Notification
 
+
 class PersonalMessageConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.user = self.scope["user"]
         self.other_user_id = self.scope["url_route"]["kwargs"]["user_id"]
 
-        if not self.user.is_authenticated:
+        if not self.user.is_authenticated or not self.user.active:
             await self.close()
             return
-
         ids = sorted([self.user.id, self.other_user_id])
         self.room_name = f"chat_{ids[0]}_{ids[1]}"
-
         await self.channel_layer.group_add(
             self.room_name,
             self.channel_name
         )
-
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -33,9 +30,10 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        if not self.user.is_authenticated or not self.user.active:
+            return
         data = json.loads(text_data)
         text = data["message"]
-
         message = await self.save_message(text)
 
         await self.channel_layer.group_send(
@@ -60,13 +58,11 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_message(self, text):
         receiver = User.objects.get(id=self.other_user_id)
-
         message = Message.objects.create(
             sender=self.user,
             receiver=receiver,
             text=text
         )
-
         Notification.objects.create(
             user=receiver,
             text=f'{self.user.username} написал вам сообщение',

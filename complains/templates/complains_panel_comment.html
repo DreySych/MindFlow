@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Панель жалоб - Комментарии | MindFlow</title>
     {% load static %}
+    {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/complain_panel.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
@@ -26,14 +27,31 @@
                     {% for i in complaints %}
                     <div class="complaint-card">
                         <div class="complaint-comment">
-                            <p class="complaint-comment-text">
-                                {{ i.comment.text }}
-                            </p>
 
-                            <a href="{% url 'question' i.comment.question.id %}#comment-{{ i.comment.id }}"
-                               class="complaint-detail-btn">
-                                К посту
-                            </a>
+                            {% if i.comment %}
+
+                                <p class="complaint-comment-text">
+                                    {{ i.comment.text }}
+                                </p>
+
+                                <a href="{% url 'question' i.comment.question.id %}#comment-{{ i.comment.id }}"
+                                   class="complaint-detail-btn">
+                                    К посту
+                                </a>
+
+                            {% elif i.answer %}
+
+                                <p class="complaint-comment-text">
+                                    {{ i.answer.answer }}
+                                </p>
+
+                                <a href="{% url 'question' i.answer.comment.question.id %}#comment-{{ i.answer.comment.id }}"
+                                   class="complaint-detail-btn">
+                                    К посту
+                                </a>
+
+                            {% endif %}
+
                         </div>
 
                         <div class="complaint-info">

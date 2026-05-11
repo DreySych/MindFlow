@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Пост - MindFlow</title>
     {% load static %}
+    {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/post.css' %}">
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
@@ -29,7 +30,7 @@
 
                         </a>
                         <a href="{% url 'profile_posts' %}" class="user-name-link">{{ question.author.username }}</a>
-                        <span class="time-ago">{{ question.creation_date }}</span>
+                        <span class="time-ago">{{ question.creation_date|smart_time }}</span>
                     </div>
                     <p class="question-text">
                         {{ question.title }}
@@ -131,7 +132,31 @@
                     if (!data.ok) {
                         if (data.login) {
                             window.location.href = data.login;
+                            return;
                         }
+
+                        if (data.error) {
+                            const errorBox = document.createElement('div');
+
+                            errorBox.textContent = data.error;
+
+                            errorBox.style.position = 'fixed';
+                            errorBox.style.top = '20px';
+                            errorBox.style.right = '20px';
+                            errorBox.style.background = '#ff4d4f';
+                            errorBox.style.color = 'white';
+                            errorBox.style.padding = '14px 18px';
+                            errorBox.style.borderRadius = '12px';
+                            errorBox.style.zIndex = '99999';
+                            errorBox.style.fontSize = '14px';
+
+                            document.body.appendChild(errorBox);
+
+                            setTimeout(() => {
+                                errorBox.remove();
+                            }, 3000);
+                        }
+
                         return;
                     }
 
@@ -163,7 +188,31 @@
                     if (!data.ok) {
                         if (data.login) {
                             window.location.href = data.login;
+                            return;
                         }
+
+                        if (data.error) {
+                            const errorBox = document.createElement('div');
+
+                            errorBox.textContent = data.error;
+
+                            errorBox.style.position = 'fixed';
+                            errorBox.style.top = '20px';
+                            errorBox.style.right = '20px';
+                            errorBox.style.background = '#ff4d4f';
+                            errorBox.style.color = 'white';
+                            errorBox.style.padding = '14px 18px';
+                            errorBox.style.borderRadius = '12px';
+                            errorBox.style.zIndex = '99999';
+                            errorBox.style.fontSize = '14px';
+
+                            document.body.appendChild(errorBox);
+
+                            setTimeout(() => {
+                                errorBox.remove();
+                            }, 3000);
+                        }
+
                         return;
                     }
 
@@ -256,9 +305,31 @@ document.addEventListener('submit', function(event) {
         }
     }).then(function(response) {
 
-        if (response.ok) {
-            form.reset();
-        }
+        response.json().then(function(data) {
+            if (data.ok) {
+                form.reset();
+            } else if (data.error) {
+                const errorBox = document.createElement('div');
+
+                errorBox.textContent = data.error;
+
+                errorBox.style.position = 'fixed';
+                errorBox.style.top = '20px';
+                errorBox.style.right = '20px';
+                errorBox.style.background = '#ff4d4f';
+                errorBox.style.color = 'white';
+                errorBox.style.padding = '14px 18px';
+                errorBox.style.borderRadius = '12px';
+                errorBox.style.zIndex = '99999';
+                errorBox.style.fontSize = '14px';
+                
+                document.body.appendChild(errorBox);
+
+                setTimeout(() => {
+                    errorBox.remove();
+                }, 3000);
+            }
+        });
 
     });
 

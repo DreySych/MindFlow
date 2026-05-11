@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from complaints.models import Complaint
-from questions.models import Question, Comment
 from users.models import User, Subscription
 from notifications.models import Notification
-
+from questions.models import Question, Comment, Answer
 
 def accept(request):
     complaint = Complaint.objects.filter(id=request.GET.get('complaint_id')).first()
@@ -16,7 +15,10 @@ def accept(request):
             complaint.user.save()
         elif complaint.comment:
             complaint.comment.delete()
+        elif complaint.answer:
+            complaint.answer.delete()
         complaint.delete()
+
     return redirect(request.GET.get('to', '/'))
 
 
@@ -32,6 +34,9 @@ def complaint_page(request):
         if not request.user.is_authenticated:
             return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
 
+        if not request.user.active:
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете отправлять жалобы'})
+
         complaint_text = request.POST.get('description', '').strip()
 
         if not complaint_text:
@@ -43,6 +48,7 @@ def complaint_page(request):
         question_id = request.GET.get('question_id')
         user_id = request.GET.get('user_id')
         comment_id = request.GET.get('comment_id')
+        answer_id = request.GET.get('answer_id')
         if question_id:
             question = Question.objects.filter(id=question_id).first()
 
@@ -66,7 +72,15 @@ def complaint_page(request):
                     'ok': False,
                     'error': 'Нельзя жаловаться на свой комментарий'
                 })
-        if not question_id and not user_id and not comment_id:
+        if answer_id:
+            answer = Answer.objects.filter(id=answer_id).first()
+
+            if answer and answer.author == request.user:
+                return JsonResponse({
+                    'ok': False,
+                    'error': 'Нельзя жаловаться на свой ответ'
+                })
+        if not question_id and not user_id and not comment_id and not answer_id:
             return JsonResponse({'ok': False, 'error': 'Не указан объект жалобы'})
 
         try:
@@ -80,6 +94,8 @@ def complaint_page(request):
                 complaint.user = User.objects.get(id=user_id)
             if comment_id:
                 complaint.comment = Comment.objects.get(id=comment_id)
+            if answer_id:
+                complaint.answer = Answer.objects.get(id=answer_id)
 
             complaint.save()
 
@@ -99,6 +115,8 @@ def complaint_page(request):
             return JsonResponse({'ok': False, 'error': 'Пользователь не найден'})
         except Comment.DoesNotExist:
             return JsonResponse({'ok': False, 'error': 'Комментарий не найден'})
+        except Answer.DoesNotExist:
+            return JsonResponse({'ok': False, 'error': 'Ответ не найден'})
         except Exception as e:
             print('Complaint error:', str(e))
             return JsonResponse({'ok': False, 'error': 'Ошибка сервера'})
@@ -136,7 +154,11 @@ def complaint_comment_panel_page(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
-    complaints = Complaint.objects.filter(comment__isnull=False).order_by('-id')
+    complaints = Complaint.objects.filter(
+        comment__isnull=False
+    ).order_by('-id') | Complaint.objects.filter(
+        answer__isnull=False
+    ).order_by('-id')
     context = {
         'complaints': complaints,
         'user': request.user,

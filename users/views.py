@@ -21,6 +21,8 @@ from django.contrib.auth import authenticate, login, logout
 from questions.views import get_question_context
 
 # Create your views here.
+def can_act(user):
+    return user.is_authenticated and user.active
 
 def logout_page(request):
     logout(request)
@@ -129,8 +131,8 @@ def profile_page_general(request, username):
         return redirect('/account/login')
 
 def profile_page_settings(request):
-    if not request.user.is_authenticated:
-        return redirect('/account/login')
+    if not can_act(request.user):
+        return redirect('/')
 
     user = request.user
 
@@ -238,6 +240,8 @@ def profile_page_liked(request, username):
 
 
 def add_friend(request, user_id):
+    if not can_act(request.user):
+        return redirect('/')
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
     subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
@@ -254,6 +258,8 @@ def add_friend(request, user_id):
 
 
 def delete_friend(request, user_id):
+    if not can_act(request.user):
+        return redirect('/')
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
     subscription = Subscription.objects.filter(user1=current_user, user2=friend).first()

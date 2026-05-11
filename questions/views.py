@@ -11,7 +11,11 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from users.models import Subscription
+from django.utils import timezone
 # Create your views here.
+
+def can_act(user):
+    return user.is_authenticated and user.active
 
 def get_question_context(question_id):
     question = Question.objects.filter(pk=question_id).first()
@@ -42,6 +46,11 @@ def question_page(request, question_id, template_name='question.html'):
     question = context['question']
 
     if request.method == 'POST':
+        if not can_act(request.user):
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+            return redirect('/')
+
         form = CommentForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
             text = form.cleaned_data['text']
@@ -49,7 +58,7 @@ def question_page(request, question_id, template_name='question.html'):
                 text=text,
                 author=request.user,
                 question=question,
-                creation_date=datetime.datetime.now(),
+                creation_date=timezone.now(),
                 rating=0
             )
             comment.save()
@@ -98,7 +107,7 @@ def question_make_page(request):
                 if form.is_valid():
                     model = SentenceTransformer("my_local_model", local_files_only=True)
 
-                    time = datetime.datetime.now()
+                    time = timezone.now()
                     title = form.cleaned_data['title']
                     description = form.cleaned_data['description']
 
@@ -147,8 +156,8 @@ def question_make_page(request):
     return render(request, template_name='make_edit_question.html', context=context)
 
 def question_edit_page(request):
-    if not request.user.is_authenticated:
-        return redirect('/account/login')
+    if not can_act(request.user):
+        return redirect('/')
 
     question_id = request.GET.get('id')
     question = get_object_or_404(Question, id=question_id)
@@ -205,14 +214,14 @@ def themes_page(request):
     return render(request, template_name="themes.html")
 
 def make_comment_page(request, question_id):
-    if request.user.is_authenticated:
+    if can_act(request.user):
         if request.method == "POST":
             form = CommentForm(request.POST)
             if form.is_valid():
                 text = form.cleaned_data['text']
                 rating = 0
                 author = request.user
-                creation_date = datetime.datetime.now()
+                creation_date = timezone.now()
                 question = get_object_or_404(Question, pk=question_id)
                 comment = Comment(text=text, rating=rating, author=author, creation_date=creation_date,
                                   question=question)
@@ -236,13 +245,18 @@ def like_comment(request):
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
     comment_id = request.GET.get('id')
     comment = get_object_or_404(Comment, id=comment_id)
 
     like_obj, created = CommentLike.objects.get_or_create(
         author=request.user,
         comment=comment,
-        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+        defaults={'rating': 0, 'created_at': timezone.now()}
     )
 
     if like_obj.rating == 1:
@@ -275,13 +289,18 @@ def dislike_comment(request):
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
     comment_id = request.GET.get('id')
     comment = get_object_or_404(Comment, id=comment_id)
 
     like_obj, created = CommentLike.objects.get_or_create(
         author=request.user,
         comment=comment,
-        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+        defaults={'rating': 0,'created_at': timezone.now()}
     )
 
     if like_obj.rating == -1:
@@ -310,8 +329,8 @@ def dislike_comment(request):
 
 
 def make_answer_page(request, comment_id):
-    if not request.user.is_authenticated:
-        return redirect('/account/login/')
+    if not can_act(request.user):
+        return redirect('/')
 
     comment = get_object_or_404(Comment, id=comment_id)
 
@@ -323,7 +342,7 @@ def make_answer_page(request, comment_id):
                 answer=text,
                 rating=0,
                 author=request.user,
-                creation_date=datetime.datetime.now(),
+                creation_date=timezone.now(),
                 comment=comment
             )
             answer.save()
@@ -345,13 +364,18 @@ def like_answer(request):
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
     answer_id = request.GET.get('id')
     answer = get_object_or_404(Answer, id=answer_id)
 
     like_obj, created = AnswerLike.objects.get_or_create(
         author=request.user,
         answer=answer,
-        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+        defaults={'rating': 0, 'created_at': timezone.now()}
     )
 
     if like_obj.rating == 1:
@@ -383,13 +407,23 @@ def dislike_answer(request):
             return JsonResponse({'ok': False, 'login': '/account/login/'})
         return redirect('/account/login/')
 
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
     answer_id = request.GET.get('id')
     answer = get_object_or_404(Answer, id=answer_id)
 
     like_obj, created = AnswerLike.objects.get_or_create(
         author=request.user,
         answer=answer,
-        defaults={'rating': 0, 'created_at': datetime.datetime.now()}
+        defaults={'rating': 0, 'created_at': timezone.now()}
     )
 
     if like_obj.rating == -1:

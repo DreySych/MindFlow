@@ -1,9 +1,27 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.utils.timesince import timesince
 from .models import Notification
+from django.utils import timezone
 
+def smart_time(value):
+    now = timezone.now()
+    diff = now - value
+
+    minutes = int(diff.total_seconds() // 60)
+    hours = int(diff.total_seconds() // 3600)
+    days = diff.days
+
+    if minutes < 1:
+        return 'только что'
+    if minutes < 60:
+        return f'{minutes} мин. назад'
+    if hours < 24:
+        return f'{hours} ч. назад'
+    if days <= 7:
+        return f'{days} дн. назад'
+
+    return value.strftime('%d.%m.%Y')
 
 @login_required
 def notifications_list(request):
@@ -17,7 +35,7 @@ def notifications_list(request):
             'text': notification.text,
             'link': notification.link,
             'is_read': notification.is_read,
-            'created_at': timesince(notification.created_at) + ' назад',
+            'created_at': smart_time(notification.created_at),
         })
 
     return JsonResponse({

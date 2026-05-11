@@ -1,6 +1,6 @@
 <!-- comment_item.html -->
 {% load static %}
-
+{% load custom_filters %}
 <div class="comment-thread" id="comment-{{ comment.id }}">
 
     <div class="comment-item">
@@ -23,7 +23,7 @@
                 </a>
 
                 <span class="comment-time">
-                    {{ comment.creation_date|timesince }} назад
+                    {{ comment.creation_date|smart_time }}
                 </span>
 
             </div>
@@ -52,6 +52,7 @@
 
                 </div>
 
+
                 <button type="button"
                         class="comment-action-btn reply-toggle"
                         onclick="document.getElementById('replyForm{{ comment.id }}').style.display='flex'">
@@ -68,6 +69,7 @@
                         onclick="openComplainCommentOverlay({{ comment.id }})">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </button>
+
 
             </div>
 
@@ -101,7 +103,7 @@
 
                     <span class="comment-time">
 
-                        {{ answer.creation_date|timesince }} назад
+                        {{ answer.creation_date|smart_time }}
 
                     </span>
 
@@ -134,7 +136,12 @@
                         </a>
 
                     </div>
-
+                <button type="button"
+                        class="comment-report-btn"
+                        data-author-id="{{ answer.author.id }}"
+                        onclick="openComplainAnswerOverlay({{ answer.id }})">
+                    <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                </button>
 
 
                 </div>

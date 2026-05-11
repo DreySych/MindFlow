@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load custom_filters %}
 <article class="question-card" id="question-{{ question.id }}">
     <div class="question-card-content">
 
@@ -17,7 +17,7 @@
             </a>
 
             <span class="time-ago">
-                {{ question.creation_date|timesince }} назад
+                {{ question.creation_date|smart_time }}
             </span>
         </div>
 
