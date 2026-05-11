@@ -27,10 +27,14 @@
         <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
       </button>
     </form>
-    <a href="" class="ii-button">
-      <span class="ii-text">ИИ Поиск</span>
-      <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
-    </a>
+    <form method="get" action="{% url 'ai_search' %}" class="ii-button-form">
+        <input type="hidden" name="q" id="aiSearchHidden">
+
+        <button type="submit" class="ii-button" id="aiSearchBtn">
+            <span class="ii-text">ИИ Поиск</span>
+            <img src="{% static 'images/lamp.png' %}" alt="ИИ" class="icon-ii">
+        </button>
+    </form>
 
     {% include 'search_overlay.html' %}
   </div>
@@ -164,4 +168,25 @@ function loadNotifications() {
 
 setInterval(loadNotifications, 5000);
 document.addEventListener('DOMContentLoaded', loadNotifications);
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const aiForm = document.querySelector('.ii-button-form');
+
+    if (aiForm) {
+        aiForm.addEventListener('submit', function(event) {
+            const searchInput = document.getElementById('searchInput');
+            const hiddenInput = document.getElementById('aiSearchHidden');
+
+            if (searchInput && hiddenInput) {
+                hiddenInput.value = searchInput.value.trim();
+            }
+
+            if (!hiddenInput.value) {
+                event.preventDefault();
+                alert('Введите запрос в поиск');
+            }
+        });
+    }
+});
 </script>

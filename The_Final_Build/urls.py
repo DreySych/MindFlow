@@ -13,6 +13,7 @@ import users.views as users_views
 import complaints.views as complaints_views
 import notifications.views as notifications_views
 import private_messages.views as pm_views
+from ai import views as ai_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -62,7 +63,8 @@ urlpatterns = [
     path('account/password-restore/code/', users_views.password_restore_code_page, name='password_restore_code'),
     path('account/password-restore/new/', users_views.password_restore_new_page, name='password_restore_new'),
 
-
+    path("ai/", ai_views.ai_search_page, name="ai_search"),
+    path("ai/api/", ai_views.ai_search_api, name="ai_search_api"),
 
     path(
         'profile/someone/',

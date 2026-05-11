@@ -14,7 +14,7 @@ def chat_page(request, user_id):
     if request.method == 'POST':
         text = request.POST.get('text')
 
-        if text:
+        if text and request.user.active:
             Message.objects.create(
                 sender=request.user,
                 receiver=other_user,

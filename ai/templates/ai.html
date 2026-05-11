@@ -32,6 +32,7 @@
           </div>
 
           <div class="ai-response-body" id="aiResponseBody">
+              
             {% if query %}
               <p class="ai-text" id="aiStatus">Ответ от ИИ</p>
             {% else %}
@@ -48,11 +49,11 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    responseBody = document.getElementById("aiResponseBody");
-    statusEl = document.getElementById("aiStatus");
+    const responseBody = document.getElementById("aiResponseBody");
+    const statusEl = document.getElementById("aiStatus");
 
     // Берём запрос из контекста
-    query = "{{ query|escapejs }}";
+    const query = "{{ query|escapejs }}";
     console.log("query:", query);
     if (query) {
         // Если есть запрос, то показываем статус и шлём запрос к API
@@ -87,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Функционал кнопки копирования
-    copyBtn = document.querySelector(".ai-copy");
+    const copyBtn = document.querySelector(".ai-copy");
     let copyImg;
     if (copyBtn) {
         copyImg = copyBtn.querySelector("img");
@@ -96,11 +97,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (copyBtn && copyImg && responseBody) {
-        originalSrc = copyImg.getAttribute("src");
-        successSrc = "{% static 'images/check_mark.png' %}";
+        const originalSrc = copyImg.getAttribute("src");
+        const successSrc = "{% static 'images/check_mark.png' %}";
 
         copyBtn.addEventListener("click", async function () {
-            text = responseBody.innerText.trim();
+            const text = responseBody.innerText.trim();
             if (!text) return;
 
             try {

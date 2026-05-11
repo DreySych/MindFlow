@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'private_messages',
     'notifications',
     'basic_templates',
+    'ai',
 ]
 
 MIDDLEWARE = [

@@ -1,12 +1,11 @@
 import json
-from datetime import datetime, timezone
+import datetime
+from django.utils import timezone
 from unittest import mock
 from django.test import TestCase, Client
 from django.urls import reverse
-
 from questions.models import Question, Comment, Answer
 from users.models import User
-
 from ai.strategies import AllQuestionsStrategy, LastNQuestionsStrategy
 from ai.services import AiSearchService, AiSearchResult, AskOllamaClient
 
@@ -15,27 +14,41 @@ class StrategyTests(TestCase):
     """ Тесты стратегий выбора вопросов. """
 
     def setUp(self):
-        self.user = User.objects.create(username="tester")
+        self.user = User.objects.create(
+            username="tester",
+            email="tester@test.com",
+            password="12345",
+            sex=1,
+            reputation=0,
+            role="user",
+            registration_date=datetime.date.today(),
+        )
         self.q1 = Question.objects.create(
             title="Первый вопрос",
             description="Описание 1",
             author=self.user,
-            views=0,
-            creation_date=datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc),
+            rating=0,
+            images='',
+            embedding='',
+            creation_date=timezone.now() - datetime.timedelta(days=3)
         )
         self.q2 = Question.objects.create(
             title="Второй вопрос",
             description="Описание 2",
             author=self.user,
-            views=0,
-            creation_date=datetime(2024, 1, 2, 10, 0, tzinfo=timezone.utc),
+            rating=0,
+            images='',
+            embedding='',
+            creation_date=timezone.now() - datetime.timedelta(days=2)
         )
         self.q3 = Question.objects.create(
             title="Третий вопрос",
             description="Описание 3",
             author=self.user,
-            views=0,
-            creation_date=datetime(2024, 1, 3, 10, 0, tzinfo=timezone.utc),
+            rating=0,
+            images='',
+            embedding='',
+            creation_date=timezone.now() - datetime.timedelta(days=1)
         )
 
     def test_all_questions_strategy_returns_all(self):
@@ -74,27 +87,37 @@ class AiSearchServiceTests(TestCase):
     """ Тесты сервиса AiSearchService. Внешнее API (Ollama) заменяем на FakeOllamaClient. """
 
     def setUp(self):
-        self.user = User.objects.create(username="tester")
+        self.user = User.objects.create(
+            username="tester",
+            email="tester@test.com",
+            password="12345",
+            sex=1,
+            reputation=0,
+            role="user",
+            registration_date=datetime.date.today(),
+        )
         self.q = Question.objects.create(
             title="Вопрос про сов",
             description="Описание про сов",
             author=self.user,
-            views=0,
-            creation_date=datetime(2024, 1, 1, 10, 0, tzinfo=timezone.utc),
+            rating=0,
+            images='',
+            embedding='',
+            creation_date=timezone.now()
         )
         self.comment = Comment.objects.create(
-            comment="Комментарий к вопросу",
+            text="Комментарий к вопросу",
             author=self.user,
             question=self.q,
-            likes=0,
-            creation_date=datetime(2024, 1, 1, 11, 0, tzinfo=timezone.utc),
+            rating=0,
+            creation_date=timezone.now()
         )
         self.answer = Answer.objects.create(
             answer="Ответ к комментарию",
             author=self.user,
-            question=self.comment,
+            comment=self.comment,
             rating=0,
-            creation_date=datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
+            creation_date=timezone.now()
         )
 
     def make_service(self):

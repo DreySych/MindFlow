@@ -31,7 +31,7 @@ def build_context(questions):
     for q in questions:
         parts.append(f"Заголовок: {q.title}\nОписание: {q.description}")
         for c in q.comment_set.all():
-            parts.append(f"Комментарий: {c.comment}")
+            parts.append(f"Комментарий: {c.text}")
             for a in c.answer_set.all():
                 parts.append(f"Ответ к комментарию: {a.answer}")
 
@@ -56,7 +56,7 @@ class AskOllamaClient:
     def __init__(self, client):
         self._client = client
 
-    def ask(self, system_prompt, user_prompt, model="qwen3:0.6b"):
+    def ask(self, system_prompt, user_prompt, model="qwen3:1.7b"):
         """ Отправляет запрос к LLM и возвращает текстовый ответ. """
         response = self._client.chat(
             model=model,
