@@ -109,7 +109,7 @@ def profile_page_general(request, username):
     if request.user.is_authenticated:
         user = request.user
         target_user = get_object_or_404(User, username=username)
-        posts = Question.objects.filter(author=target_user)
+        posts = Question.objects.filter(author=target_user).order_by('-creation_date')
         is_owner = (request.user.is_authenticated and user == target_user)
         posts_context = []
         for post in posts:
@@ -175,7 +175,7 @@ def profile_page_settings(request):
 def profile_page_comments(request, username):
     if request.user.is_authenticated:
         target_user = get_object_or_404(User, username=username)
-        posts = Question.objects.filter(author=target_user)
+        posts = Question.objects.filter(author=target_user).order_by('-creation_date')
         comments = Comment.objects.filter(author=target_user)
         context = {
             'user': target_user,

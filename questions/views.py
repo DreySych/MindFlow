@@ -93,7 +93,7 @@ def question_make_page(request):
     if request.user.is_authenticated:
         if request.user.is_authenticated and request.user.active:
             if request.method == "POST":
-                form = QuestionForm(request.POST)
+                form = QuestionForm(request.POST, request.FILES)
 
                 if form.is_valid():
                     model = SentenceTransformer("my_local_model", local_files_only=True)
@@ -130,7 +130,7 @@ def question_make_page(request):
                     question.set_embedding(embeddings)
                     question.save()
 
-                    return redirect('/')
+                    return redirect(f'/profile/{request.user.username}/#question-{question.id}')
 
             else:
                 form = QuestionForm()
@@ -178,7 +178,7 @@ def question_edit_page(request):
 
             question.save()
 
-            return redirect('question', question_id=question.id)
+            return redirect(f'/profile/{request.user.username}/#question-{question.id}')
 
     else:
         form = QuestionForm(initial={
@@ -190,6 +190,7 @@ def question_edit_page(request):
         'form': form,
         'question': question,
         'is_edit': True,
+        'question_images': question.images.split(',') if question.images else [],
     }
     if request.user.is_authenticated:
         context['subscriptions'] = Subscription.objects.filter(user1=request.user)

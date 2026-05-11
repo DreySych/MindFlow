@@ -43,7 +43,29 @@ def complaint_page(request):
         question_id = request.GET.get('question_id')
         user_id = request.GET.get('user_id')
         comment_id = request.GET.get('comment_id')
+        if question_id:
+            question = Question.objects.filter(id=question_id).first()
 
+            if question and question.author == request.user:
+                return JsonResponse({
+                    'ok': False,
+                    'error': 'Нельзя жаловаться на свой пост'
+                })
+
+        if user_id and str(user_id) == str(request.user.id):
+            return JsonResponse({
+                'ok': False,
+                'error': 'Нельзя жаловаться на себя'
+            })
+
+        if comment_id:
+            comment = Comment.objects.filter(id=comment_id).first()
+
+            if comment and comment.author == request.user:
+                return JsonResponse({
+                    'ok': False,
+                    'error': 'Нельзя жаловаться на свой комментарий'
+                })
         if not question_id and not user_id and not comment_id:
             return JsonResponse({'ok': False, 'error': 'Не указан объект жалобы'})
 

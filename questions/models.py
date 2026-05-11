@@ -125,6 +125,8 @@ def announce_new_comment(sender, instance, created, **kwargs):
                 "message": {
                     "html": html_content,
                     "event_type": "new_comment",
+                    "question_id": question.id,
+                    "count": all_comments.count(),
                 }
             }
         )
@@ -145,6 +147,8 @@ def announce_new_answer(sender, instance, created, **kwargs):
                 "message": {
                     "html": html_content,
                     "event_type": "new_answer",
+                    "question_id": question.id,
+                    "count": all_comments.count(),
                 }
             }
         )
