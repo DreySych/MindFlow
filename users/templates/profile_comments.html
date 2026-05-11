@@ -83,11 +83,18 @@
                                             <img src="{% static 'images/default.png' %}" alt="Avatar" class="user-avatar">
                                         {% endif %}
                                     </a>
+
+
+
+
                                     <a href="{% url 'profile_general' username=comment_data.comment.question.author.username %}" class="user-name-link">
                                         {{ comment_data.comment.question.author.username }}
                                     </a>
-                                    <span class="time-ago">{{ comment_data.comment.creation_date|timesince }} назад</span>
+
+                                    <span class="time-ago">{{ comment_data.comment.creation_date|smart_time }}</span>
                                     <span class="time-ago" style="margin-left: 4px;">•</span>
+
+
                                     <a href="{% url 'question' comment_data.comment.question.id %}" class="comment-post-link">
                                         {{ comment_data.comment.question.title }}
                                     </a>
@@ -99,7 +106,13 @@
                                         <a href="{% url 'like_comment' %}?id={{ comment_data.comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn upvote {% if comment_data.user_rating == 1 %}active{% endif %}">
                                             <img src="{% static 'images/like.png' %}" alt="Лайк">
                                         </a>
+
+
+
+
                                         <span class="vote-count">{{ comment_data.comment.rating }}</span>
+
+
                                         <a href="{% url 'dislike_comment' %}?id={{ comment_data.comment.id }}&to=/profile/{{ user.username }}/comments/" class="vote-btn downvote {% if comment_data.user_rating == -1 %}active{% endif %}">
                                             <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                                         </a>
@@ -124,50 +137,81 @@
     {% include 'complain_user.html' %}
     {% include 'complain_comment.html' %}
 
-    <script>
-    function getCookie(name) {
-        var value = '; ' + document.cookie;
-        var parts = value.split('; ' + name + '=');
-        if (parts.length === 2) return parts.pop().split(';').shift();
+<script>
+function showError(text) {
+    const errorBox = document.createElement('div');
+
+    errorBox.textContent = text;
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.right = '20px';
+    errorBox.style.background = '#ff4d4f';
+    errorBox.style.color = 'white';
+    errorBox.style.padding = '14px 18px';
+    errorBox.style.borderRadius = '12px';
+    errorBox.style.zIndex = '99999';
+    errorBox.style.fontSize = '14px';
+
+    document.body.appendChild(errorBox);
+
+    setTimeout(function() {
+        errorBox.remove();
+    }, 3000);
+}
+
+document.addEventListener('click', function(event) {
+    const button = event.target.closest('.vote-btn.upvote, .vote-btn.downvote');
+
+    if (!button) {
+        return;
     }
 
-    document.addEventListener('click', function(event) {
-        var button = event.target.closest('.vote-btn.upvote, .vote-btn.downvote');
-        if (!button) return;
+    event.preventDefault();
 
-        event.preventDefault();
+    fetch(button.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
 
-        fetch(button.href, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': getCookie('csrftoken')
-            }
-        })
-        .then(function(response) { return response.json(); })
-        .then(function(data) {
-            if (!data.ok) {
-                if (data.login) window.location.href = data.login;
+        if (!data.ok) {
+
+            if (data.login) {
+                window.location.href = data.login;
                 return;
             }
-            var group = button.closest('.vote-group');
-            var count = group.querySelector('.vote-count');
-            var upvoteBtn = group.querySelector('.upvote');
-            var downvoteBtn = group.querySelector('.downvote');
 
-            count.textContent = data.rating;
-
-            if (data.user_rating === 1) {
-                if (upvoteBtn) upvoteBtn.classList.add('active');
-                if (downvoteBtn) downvoteBtn.classList.remove('active');
-            } else if (data.user_rating === -1) {
-                if (downvoteBtn) downvoteBtn.classList.add('active');
-                if (upvoteBtn) upvoteBtn.classList.remove('active');
-            } else {
-                if (upvoteBtn) upvoteBtn.classList.remove('active');
-                if (downvoteBtn) downvoteBtn.classList.remove('active');
+            if (data.error) {
+                showError(data.error);
             }
-        });
+
+            return;
+        }
+
+        const group = button.closest('.vote-group');
+        const count = group.querySelector('.vote-count');
+        const upvoteBtn = group.querySelector('.upvote');
+        const downvoteBtn = group.querySelector('.downvote');
+
+        count.textContent = data.rating;
+
+        if (data.user_rating === 1) {
+            upvoteBtn.classList.add('active');
+            downvoteBtn.classList.remove('active');
+        } else if (data.user_rating === -1) {
+            downvoteBtn.classList.add('active');
+            upvoteBtn.classList.remove('active');
+        } else {
+            upvoteBtn.classList.remove('active');
+            downvoteBtn.classList.remove('active');
+        }
     });
-    </script>
+});
+</script>
+
 </body>
 </html>
