@@ -24,10 +24,11 @@ class PersonalMessageConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.room_name,
-            self.channel_name
-        )
+        if hasattr(self, 'room_name'):
+            await self.channel_layer.group_discard(
+                self.room_name,
+                self.channel_name
+            )
 
     async def receive(self, text_data):
         if not self.user.is_authenticated or not self.user.active:
