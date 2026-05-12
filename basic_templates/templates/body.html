@@ -8,7 +8,7 @@
     <input type="text" placeholder="Поиск друзей..." class="sidebar-search-input" id="friendSearchInput">
   </div>
 
-  <div class="friends-list">
+  <div class="friends-list" id="friendsList">
     {% for subscription in subscriptions %}
       <div class="friend-item">
         {% if subscription.user2.image %}
