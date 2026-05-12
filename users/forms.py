@@ -17,7 +17,14 @@ class SignUpForm(forms.Form):
     email = forms.EmailField(label='Почта', widget=forms.EmailInput)
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
     password_confirm = forms.CharField(widget=forms.PasswordInput, label='Подтверждение пароля')
-    sex = forms.TypedChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False, empty_value=None, coerce= lambda x: int(x))
+    sex = forms.TypedChoiceField(
+        label='Пол',
+        widget=forms.RadioSelect,
+        choices=sex_vatiants,
+        required=False,
+        empty_value=None,
+        coerce=int,
+    )
     birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
 
 
@@ -32,7 +39,14 @@ class ProfileForm(forms.Form):
     ]
 
     username = forms.CharField(label='Никнейм', max_length=100, required=True)
-    sex = forms.TypedChoiceField(label='Пол', widget=forms.RadioSelect, choices=sex_vatiants, required=False,empty_value=None, coerce=lambda x: int(x))
+    sex = forms.TypedChoiceField(
+        label='Пол',
+        widget=forms.RadioSelect,
+        choices=sex_vatiants,
+        required=False,
+        empty_value=None,
+        coerce=int,
+    )
     email = forms.EmailField(label='Почта', required=True)
     birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     image = forms.ImageField(label='Фото профиля', required=False)

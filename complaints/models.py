@@ -1,6 +1,7 @@
 from django.db import models
-from users.models import *
-from questions.models import *
+
+from questions.models import Answer, Comment, Question
+from users.models import User
 
 class Complaint(models.Model):
     description = models.TextField()

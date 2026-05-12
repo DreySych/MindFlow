@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
 from main.model_loader import get_model
-from questions.forms import *
-from questions.models import *
+from questions.forms import CommentForm, QuestionForm
+from questions.models import Answer, AnswerLike, Comment, CommentLike, Like, Question
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse

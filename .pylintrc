@@ -1,0 +1,29 @@
+[MASTER]
+ignore=migrations,__pycache__,media,staticfiles,logs
+load-plugins=
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    duplicate-code,
+    import-error,
+    invalid-name,
+    no-member,
+    broad-exception-caught,
+    too-many-return-statements,
+    too-many-branches,
+    too-many-instance-attributes,
+    super-init-not-called,
+    global-statement,
+
+[FORMAT]
+max-line-length=120
+
+[DESIGN]
+max-args=10
+max-locals=25
+max-branches=20
+max-statements=60
