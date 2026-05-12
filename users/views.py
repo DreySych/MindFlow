@@ -2,6 +2,9 @@ import os
 import uuid
 from itertools import chain
 from operator import attrgetter
+
+from django.http import JsonResponse
+
 from .models import RecoveryCode
 from .forms import PasswordRestoreEmailForm, PasswordRestoreCodeForm, PasswordRestoreNewForm
 from .utils import send_recovery_code
@@ -370,7 +373,8 @@ def profile_page_liked(request, username):
 
 def add_friend(request, user_id):
     if not can_act(request.user):
-        return redirect('/')
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
     subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
