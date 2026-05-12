@@ -1,25 +1,32 @@
-.. MindFlow documentation master file, created by
-   sphinx-quickstart on Wed May 13 00:20:47 2026.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Документация The Final Build
+=============================
 
-Документация MindFlow
-=====================
+**The Final Build** — это веб-платформа для вопросов и ответов (Q&A)
+с интеллектуальным AI-поиском на основе LLM.
+
+Основные возможности
+--------------------
+
+* 📝 **Система вопросов и ответов** — публикация вопросов, комментирование, ответы
+* 🤖 **AI-поиск** — интеллектуальный поиск с использованием Ollama LLM (qwen3:1.7b)
+* 👍 **Лайки/дизлайки** — голосование за контент
+* 👥 **Подписки** — подписка на пользователей
+* 🔔 **Уведомления** — система оповещений
+* 🛡️ **Модерация** — панель администратора для жалоб
+* 👤 **Профили** — персональные страницы пользователей
 
 .. toctree::
    :maxdepth: 2
    :caption: Содержание:
 
-   introduction
    installation
-   usage
-   api/index
-   models
-   development
-   faq
+   quickstart
+   api
+   modules/index
+   modules/architecture
 
 Индексы и таблицы
-==================
+=================
 
 * :ref:`genindex`
 * :ref:`modindex`
