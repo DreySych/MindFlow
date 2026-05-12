@@ -6,6 +6,7 @@
     {% load static %}
     {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/question_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
 </head>
@@ -25,7 +26,6 @@
             <div class="profile-info">
                 <h1 class="profile-nick">{{ user.username }}</h1>
                 <div class="profile-id">ID: {{ user.id }}</div>
-                <div class="profile-actions"></div>
             </div>
         </div>
     </div>
@@ -209,7 +209,6 @@
 
             count.textContent = data.rating;
 
-            // Обновляем активные классы
             if (data.user_rating === 1) {
                 upvoteBtn.classList.add('active');
                 downvoteBtn.classList.remove('active');

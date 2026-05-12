@@ -5,7 +5,13 @@
   <div class="chat-modal">
     <div class="chat-modal-header">
       <div class="chat-user-info">
-        <img src="{% static 'images/default.png' %}" alt="Аватар" class="chat-modal-avatar">
+        <img src="
+            {% if request.user.image %}
+                {{ request.user.image.url }}
+            {% else %}
+                {% static 'images/default.png' %}
+            {% endif %}
+        " alt="Аватар" class="chat-modal-avatar">
         <span class="chat-modal-username" id="chatUserName">Выберите чат</span>
       </div>
       <button class="chat-modal-close" onclick="closeChatOverlay()">
