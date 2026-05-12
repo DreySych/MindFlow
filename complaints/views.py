@@ -4,6 +4,9 @@ from complaints.models import Complaint
 from users.models import User, Subscription
 from notifications.models import Notification
 from questions.models import Question, Comment, Answer
+import logging
+
+logger = logging.getLogger('project')
 
 def accept(request):
     complaint = Complaint.objects.filter(id=request.GET.get('complaint_id')).first()
@@ -98,6 +101,7 @@ def complaint_page(request):
                 complaint.answer = Answer.objects.get(id=answer_id)
 
             complaint.save()
+            logger.info('Complaint created by user=%s', request.user.username)
 
             admins = User.objects.filter(is_staff=True)
             for admin in admins:
@@ -118,7 +122,7 @@ def complaint_page(request):
         except Answer.DoesNotExist:
             return JsonResponse({'ok': False, 'error': 'Ответ не найден'})
         except Exception as e:
-            print('Complaint error:', str(e))
+            logger.error('Complaint error: %s', e)
             return JsonResponse({'ok': False, 'error': 'Ошибка сервера'})
 
     return redirect('/')

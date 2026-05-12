@@ -5,7 +5,7 @@ from operator import attrgetter
 from .models import RecoveryCode
 from .forms import PasswordRestoreEmailForm, PasswordRestoreCodeForm, PasswordRestoreNewForm
 from .utils import send_recovery_code
-
+import logging
 from django.conf import settings
 from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
@@ -25,6 +25,7 @@ from questions.views import get_question_context
 import json
 import traceback
 
+logger = logging.getLogger('project')
 
 # Create your views here.
 def can_act(user):
@@ -40,7 +41,7 @@ def signup_page(request):
 
     if request.method == 'POST':
         form = SignUpForm(request.POST, request.FILES)
-        print(form.errors)
+        logger.warning('Signup form errors: %s', form.errors)
         if form.is_valid():
             password1 = form.cleaned_data['password']
             password2 = form.cleaned_data['password_confirm']
@@ -60,7 +61,7 @@ def signup_page(request):
                 login(request, user)
                 return redirect('/')
             else:
-                print("Пароли не совпадают")
+                logger.warning('Password confirmation failed during signup')
     else:
         form = SignUpForm()
 
@@ -86,7 +87,7 @@ def login_page(request):
                 login(request, user)
                 return redirect('index')
             else:
-                print("ОШИБКА. НЕВЕРНЫЙ ПАРОЛЬ")
+                logger.warning('Login failed: wrong username or password')
     else:
         form = LoginForm()
 
@@ -126,16 +127,16 @@ def password_restore_page(request):
                     request.session['restore_email'] = email
                     request.session['restore_user_id'] = user.id
 
-                    print(f"✅ Письмо с кодом {recovery.code} отправлено на {email}")
-                    print(f"✅ Email настройки: {settings.EMAIL_HOST}:{settings.EMAIL_PORT}")
-                    print(f"✅ От: {settings.DEFAULT_FROM_EMAIL}")
+                    logger.info('Recovery email sent to %s', email)
+                    logger.debug('Email settings: %s:%s, from %s', settings.EMAIL_HOST, settings.EMAIL_PORT,
+                                 settings.DEFAULT_FROM_EMAIL)
 
                     messages.success(request, 'Код восстановления отправлен на вашу почту!')
                     return redirect('password_restore_code')
 
                 except Exception as e:
-                    print(f"❌ ОШИБКА ОТПРАВКИ: {str(e)}")
-                    print(f"❌ Traceback: {traceback.format_exc()}")
+                    logger.error('Recovery email sending failed: %s', e)
+                    logger.debug('Traceback: %s', traceback.format_exc())
                     messages.error(request, f'Ошибка отправки письма: {str(e)}')
 
                 else:

@@ -6,6 +6,9 @@ from django.db.models.signals import post_save
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.template.loader import render_to_string
+import logging
+
+logger = logging.getLogger('project')
 
 # Create your models here.
 
@@ -32,7 +35,7 @@ class Question(models.Model):
         for i in self.images.split(','):
             l.append("media/"+i)
 
-        print(l)
+        logger.debug('Question image list: %s', l)
 
         return l
 

@@ -158,3 +158,40 @@ EMAIL_HOST_USER = 'sigmaalfamale123@gmail.com'
 EMAIL_HOST_PASSWORD = 'whbmnehyhdpuasdv'
 DEFAULT_FROM_EMAIL = 'MindFlow <sigmaalfaamale123@gmail.com>'
 
+LOG_DIR = BASE_DIR / 'logs'
+os.makedirs(LOG_DIR, exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'main': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'file': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'project.log',
+            'formatter': 'main',
+            'encoding': 'utf-8',
+        },
+    },
+
+    'loggers': {
+        'project': {
+            'handlers': ['file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

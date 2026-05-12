@@ -13,7 +13,10 @@ from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from users.models import Subscription
 from django.utils import timezone
+import logging
 # Create your views here.
+
+logger = logging.getLogger('project')
 
 def can_act(user):
     return user.is_authenticated and user.active
@@ -130,8 +133,8 @@ def question_make_page(request):
                     description = form.cleaned_data['description']
 
                     images = request.FILES.getlist('images')
-                    print('FILES:', request.FILES)
-                    print('IMAGES:', images)
+                    logger.debug('Uploaded files for question: %s', request.FILES)
+                    logger.info('Question images count: %s', len(images))
 
                     image_paths = []
                     text = f"{title}\n{description}"
@@ -156,7 +159,7 @@ def question_make_page(request):
 
                     question.set_embedding(embeddings)
                     question.save()
-
+                    logger.info('Question created: id=%s, author=%s', question.id, request.user.username)
                     return redirect(f'/profile/{request.user.username}/#question-{question.id}')
 
             else:
@@ -205,7 +208,7 @@ def question_edit_page(request):
                 question.images = ','.join(image_paths)
 
             question.save()
-
+            logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
 
     else:

@@ -19,8 +19,8 @@ media/
 staticfiles/
 
 # Logs
-*.log
 logs/
+*.log
 
 # OS
 .DS_Store
@@ -30,3 +30,5 @@ Thumbs.db
 .env
 
 my_local_model/
+
+
