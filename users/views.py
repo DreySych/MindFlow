@@ -27,9 +27,11 @@ import traceback
 
 logger = logging.getLogger('project')
 
+
 # Create your views here.
 def can_act(user):
     return user.is_authenticated and user.active
+
 
 def logout_page(request):
     logout(request)
@@ -149,38 +151,36 @@ def password_restore_page(request):
 
 
 def password_restore_code_page(request):
+    if 'restore_email' not in request.session:
+        messages.error(request, 'Сначала введите почту')
+        return redirect('password_restore')
 
-        if 'restore_email' not in request.session:
-            messages.error(request, 'Сначала введите почту')
-            return redirect('password_restore')
+    if request.method == 'POST':
+        form = PasswordRestoreCodeForm(request.POST)
+        if form.is_valid():
+            code = form.cleaned_data['code']
+            user_id = request.session.get('restore_user_id')
 
-        if request.method == 'POST':
-            form = PasswordRestoreCodeForm(request.POST)
-            if form.is_valid():
-                code = form.cleaned_data['code']
-                user_id = request.session.get('restore_user_id')
+            recovery = RecoveryCode.objects.filter(
+                user_id=user_id,
+                code=code,
+                is_used=False
+            ).first()
 
+            if recovery and recovery.is_valid():
 
-                recovery = RecoveryCode.objects.filter(
-                    user_id=user_id,
-                    code=code,
-                    is_used=False
-                ).first()
+                recovery.is_used = True
+                recovery.save()
+                request.session['restore_code_verified'] = True
 
-                if recovery and recovery.is_valid():
+                messages.success(request, 'Код подтверждён! Теперь придумайте новый пароль.')
+                return redirect('password_restore_new')
+            else:
+                messages.error(request, 'Неверный или истёкший код')
+    else:
+        form = PasswordRestoreCodeForm()
 
-                    recovery.is_used = True
-                    recovery.save()
-                    request.session['restore_code_verified'] = True
-
-                    messages.success(request, 'Код подтверждён! Теперь придумайте новый пароль.')
-                    return redirect('password_restore_new')
-                else:
-                    messages.error(request, 'Неверный или истёкший код')
-        else:
-            form = PasswordRestoreCodeForm()
-
-        return render(request, 'password_restore_code.html', {'form': form})
+    return render(request, 'password_restore_code.html', {'form': form})
 
 
 def password_restore_new_page(request):
@@ -221,7 +221,6 @@ def profile_page_general(request, username):
         posts_context = []
         for post in posts:
             post_context = get_question_context(post.pk)
-
 
             if request.user.is_authenticated:
                 user_like = Like.objects.filter(user=request.user, question=post).first()
