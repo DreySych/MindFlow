@@ -287,3 +287,56 @@ class QuestionsViewsTest(TestCase):
         self.client.login(username='other', password='pass')
         response = self.client.get(f'/question/{self.question.id}/')
         self.assertContains(response, 'id="commentForm"')
+
+        # ТЕСТЫ ДЛЯ ЛАЙКОВ/ДИЗЛАЙКОВ ПОСТОВ (вопросов)
+    def test_like_post_increases_rating(self):
+            # Лайк поста незалогиненым пользователем запрещён -> залогиним другого и лайкнем
+            self.client.login(username='other', password='pass')
+            response = self.client.get(
+                f'/like/?id={self.question.id}',
+                HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            )
+            data = response.json()
+            self.assertTrue(data['ok'])
+            self.assertEqual(data['rating'], 1)
+
+    def test_like_post_toggle_removes_like(self):
+            # Повторный лайк снимает лайк и уменьшает рейтинг
+            self.client.login(username='other', password='pass')
+            # Первый лайк
+            self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            # Повторный лайк должен снять
+            response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            data = response.json()
+            self.assertTrue(data['ok'])
+            self.assertEqual(data['rating'], 0)
+
+    def test_dislike_post_decreases_rating(self):
+            # Дизлайк уменьшает рейтинг
+            self.client.login(username='other', password='pass')
+            response = self.client.get(f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            data = response.json()
+            self.assertTrue(data['ok'])
+            self.assertEqual(data['rating'], -1)
+
+    def test_switch_dislike_to_like_changes_rating_correctly(self):
+            # Переключение с дизлайка на лайк должно прибавить 2 к рейтингу
+            self.client.login(username='other', password='pass')
+            # Сначала дизлайк
+            self.client.get(f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            q = Question.objects.get(id=self.question.id)
+            self.assertEqual(q.rating, -1)
+            # Затем лайк - ожидание: рейтинг = +1 (из -1 + 2)
+            response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            data = response.json()
+            self.assertTrue(data['ok'])
+            self.assertEqual(data['rating'], 1)
+
+    def test_blocked_user_cannot_like(self):
+            # Забаненный пользователь не может ставить лайки на посты
+            self.client.login(username='blocked', password='pass')
+            response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+            data = response.json()
+            self.assertFalse(data['ok'])
+            self.assertEqual(data['error'], 'Вы заблокированы и не можете выполнять это действие')
+
