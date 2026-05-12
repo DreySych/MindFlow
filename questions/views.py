@@ -5,6 +5,7 @@ from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
 from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
+from main.model_loader import get_model
 from questions.forms import *
 from questions.models import *
 from channels.layers import get_channel_layer
@@ -121,7 +122,8 @@ def question_make_page(request):
                 form = QuestionForm(request.POST, request.FILES)
 
                 if form.is_valid():
-                    model = SentenceTransformer("my_local_model", local_files_only=True)
+
+                    model = get_model()
 
                     time = timezone.now()
                     title = form.cleaned_data['title']
