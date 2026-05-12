@@ -55,7 +55,9 @@
 
                 <button type="button"
                         class="comment-action-btn reply-toggle"
-                        onclick="document.getElementById('replyForm{{ comment.id }}').style.display='flex'">
+                        {% if user.is_authenticated %}
+                            onclick="document.getElementById('replyForm{{ comment.id }}').style.display='flex'"
+                        {% endif %}>
 
                     <img src="{% static 'images/comment.png' %}" alt="Ответить">
 
@@ -182,3 +184,14 @@
 </form>
 
 </div>
+
+<script>
+    document.querySelectorAll('.reply-toggle').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        {% if not user.is_authenticated %}
+            window.location.href = '/account/login/?next={{ request.path }}';
+            e.preventDefault();
+        {% endif %}
+    });
+});
+</script>
