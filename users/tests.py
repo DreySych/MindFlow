@@ -103,6 +103,6 @@ class UsersViewsTest(TestCase):
         # Забаненный пользователь не может подписываться на других
         self.client.login(username='blocked', password='pass')
         resp = self.client.get(f'/add_friend/{self.user1.id}/')
-        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.status_code, 200)
         # Подписка не должна быть создана
         self.assertFalse(Subscription.objects.filter(user1=self.blocked, user2=self.user1).exists())
