@@ -26,9 +26,7 @@
                 <div class="complaint-card">
                     <div class="complaint-post">
                         <div class="complaint-post-title">{{ i.question.title }}</div>
-                        <p class="complaint-post-text">
-                            {{ i.question.description }}
-                        </p>
+                        <p class="complaint-post-text">{{ i.question.description }}</p>
                         <a href="{% url 'question' i.question.id %}" class="complaint-detail-btn">Подробнее</a>
                     </div>
 
@@ -39,13 +37,11 @@
                         </div>
 
                         <div class="complaint-verdict">
-                            <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions"
-                               class="verdict-btn approve">
+                            <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions" class="verdict-btn approve">
                                 <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
                             </a>
 
-                            <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions"
-                               class="verdict-btn reject">
+                            <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/questions" class="verdict-btn reject">
                                 <img src="{% static 'images/krest.png' %}" alt="Отклонить">
                             </a>
                         </div>

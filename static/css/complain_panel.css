@@ -102,6 +102,11 @@ body {
 
 .complaint-comment {
     margin-bottom: 16px;
+    /* ПРИЖАТЬ ТЕКСТ К ЛЕВОМУ КРАЮ */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .complaint-comment-text {
@@ -109,9 +114,23 @@ body {
     color: #333;
     line-height: 1.5;
     font-style: italic;
-    padding: 12px;
+    /* МИНИМАЛЬНЫЕ ОТСТУПЫ */
+    padding: 8px 8px !important;
     background: #f8f8f8;
     border-radius: 8px;
+    /* ПЕРЕНОС ТЕКСТА */
+    word-break: break-all;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 !important;
+    text-align: left !important;
+    width: 100% !important;
+    /* ПРИЖАТЬ К ЛЕВУЮ СТОРОНУ */
+    margin-left: 0 !important;
+    padding-left: 8px !important;
 }
 
 .complaint-info {
@@ -120,29 +139,41 @@ body {
     justify-content: space-between;
     padding-top: 16px;
     border-top: 1px solid #eee;
+    gap: 0;
 }
 
 .complaint-type {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex: 1;
+    min-width: 0;
 }
 
 .complaint-label {
     font-size: 14px;
     color: #888;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .complaint-value {
     font-size: 14px;
     color: #e53935;
     font-weight: 500;
+    flex: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    padding-right: 12px;
+    max-width: none;
 }
 
 .complaint-verdict {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
 }
 
 .verdict-btn {
@@ -155,6 +186,7 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .verdict-btn img {
@@ -283,11 +315,29 @@ body {
     .complaint-info {
         flex-direction: column;
         gap: 12px;
+        align-items: stretch;
+    }
+
+    .complaint-type {
+        flex-direction: column;
         align-items: flex-start;
+        gap: 4px;
+        order: 2;
     }
 
     .complaint-verdict {
+        order: 1;
         align-self: flex-end;
+    }
+
+    .complaint-comment {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .complaint-comment-text {
+        padding: 6px 6px !important;
+        font-size: 15px;
     }
 
     .user-avatar-complaint {
