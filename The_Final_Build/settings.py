@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-s2rjmxhai3tc@i6i253h%&8_%8mqei825&y0x(#w5-!d)g8!e+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["188.127.251.228", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -131,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -154,9 +154,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'sigmaalfamale123@gmail.com'
-EMAIL_HOST_PASSWORD = 'whbmnehyhdpuasdv'
-DEFAULT_FROM_EMAIL = 'MindFlow <sigmaalfaamale123@gmail.com>'
+EMAIL_HOST_USER = 'support.mindflow@gmail.com'
+EMAIL_HOST_PASSWORD = 'fsxwrwccxnhahgya'
+DEFAULT_FROM_EMAIL = 'MindFlow <support.mindflow@gmail.com>'
+
 
 LOG_DIR = BASE_DIR / 'logs'
 os.makedirs(LOG_DIR, exist_ok=True)
