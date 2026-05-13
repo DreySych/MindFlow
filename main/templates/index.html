@@ -30,6 +30,43 @@
     {% include 'complain_question.html' %}
 
     <script>
+    function getCookie(name) {
+        let value = null;
+        document.cookie.split(';').forEach(c => {
+            let [k, v] = c.trim().split('=');
+            if (k === name) value = decodeURIComponent(v);
+        });
+        return value;
+    }
+
+    function deleteQuestion(questionId) {
+        const csrftoken = getCookie('csrftoken');
+
+        fetch(`/question/${questionId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) {
+                document.getElementById(`question-${questionId}`)?.remove();
+            }
+        })
+        .catch(err => console.error('Ошибка:', err));
+    }
+
+    function openComplainQuestionOverlay(questionId) {
+        const overlay = document.getElementById('complainQuestionOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+            const input = document.getElementById('complain_question_id');
+            if (input) input.value = questionId;
+        }
+    }
+
     document.addEventListener('click', function(event) {
         const button = event.target.closest('.question-vote-btn');
 
@@ -71,7 +108,6 @@
                 count.textContent = data.rating;
             }
 
-            // Обновляем активные классы в зависимости от user_rating
             if (data.user_rating === 1) {
                 if (upvoteBtn) upvoteBtn.classList.add('active');
                 if (downvoteBtn) downvoteBtn.classList.remove('active');
