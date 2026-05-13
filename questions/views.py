@@ -491,4 +491,3 @@ def delete_question(request, question_id):
 
     question.delete()
     return JsonResponse({'ok': True})
-
