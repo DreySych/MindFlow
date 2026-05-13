@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'questions',
     'users',
     'complaints',
-    'complains',
     'channels',
     'private_messages',
     'notifications',

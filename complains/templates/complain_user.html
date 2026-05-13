@@ -1,0 +1,71 @@
+{% load static %}
+<div class="complain-overlay" id="complainUserOverlay">
+  <div class="complain-backdrop" onclick="closeComplainUserOverlay()"></div>
+  <div class="complain-modal">
+    <div id="complainUserForm">
+      <div class="complain-header">
+        <span class="complain-title">Пожаловаться на пользователя</span>
+      </div>
+
+      <div class="complain-body">
+        <p class="complain-subtitle">Введите причину жалобы:</p>
+        <textarea id="complainUserText" class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+      </div>
+
+      <div class="complain-footer">
+        <button class="complain-cancel-btn" onclick="closeComplainUserOverlay()">Отмена</button>
+        <button class="complain-submit-btn" onclick="submitComplainUser()">Отправить жалобу</button>
+      </div>
+    </div>
+
+    <div id="complainUserThanks" style="display: none;">
+      <div class="complain-header">
+        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+      </div>
+      <div class="complain-body">
+        <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+      </div>
+      <div class="complain-footer">
+        <button class="complain-submit-btn" onclick="closeComplainUserOverlay()">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openComplainUserOverlay() {
+    document.getElementById('complainUserOverlay').classList.add('active');
+    document.getElementById('complainUserForm').style.display = 'block';
+    document.getElementById('complainUserThanks').style.display = 'none';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeComplainUserOverlay() {
+    document.getElementById('complainUserOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function submitComplainUser() {
+    const textarea = document.getElementById('complainUserText');
+
+    if (!textarea.value.trim()) {
+        textarea.style.border = '1px solid red';
+        return;
+    }
+
+    fetch('/complaint/?user_id={{ user.id }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'description=' + encodeURIComponent(textarea.value)
+    }).then(function(response) {
+        if (response.ok) {
+            document.getElementById('complainUserForm').style.display = 'none';
+            document.getElementById('complainUserThanks').style.display = 'block';
+            textarea.value = '';
+        }
+    });
+}
+</script>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель жалоб - Пользователи | MindFlow</title>
+    {% load static %}
+    {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'css/complain_panel.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <div class="content-wrapper">
+        <main>
+            <div class="admin-container">
+                <h1 class="admin-title">Панель жалоб</h1>
+
+                <div class="admin-tabs">
+                    <a href="{% url 'complains_panel_page_p' %}" class="admin-tab">Посты</a>
+                    <a href="{% url 'complains_panel_page_c' %}" class="admin-tab">Комментарии</a>
+                    <a href="{% url 'complains_panel_page_u' %}" class="admin-tab active">Пользователи</a>
+                </div>
+
+                <div class="complaints-list">
+                    {% for i in complaints %}
+                    <div class="complaint-card user-complaint-card">
+                        <div class="user-info-row">
+                            <a href="{% url 'profile_general' username=i.user.username %}" class="user-avatar-link">
+                                {% if i.user.image %}
+                                    <img src="{{ i.user.image.url }}" alt="Аватар" class="user-avatar-complaint">
+                                {% else %}
+                                    <img src="{% static 'images/default.png' %}" alt="Аватар" class="user-avatar-complaint">
+                                {% endif %}
+                            </a>
+
+                            <a href="{% url 'profile_general' username=i.user.username %}" class="user-name-link-complaint">
+                                {{ i.user.username }}
+                            </a>
+                        </div>
+
+                        <div class="complaint-info-complaint">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Причина жалобы:</span>
+                                <span class="complaint-value">{{ i.description }}</span>
+                            </div>
+
+                            <div class="complaint-verdict">
+                                <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
+                                   class="verdict-btn approve">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                </a>
+
+                                <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
+                                   class="verdict-btn reject">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <h3>Жалоб на пользователей пока нет</h3>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>

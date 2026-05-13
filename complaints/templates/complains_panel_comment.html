@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель жалоб - Комментарии | MindFlow</title>
+    {% load static %}
+    {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'css/complain_panel.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'body.html' %}
+
+    <div class="content-wrapper">
+        <main>
+            <div class="admin-container">
+                <h1 class="admin-title">Панель жалоб</h1>
+
+                <div class="admin-tabs">
+                    <a href="{% url 'complains_panel_page_p' %}" class="admin-tab">Посты</a>
+                    <a href="{% url 'complains_panel_page_c' %}" class="admin-tab active">Комментарии</a>
+                    <a href="{% url 'complains_panel_page_u' %}" class="admin-tab">Пользователи</a>
+                </div>
+
+                <div class="complaints-list">
+                    {% for i in complaints %}
+                    <div class="complaint-card">
+                        <div class="complaint-comment">
+
+                            {% if i.comment %}
+
+                                <p class="complaint-comment-text">
+                                    {{ i.comment.text }}
+                                </p>
+
+                                <a href="{% url 'question' i.comment.question.id %}#comment-{{ i.comment.id }}"
+                                   class="complaint-detail-btn">
+                                    К посту
+                                </a>
+
+                            {% elif i.answer %}
+
+                                <p class="complaint-comment-text">
+                                    {{ i.answer.answer }}
+                                </p>
+
+                                <a href="{% url 'question' i.answer.comment.question.id %}#comment-{{ i.answer.comment.id }}"
+                                   class="complaint-detail-btn">
+                                    К посту
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="complaint-info">
+                            <div class="complaint-type">
+                                <span class="complaint-label">Причина жалобы:</span>
+                                <span class="complaint-value">{{ i.description }}</span>
+                            </div>
+
+                            <div class="complaint-verdict">
+                                <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/comments/"
+                                   class="verdict-btn approve">
+                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                </a>
+
+                                <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/comments/"
+                                   class="verdict-btn reject">
+                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <h3>Жалоб на комментарии пока нет</h3>
+                    {% endfor %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    {% include 'footer.html' %}
+</body>
+</html>
