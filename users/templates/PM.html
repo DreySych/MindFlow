@@ -5,13 +5,11 @@
   <div class="chat-modal">
     <div class="chat-modal-header">
       <div class="chat-user-info">
-        <img src="
-            {% if request.user.image %}
-                {{ request.user.image.url }}
-            {% else %}
-                {% static 'images/default.png' %}
-            {% endif %}
-        " alt="Аватар" class="chat-modal-avatar">
+          {% if subscription.user2.image %}
+            <img src="{{ subscription.user2.image.url }}" alt="" class="chat-modal-avatar" id="chatAvatar">
+          {% else %}
+            <img src="{% static 'images/default.png' %}" alt="" class="chat-modal-avatar" id="chatAvatar">
+          {% endif %}
         <span class="chat-modal-username" id="chatUserName">Выберите чат</span>
       </div>
       <button class="chat-modal-close" onclick="closeChatOverlay()">
@@ -24,7 +22,6 @@
     </div>
 
     <div class="chat-modal-input-area">
-
       <input type="text"
              id="chat-message-input"
              placeholder="Напишите сообщение..."
@@ -33,27 +30,40 @@
       <button type="button"
               id="chat-message-submit"
               class="chat-modal-send-btn">
-
           <img src="{% static 'images/send.png' %}" alt="Отправить">
-
       </button>
-
-  </div>
-  </div>
     </div>
+  </div>
+</div>
 
 <script>
 let chatSocket = null;
 let selectedUserId = null;
 const currentUserId = "{{ request.user.id }}";
 
-function openChatOverlay(userId, username) {
+function openChatOverlay(userId, username, avatarUrl = null) {
     selectedUserId = userId;
     localStorage.setItem('chatOpen', 'true');
     localStorage.setItem('chatUserId', userId);
     localStorage.setItem('chatUsername', username);
+
+    if (avatarUrl) {
+        localStorage.setItem('chatAvatarUrl', avatarUrl);
+    } else {
+        localStorage.removeItem('chatAvatarUrl');
+    }
+
     document.getElementById('chatOverlay').classList.add('active');
     document.getElementById('chatUserName').textContent = username;
+
+    // Устанавливаем аватар
+    const avatarImg = document.getElementById('chatAvatar');
+    if (avatarUrl) {
+        avatarImg.src = avatarUrl;
+    } else {
+        avatarImg.src = "{% static 'images/default.png' %}";
+    }
+
     document.body.style.overflow = '';
 
     loadChatMessages(userId);
@@ -65,6 +75,7 @@ function closeChatOverlay() {
     localStorage.removeItem('chatOpen');
     localStorage.removeItem('chatUserId');
     localStorage.removeItem('chatUsername');
+    localStorage.removeItem('chatAvatarUrl');
     if (chatSocket) {
         chatSocket.close();
         chatSocket = null;
@@ -126,7 +137,7 @@ function addMessageToChat(text, senderId, time) {
     const messageHtml = `
         <div class="chat-message ${messageClass}">
             <div class="chat-message-bubble">
-                <p>${text}</p>
+                <p>${escapeHtml(text)}</p>
                 <span class="chat-message-time">${time}</span>
             </div>
         </div>
@@ -134,6 +145,12 @@ function addMessageToChat(text, senderId, time) {
 
     messagesContainer.innerHTML += messageHtml;
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 document.getElementById('chat-message-submit').onclick = function() {
@@ -150,23 +167,31 @@ document.getElementById('chat-message-submit').onclick = function() {
 
     input.value = '';
 };
-document.addEventListener('DOMContentLoaded', function() {
-    const params = new URLSearchParams(window.location.search);
 
-    const chatId = params.get('open_chat');
-    const chatUsername = params.get('chat_username');
-
-    if (chatId) {
-        openChatOverlay(chatId, chatUsername);
+document.getElementById('chat-message-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('chat-message-submit').click();
     }
 });
+
 document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const chatId = params.get('open_chat');
+    const chatUsername = params.get('chat_username');
+    const chatAvatar = params.get('chat_avatar');
+
+    if (chatId) {
+        openChatOverlay(chatId, chatUsername, chatAvatar);
+        return;
+    }
+
     if (localStorage.getItem('chatOpen') === 'true') {
         const userId = localStorage.getItem('chatUserId');
         const username = localStorage.getItem('chatUsername');
+        const avatarUrl = localStorage.getItem('chatAvatarUrl');
 
         if (userId && username) {
-            openChatOverlay(userId, username);
+            openChatOverlay(userId, username, avatarUrl);
         }
     }
 });

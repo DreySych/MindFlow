@@ -20,7 +20,7 @@
         </a>
         <button type="button"
                 class="chat-button"
-                onclick="openChatOverlay({{ subscription.user2.id }}, '{{ subscription.user2.username }}')">
+                onclick="openChatOverlay({{ subscription.user2.id }}, '{{ subscription.user2.username }}', '{% if subscription.user2.image %}{{ subscription.user2.image.url }}{% endif %}')">
             <img src="{% static 'images/chat.png' %}" alt="Чат" class="chat-icon">
         </button>
       </div>
