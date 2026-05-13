@@ -181,11 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (searchInput && hiddenInput) {
                 hiddenInput.value = searchInput.value.trim();
             }
-
-            if (!hiddenInput.value) {
-                event.preventDefault();
-                alert('Введите запрос в поиск');
-            }
         });
     }
 });
