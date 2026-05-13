@@ -29,27 +29,19 @@
                         <div class="complaint-comment">
 
                             {% if i.comment %}
-
-                                <p class="complaint-comment-text">
-                                    {{ i.comment.text }}
-                                </p>
-
+                                <p class="complaint-comment-text">{{ i.comment.text }}</p>
+                                <div class="complaint-btn-spacer"></div>
                                 <a href="{% url 'question' i.comment.question.id %}#comment-{{ i.comment.id }}"
                                    class="complaint-detail-btn">
                                     К посту
                                 </a>
-
                             {% elif i.answer %}
-
-                                <p class="complaint-comment-text">
-                                    {{ i.answer.answer }}
-                                </p>
-
+                                <p class="complaint-comment-text">{{ i.answer.answer }}</p>
+                                <div class="complaint-btn-spacer"></div>
                                 <a href="{% url 'question' i.answer.comment.question.id %}#comment-{{ i.answer.comment.id }}"
                                    class="complaint-detail-btn">
                                     К посту
                                 </a>
-
                             {% endif %}
 
                         </div>
@@ -65,7 +57,6 @@
                                    class="verdict-btn approve">
                                     <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
                                 </a>
-
                                 <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/comments/"
                                    class="verdict-btn reject">
                                     <img src="{% static 'images/krest.png' %}" alt="Отклонить">

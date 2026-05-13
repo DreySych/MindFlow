@@ -163,6 +163,13 @@ def complaint_comment_panel_page(request):
     ).order_by('-id') | Complaint.objects.filter(
         answer__isnull=False
     ).order_by('-id')
+
+    for complaint in complaints:
+        if complaint.comment and complaint.comment.text:
+            complaint.comment.text = complaint.comment.text.lstrip()
+        elif complaint.answer and complaint.answer.answer:
+            complaint.answer.answer = complaint.answer.answer.lstrip()
+
     context = {
         'complaints': complaints,
         'user': request.user,

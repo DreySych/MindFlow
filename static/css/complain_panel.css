@@ -293,7 +293,9 @@ body {
     align-items: center;
     gap: 12px;
 }
-
+.complaint-btn-spacer {
+    height: 16px;
+}
 @media (max-width: 768px) {
     .content-wrapper {
         margin-left: 0;
