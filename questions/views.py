@@ -14,12 +14,15 @@ from django.http import JsonResponse
 from users.models import Subscription
 from django.utils import timezone
 import logging
+
 # Create your views here.
 
 logger = logging.getLogger('project')
 
+
 def can_act(user):
     return user.is_authenticated and user.active
+
 
 def get_question_context(question_id):
     question = Question.objects.filter(pk=question_id).first()
@@ -206,17 +209,14 @@ def question_edit_page(request):
                     image_paths.append(path)
 
                 question.images = ','.join(image_paths)
-
             question.save()
             logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
-
     else:
         form = QuestionForm(initial={
             'title': question.title,
             'description': question.description,
         })
-
     context = {
         'form': form,
         'question': question,
@@ -320,7 +320,7 @@ def dislike_comment(request):
     like_obj, created = CommentLike.objects.get_or_create(
         author=request.user,
         comment=comment,
-        defaults={'rating': 0,'created_at': timezone.now()}
+        defaults={'rating': 0, 'created_at': timezone.now()}
     )
 
     if like_obj.rating == -1:
@@ -432,8 +432,6 @@ def dislike_answer(request):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
         return redirect('/')
-
-    
 
     answer_id = request.GET.get('id')
     answer = get_object_or_404(Answer, id=answer_id)
