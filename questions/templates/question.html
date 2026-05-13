@@ -72,9 +72,24 @@
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
                             </button>
-                        {% else %}
-                            <button type="button" class="action-btn report"
-                                    onclick="openComplainQuestionOverlay({{ question.id }})">
+                        {% elif request.user.is_superuser %}
+                            <button type="button"
+                                    class="action-btn report"
+                                    onclick="openComplainQuestionOverlay({{ question.id }})"
+                                    title="Пожаловаться">
+                                <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                            </button>
+                            <button type="button"
+                                    class="action-btn delete"
+                                    onclick="deleteQuestion({{ question.id }})"
+                                    title="Удалить">
+                                <img src="{% static 'images/krest.png' %}" alt="Удалить">
+                            </button>
+                        {% elif request.user != question.author %}
+                            <button type="button"
+                                    class="action-btn report"
+                                    onclick="openComplainQuestionOverlay({{ question.id }})"
+                                    title="Пожаловаться">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
                         {% endif %}
@@ -141,6 +156,8 @@
     }
 
     function deleteQuestion(questionId) {
+        if (!confirm('Удалить этот пост?')) return;
+
         fetch(`/question/${questionId}/delete/`, {
             method: 'POST',
             headers: {

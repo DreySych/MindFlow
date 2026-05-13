@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;600;500;400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <title>Вход | MindFlow</title>
 </head>
 <body>
@@ -97,6 +98,27 @@
                 showNotification('Заполните все поля');
             }
         });
+
+        function fixFooter() {
+            const footer = document.querySelector('footer');
+            if (!footer) return;
+
+            const windowHeight = window.innerHeight;
+            const bodyHeight = document.body.scrollHeight;
+            const footerHeight = footer.offsetHeight;
+
+            if (bodyHeight + footerHeight < windowHeight) {
+                const wrapper = document.querySelector('.auth-wrapper');
+                if (wrapper) {
+                    const neededHeight = windowHeight - footerHeight - 100;
+                    wrapper.style.minHeight = neededHeight + 'px';
+                }
+            }
+        }
+
+        window.addEventListener('load', fixFooter);
+        window.addEventListener('resize', fixFooter);
+        setTimeout(fixFooter, 100);
     </script>
 </body>
 </html>

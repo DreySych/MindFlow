@@ -38,7 +38,7 @@
 
             <div class="vote-group gradient-border">
                 <a href="{% url 'like' %}?id={{ question.id }}&to={{ request.path }}%23question-{{ question.id }}"
-   class="vote-btn upvote question-vote-btn {% if user_rating == 1 %}active{% endif %}">
+                   class="vote-btn upvote question-vote-btn {% if user_rating == 1 %}active{% endif %}">
                     <img src="{% static 'images/like.png' %}" alt="Лайк">
                 </a>
 
@@ -47,7 +47,7 @@
                 </span>
 
                 <a href="{% url 'dislike' %}?id={{ question.id }}&to={{ request.path }}%23question-{{ question.id }}"
-   class="vote-btn downvote question-vote-btn {% if user_rating == -1 %}active{% endif %}">
+                   class="vote-btn downvote question-vote-btn {% if user_rating == -1 %}active{% endif %}">
                     <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                 </a>
             </div>
@@ -66,23 +66,30 @@
                    class="action-btn edit gradient-border" title="Редактировать">
                     <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                 </a>
-            {% endif %}
-
-            {% if request.user == question.author or request.user.is_staff %}
                 <button type="button"
                         class="action-btn delete gradient-border"
                         onclick="deleteQuestion({{ question.id }})"
                         title="Удалить">
                     <img src="{% static 'images/krest.png' %}" alt="Удалить">
                 </button>
-            {% endif %}
-
-            {% if request.user != question.author %}
-                <!-- Кнопка жалобы для всех пользователей кроме автора -->
+            {% elif request.user.is_superuser %}
                 <button type="button"
-                    class="action-btn report gradient-border"
-                    onclick="openComplainQuestionOverlay({{ question.id }})"
-                    title="Пожаловаться">
+                        class="action-btn report gradient-border"
+                        onclick="openComplainQuestionOverlay({{ question.id }})"
+                        title="Пожаловаться">
+                    <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                </button>
+                <button type="button"
+                        class="action-btn delete gradient-border"
+                        onclick="deleteQuestion({{ question.id }})"
+                        title="Удалить">
+                    <img src="{% static 'images/krest.png' %}" alt="Удалить">
+                </button>
+            {% elif request.user != question.author %}
+                <button type="button"
+                        class="action-btn report gradient-border"
+                        onclick="openComplainQuestionOverlay({{ question.id }})"
+                        title="Пожаловаться">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </button>
             {% endif %}
@@ -90,28 +97,3 @@
         </div>
     </div>
 </article>
-
-<script>
-function deleteQuestion(questionId) {
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
-                      document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
-
-    fetch(`/question/${questionId}/delete/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrftoken,
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(res => {
-        if (!res.ok) throw new Error('Ошибка сервера');
-        return res.json();
-    })
-    .then(data => {
-        if (data.ok) {
-            document.getElementById(`question-${questionId}`)?.remove();
-        }
-    })
-    .catch(err => console.error('Ошибка:', err));
-}
-</script>
