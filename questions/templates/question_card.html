@@ -1,5 +1,6 @@
 {% load static %}
 {% load custom_filters %}
+<link rel="stylesheet" href="{% static 'css/question_card.css' %}">
 <article class="question-card" id="question-{{ question.id }}">
     <div class="question-card-content">
 
@@ -55,23 +56,33 @@
                class="action-btn comment gradient-border"
                style="text-decoration:none; display:inline-flex; align-items:center;">
                 <img src="{% static 'images/comment.png' %}" alt="Комментарий">
-
-                <span>
-                    {{ comments|length }}
-                </span>
+                <span>{{ comments|length }}</span>
             </a>
 
             <div style="flex:1;"></div>
 
             {% if request.user == question.author %}
                 <a href="{% url 'edit_question' %}?id={{ question.id }}"
-                   type="button" class="action-btn cross gradient-border">
+                   class="action-btn edit gradient-border" title="Редактировать">
                     <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                 </a>
-            {% else %}
+            {% endif %}
+
+            {% if request.user == question.author or request.user.is_staff %}
+                <button type="button"
+                        class="action-btn delete gradient-border"
+                        onclick="deleteQuestion({{ question.id }})"
+                        title="Удалить">
+                    <img src="{% static 'images/krest.png' %}" alt="Удалить">
+                </button>
+            {% endif %}
+
+            {% if request.user != question.author and not request.user.is_staff %}
+                <!-- Кнопка жалобы -->
                 <button type="button"
                     class="action-btn report gradient-border"
-                    onclick="openComplainQuestionOverlay({{ question.id }})">
+                    onclick="openComplainQuestionOverlay({{ question.id }})"
+                    title="Пожаловаться">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </button>
             {% endif %}
@@ -79,3 +90,28 @@
         </div>
     </div>
 </article>
+
+<script>
+function deleteQuestion(questionId) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                      document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+
+    fetch(`/question/${questionId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Ошибка сервера');
+        return res.json();
+    })
+    .then(data => {
+        if (data.ok) {
+            document.getElementById(`question-${questionId}`)?.remove();
+        }
+    })
+    .catch(err => console.error('Ошибка:', err));
+}
+</script>

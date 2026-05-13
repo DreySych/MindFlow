@@ -3,6 +3,7 @@ import uuid, datetime
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
 from main.model_loader import get_model
@@ -14,6 +15,8 @@ from django.http import JsonResponse
 from users.models import Subscription
 from django.utils import timezone
 import logging
+
+
 
 # Create your views here.
 
@@ -464,3 +467,28 @@ def dislike_answer(request):
         })
 
     return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
+
+def question_card(request):
+    return render(request, template_name="questions.html")
+
+
+def delete_question(request, question_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Только POST'})
+
+    if not can_act(request.user):
+        return JsonResponse({'ok': False, 'error': 'Нет доступа'})
+
+    question = get_object_or_404(Question, id=question_id)
+
+    if question.author != request.user and not request.user.is_staff:
+        return JsonResponse({'ok': False, 'error': 'Нет прав'})
+
+    if question.images:
+        for path in question.images.split(','):
+            if path and default_storage.exists(path):
+                default_storage.delete(path)
+
+    question.delete()
+    return JsonResponse({'ok': True})
+

@@ -1,21 +1,13 @@
-/* settings.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Mallanna', sans-serif;
-    background: #ffffff;
-    min-height: 100vh;
-    color: #1a1a2e;
-}
-
 .settings-wrapper {
+    font-family: 'Mallanna', sans-serif;
+    color: #1a1a2e;
     max-width: 900px;
-    margin: 60px auto 0 auto;
+    margin: 140px auto 0 auto;
     padding: 0 40px 40px 40px;
+}
+
+.settings-wrapper * {
+    box-sizing: border-box;
 }
 
 .settings-title {
@@ -442,7 +434,7 @@ body {
 
 @media (max-width: 768px) {
     .settings-wrapper {
-        margin: 40px 20px 0 20px;
+        margin: 140px 20px 0 20px;
         padding: 0 0 20px 0;
     }
 

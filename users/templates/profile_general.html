@@ -6,6 +6,7 @@
     {% load static %}
     {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/question_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
@@ -65,7 +66,7 @@
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn active">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn">Комментарии</a>
                     {% if request.user == user %}
-                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Понравившиеся</a>
                     {% endif %}
                 </div>
 
@@ -84,5 +85,32 @@
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
     {% include 'complain_user.html' %}
+
+    <script>
+    function getCookie(name) {
+        let value = null;
+        document.cookie.split(';').forEach(c => {
+            let [k, v] = c.trim().split('=');
+            if (k === name) value = decodeURIComponent(v);
+        });
+        return value;
+    }
+
+    function deleteQuestion(questionId) {
+        fetch(`/question/${questionId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.ok) {
+                document.getElementById(`question-${questionId}`)?.remove();
+            }
+        });
+    }
+    </script>
 </body>
 </html>

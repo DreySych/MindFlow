@@ -22,16 +22,21 @@ urlpatterns = [
     path('account/login/', users_views.login_page, name='login'),
     path('account/logout/', users_views.logout_page, name='logout'),
 
+
     path('profile/', users_views.my_profile_redirect, name='profile_posts'),
+
+
     path('profile/<str:username>/', users_views.profile_page_general, name='profile_general'),
     path('profile/settings', users_views.profile_page_settings, name='profile_settings'),
     path('profile/<str:username>/comments/', users_views.profile_page_comments, name='profile_comments'),
     path('profile/<str:username>/liked/', users_views.profile_page_liked, name='profile_liked'),
 
+    path('question/<int:question_id>/delete/', question_views.delete_question, name='delete_question'),
     path('question/<int:question_id>/', question_views.question_page, name='question'),
     path('question/theme/<int:theme_num>/', question_views.question_themes_page, name='questions'),
     path('question/make/', question_views.question_make_page, name='make_question'),
     path('question/edit/', question_views.question_edit_page, name='edit_question'),
+
 
     path('comment/make/<int:question_id>', question_views.make_comment_page, name='make_comment'),
     path('comment/like/', question_views.like_comment, name='like_comment'),

@@ -1,3 +1,4 @@
+/* post.css */
 body {
     font-family: 'Mallanna', sans-serif;
 }
@@ -8,12 +9,6 @@ body {
     padding-bottom: 100px;
     min-height: 100vh;
     box-sizing: border-box;
-}
-
-.post-text {
-    max-width: 100%;
-    overflow-wrap: break-word;
-    word-break: break-word;
 }
 
 .feed {
@@ -28,32 +23,32 @@ body {
     margin-bottom: 24px;
 }
 
-.user-info {
+.post-detail-card .user-info {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 16px;
 }
 
-.user-avatar-link {
+.post-detail-card .user-avatar-link {
     display: inline-block;
     text-decoration: none;
     line-height: 0;
     transition: opacity 0.2s;
 }
 
-.user-avatar-link:hover {
+.post-detail-card .user-avatar-link:hover {
     opacity: 0.85;
 }
 
-.user-avatar {
+.post-detail-card .user-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
     object-fit: cover;
 }
 
-.user-name-link {
+.post-detail-card .user-name-link {
     font-weight: 400;
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
@@ -64,12 +59,12 @@ body {
     align-items: center;
 }
 
-.user-name-link:hover {
+.post-detail-card .user-name-link:hover {
     color: #1671FE;
     text-decoration: none;
 }
 
-.user-name-link::after {
+.post-detail-card .user-name-link::after {
     content: "•";
     font-family: sans-serif;
     color: #999;
@@ -79,7 +74,7 @@ body {
     display: inline-block;
 }
 
-.time-ago {
+.post-detail-card .time-ago {
     font-size: 17px;
     font-family: 'Mallanna', sans-serif;
     color: #888;
@@ -87,7 +82,7 @@ body {
     align-items: center;
 }
 
-.question-text {
+.post-detail-card .question-text {
     font-size: 24px;
     font-family: 'Mallanna', sans-serif;
     line-height: 1.5;
@@ -96,7 +91,7 @@ body {
     font-weight: 500;
 }
 
-.question-image-placeholder {
+.post-detail-card .question-image-placeholder {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #e0e0e0;
@@ -108,7 +103,7 @@ body {
     overflow: hidden;
 }
 
-.question-image-placeholder img {
+.post-detail-card .question-image-placeholder img {
     width: 100%;
     height: 100%;
     object-fit: fill;
@@ -116,17 +111,19 @@ body {
     display: block;
 }
 
-
-.post-text {
+.post-detail-card .post-text {
     font-size: 18px;
     font-family: 'Mallanna', sans-serif;
     line-height: 1.7;
     color: #333;
     margin: 0 0 20px 0;
     padding: 0 4px;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
-.actions {
+.post-detail-card .actions {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -135,7 +132,7 @@ body {
     border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
 }
 
-.vote-group {
+.post-detail-card .vote-group {
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
@@ -149,7 +146,7 @@ body {
     justify-content: center;
 }
 
-.vote-btn {
+.post-detail-card .vote-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -162,40 +159,26 @@ body {
     padding: 8px;
     border-radius: 50%;
     color: #1671FE;
+    transition: background 0.2s ease;
 }
 
-.vote-btn.upvote:hover {
+.post-detail-card .vote-btn.upvote:hover {
     background: rgba(76, 175, 80, 0.15);
     color: #4caf50;
 }
 
-.vote-btn.downvote:hover {
+.post-detail-card .vote-btn.downvote:hover {
     background: rgba(244, 67, 54, 0.15);
     color: #f44336;
 }
 
-.vote-btn:active {
-    transform: none;
-    background: transparent;
-}
-
-.vote-btn.upvote:active {
-    background: rgba(76, 175, 80, 0.15);
-    color: #4caf50;
-}
-
-.vote-btn.downvote:active {
-    background: rgba(244, 67, 54, 0.15);
-    color: #f44336;
-}
-
-.vote-btn img {
+.post-detail-card .vote-btn img {
     width: 20px;
     height: 20px;
     opacity: 1;
 }
 
-.vote-count {
+.post-detail-card .vote-count {
     font-size: 24px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
@@ -205,7 +188,25 @@ body {
     line-height: 1;
 }
 
-.action-btn.report {
+.post-detail-card .vote-btn.upvote.active {
+    background: rgba(76, 175, 80, 0.25) !important;
+    border-radius: 50%;
+}
+
+.post-detail-card .vote-btn.upvote.active img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg) brightness(119%) contrast(119%);
+}
+
+.post-detail-card .vote-btn.downvote.active {
+    background: rgba(244, 67, 54, 0.25) !important;
+    border-radius: 50%;
+}
+
+.post-detail-card .vote-btn.downvote.active img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
+}
+
+.post-detail-card .action-btn.report {
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
     border-radius: 20px;
@@ -220,22 +221,66 @@ body {
     color: #aaa;
 }
 
-.action-btn.report:hover {
+.post-detail-card .action-btn.report:hover {
     background: #ffebee;
     border-color: #e53935;
     color: #e53935;
 }
 
-.action-btn.report:active {
-    transform: none;
-    background: #ffebee;
-    border-color: #e53935;
-    color: #e53935;
-}
-
-.action-btn.report img {
+.post-detail-card .action-btn.report img {
     width: 20px;
     height: 20px;
+    opacity: 1;
+}
+
+.post-detail-card .action-btn.edit {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.post-detail-card .action-btn.edit:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.post-detail-card .action-btn.edit img {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
+
+.post-detail-card .action-btn.delete {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.post-detail-card .action-btn.delete:hover {
+    background: #ffebee;
+    border-color: #e53935;
+}
+
+.post-detail-card .action-btn.delete img {
+    width: 18px;
+    height: 18px;
     opacity: 1;
 }
 
@@ -253,42 +298,55 @@ body {
         padding: 16px;
     }
 
-    .question-text {
+    .post-detail-card .question-text {
         font-size: 20px;
     }
 
-    .post-text {
+    .post-detail-card .post-text {
         font-size: 16px;
     }
 
-    .user-name-link {
+    .post-detail-card .user-name-link {
         font-size: 18px;
     }
 
-    .user-name-link::after {
+    .post-detail-card .user-name-link::after {
         font-size: 16px;
     }
 
-    .time-ago {
+    .post-detail-card .time-ago {
         font-size: 16px;
     }
 
-    .vote-btn {
+    .post-detail-card .vote-btn {
         font-size: 18px;
         padding: 6px;
     }
 
-    .vote-btn img {
+    .post-detail-card .vote-btn img {
         width: 18px;
         height: 18px;
     }
 
-    .vote-count {
+    .post-detail-card .vote-count {
         font-size: 18px;
     }
 
-    .action-btn.report {
+    .post-detail-card .action-btn.report,
+    .post-detail-card .action-btn.edit,
+    .post-detail-card .action-btn.delete {
         width: 40px;
         height: 40px;
+    }
+
+    .post-detail-card .action-btn.edit img,
+    .post-detail-card .action-btn.delete img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .post-detail-card .action-btn.report img {
+        width: 18px;
+        height: 18px;
     }
 }

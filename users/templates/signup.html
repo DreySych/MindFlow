@@ -11,7 +11,11 @@
     <title>Регистрация | MindFlow</title>
 </head>
 <body>
-    <!-- Убраны header и body -->
+
+    <a href="{% url 'login' %}" class="back-button">
+        <img src="{% static 'images/back.png' %}" alt="Назад" class="back-icon">
+        <span>Назад</span>
+    </a>
 
     <div class="auth-wrapper">
         <div class="auth-container">
@@ -33,7 +37,6 @@
                         <option value="" disabled selected>Выберите пол</option>
                         <option value="male">Мужской</option>
                         <option value="female">Женский</option>
-                        <option value="other">Другой</option>
                     </select>
                 </div>
 
@@ -96,7 +99,7 @@
 
         registerForm.addEventListener('submit', function(e) {
             const password = document.querySelector('[name="password"]').value;
-            const confirmPassword = document.querySelector('[name="confirm_password"]').value;
+            const confirmPassword = document.querySelector('[name="password_confirm"]').value;
             const username = document.querySelector('[name="username"]').value;
 
             if (username.length < 3) {
@@ -109,7 +112,7 @@
             if (password !== confirmPassword) {
                 e.preventDefault();
                 showError(document.querySelector('[name="password"]'));
-                showError(document.querySelector('[name="confirm_password"]'));
+                showError(document.querySelector('[name="password_confirm"]'));
                 showNotification('Пароли не совпадают');
                 return;
             }

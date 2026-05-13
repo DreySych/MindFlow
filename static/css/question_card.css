@@ -1,0 +1,411 @@
+/* question_card.css — все стили карточки вопроса */
+
+/* === ОСНОВНАЯ СТРУКТУРА КАРТОЧКИ === */
+.question-card {
+    margin-bottom: 0;
+    padding: 16px 0;
+}
+
+.question-card + .question-card {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 16px;
+}
+
+.question-card-content {
+    border-radius: 12px;
+    padding: 8px;
+    margin: -8px;
+    transition: background 0.2s;
+}
+
+.question-card:hover .question-card-content {
+    background: #f8f8f8;
+}
+
+/* === ТЕКСТ ВОПРОСА === */
+.question-text {
+    font-size: 22px;
+    font-family: 'Mallanna', sans-serif;
+    line-height: 1.5;
+    color: #222;
+    margin: 0 0 10px 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* === ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ === */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.user-avatar-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    line-height: 0;
+    transition: opacity 0.2s;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name-link {
+    font-weight: 400;
+    font-size: 22px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1a1a1a;
+    text-decoration: none;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.user-name-link:hover {
+    color: #1671FE;
+    text-decoration: none;
+}
+
+.user-name-link::after {
+    content: "•";
+    font-family: sans-serif;
+    color: #999;
+    font-size: 20px;
+    margin-left: 8px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
+.time-ago {
+    font-size: 17px;
+    font-family: sans-serif;
+    color: #888;
+    margin-left: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* === ИЗОБРАЖЕНИЕ ВОПРОСА === */
+.question-image-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #e0e0e0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.question-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    border-radius: 16px;
+    display: block;
+}
+
+/* === БЛОК ДЕЙСТВИЙ === */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 8px;
+    margin-top: 6px;
+}
+
+/* === ГРУППА ГОЛОСОВАНИЯ === */
+.vote-group {
+    width: auto;
+    height: 44px;
+    gap: 2px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+.vote-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    padding: 8px;
+    border-radius: 50%;
+    color: #1671FE;
+    transition: background 0.2s ease;
+}
+
+.vote-btn.upvote:hover {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+}
+
+.vote-btn.downvote:hover {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+}
+
+.vote-btn img {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+}
+
+.vote-count {
+    font-size: 24px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+    min-width: 30px;
+    text-align: center;
+    line-height: 1;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Активные состояния голосования */
+.vote-btn.upvote.active {
+    background: rgba(76, 175, 80, 0.25) !important;
+    border-radius: 50%;
+}
+
+.vote-btn.upvote.active img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg) brightness(119%) contrast(119%);
+}
+
+.vote-btn.downvote.active {
+    background: rgba(244, 67, 54, 0.25) !important;
+    border-radius: 50%;
+}
+
+.vote-btn.downvote.active img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
+}
+
+/* Активные состояния для комментариев */
+.comment-vote-btn.upvote.active {
+    background: rgba(76, 175, 80, 0.25) !important;
+    border-radius: 50%;
+}
+
+.comment-vote-btn.upvote.active img {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg) brightness(119%) contrast(119%);
+}
+
+.comment-vote-btn.downvote.active {
+    background: rgba(244, 67, 54, 0.25) !important;
+    border-radius: 50%;
+}
+
+.comment-vote-btn.downvote.active img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
+}
+
+/* === КНОПКИ ДЕЙСТВИЙ (ОБЩИЕ СТИЛИ) === */
+.action-btn.comment,
+.action-btn.report {
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+/* Кнопка комментария */
+.action-btn.comment {
+    width: 78px;
+    height: 44px;
+    gap: 8px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+    text-decoration: none;
+}
+
+.action-btn.comment:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.action-btn.comment span {
+    font-size: 24px;
+    font-weight: 400;
+    font-family: 'Mallanna', sans-serif;
+    color: #1671FE;
+}
+
+/* Кнопка жалобы */
+.action-btn.report {
+    width: 78px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #aaa;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 20px;
+    border: 1px solid transparent;
+}
+
+.action-btn.report:hover {
+    background: #ffebee;
+    border-color: #e53935;
+    color: #e53935;
+}
+
+.action-btn.report img {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+}
+
+/* === КНОПКА РЕДАКТИРОВАНИЯ (СИНЯЯ) === */
+.action-btn.edit {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #1671FE;
+    text-decoration: none;
+}
+
+.action-btn.edit:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.action-btn.edit img {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
+
+/* === КНОПКА УДАЛЕНИЯ (КРАСНАЯ) === */
+.action-btn.delete {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: #e53935;
+}
+
+.action-btn.delete:hover {
+    background: #ffebee;
+    border-color: #e53935;
+    color: #c62828;
+}
+
+.action-btn.delete img {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
+
+/* Общие стили для иконок в кнопках */
+.action-btn img {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+}
+
+/* === МЕДИА-ЗАПРОСЫ === */
+@media (max-width: 768px) {
+    .user-name-link {
+        font-size: 18px;
+    }
+
+    .user-name-link::after {
+        font-size: 16px;
+    }
+
+    .time-ago {
+        font-size: 16px;
+    }
+
+    .question-text {
+        font-size: 18px;
+    }
+
+    .vote-btn {
+        font-size: 18px;
+        padding: 6px;
+    }
+
+    .vote-btn img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .vote-count {
+        font-size: 18px;
+    }
+
+    .action-btn.comment,
+    .action-btn.report {
+        height: 40px;
+        width: 70px;
+    }
+
+    .action-btn.comment span,
+    .action-btn.comment {
+        font-size: 18px;
+    }
+
+    .action-btn.report img,
+    .action-btn.comment img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .action-btn.edit,
+    .action-btn.delete {
+        width: 40px;
+        height: 40px;
+    }
+
+    .action-btn.edit img,
+    .action-btn.delete img {
+        width: 16px;
+        height: 16px;
+    }
+}

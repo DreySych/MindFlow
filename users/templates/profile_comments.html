@@ -6,6 +6,7 @@
     {% load static %}
     {% load custom_filters %}
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/question_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
@@ -67,7 +68,7 @@
                     <a href="{% url 'profile_general' username=user.username %}" class="nav-btn">Посты</a>
                     <a href="{% url 'profile_comments' username=user.username %}" class="nav-btn active">Комментарии</a>
                     {% if request.user == user %}
-                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Оценки "понравившиеся"</a>
+                        <a href="{% url 'profile_liked' username=user.username %}" class="nav-btn">Понравившиеся</a>
                     {% endif %}
                 </div>
 
