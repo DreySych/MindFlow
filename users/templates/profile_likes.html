@@ -12,21 +12,21 @@
     {% include 'header.html' %}
     {% include 'body.html' %}
 
-    <div class="profile-header-container">
-        <div class="profile-header-wrapper">
-            <div class="profile-avatar-section">
-                <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
-                     alt="Avatar" class="profile-avatar">
-            </div>
-            <div class="profile-info">
-                <h1 class="profile-nick">ник</h1>
-                <div class="profile-id">ID: 12345</div>
+    <main>
+        <div class="profile-header-container">
+            <div class="profile-header-wrapper">
+                <div class="profile-avatar-section">
+                    <img src="https://images.steamusercontent.com/ugc/2476495466522613326/13A264827AD7E9EA5BE7D1619EF6E445E1B7296C/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+                         alt="Avatar" class="profile-avatar">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-nick">ник</h1>
+                    <div class="profile-id">ID: 12345</div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="content-wrapper">
-        <main>
+        <div class="content-wrapper">
             <div class="profile-container">
                 <div class="profile-nav">
                     <a href="{% url 'profile_posts' %}" class="nav-btn">Посты</a>
@@ -134,8 +134,8 @@
                     </article>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
 
     {% include 'footer.html' %}
 </body>

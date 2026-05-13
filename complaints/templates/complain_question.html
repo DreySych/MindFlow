@@ -1,6 +1,5 @@
 <!-- complain_question.html -->
 {% load static %}
-{% load custom_filters %}
 <div class="complain-overlay" id="complainQuestionOverlay">
   <div class="complain-backdrop" onclick="closeComplainQuestionOverlay()"></div>
   <div class="complain-modal">
@@ -8,24 +7,26 @@
       <div class="complain-header">
         <span class="complain-title">Пожаловаться на пост</span>
       </div>
-
       <div class="complain-body">
         <p class="complain-subtitle">Введите причину жалобы:</p>
-        <textarea class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+        <textarea class="complain-textarea" id="complainQuestionText" placeholder="Опишите её здесь" maxlength="500"></textarea>
+        <div class="complain-char-row">
+          <span class="complain-error-text" id="complainQuestionError" style="display: none;"></span>
+          <span class="complain-char-count" id="complainQuestionCharCount">0/500</span>
+        </div>
       </div>
-
       <div class="complain-footer">
         <button type="button" class="complain-cancel-btn" onclick="closeComplainQuestionOverlay()">Отмена</button>
         <button type="button" class="complain-submit-btn" onclick="submitComplainQuestion()">Отправить жалобу</button>
       </div>
     </div>
-
     <div id="complainQuestionThanks" style="display: none;">
       <div class="complain-header">
-        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+        <span class="complain-title">Спасибо, что помогаете улучшать сообщество! ❤️</span>
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+        <p class="complain-subtitle">Спасибо за ваш вклад в безопасность платформы!</p>
       </div>
       <div class="complain-footer">
         <button type="button" class="complain-submit-btn" onclick="closeComplainQuestionOverlay()">Закрыть</button>
@@ -35,27 +36,93 @@
 </div>
 
 <script>
-  window.openComplainQuestionOverlay = function() {
+
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'complainQuestionText') {
+        var len = e.target.value.length;
+        var cc = document.getElementById('complainQuestionCharCount');
+        var et = document.getElementById('complainQuestionError');
+
+        if (cc) {
+            cc.textContent = len + '/500';
+            if (len > 450) cc.style.color = '#e53935';
+            else if (len > 400) cc.style.color = '#ff9800';
+            else cc.style.color = '#888';
+        }
+
+        if (et && e.target.value.trim()) {
+            et.style.display = 'none';
+        }
+    }
+});
+
+window.openComplainQuestionOverlay = function(questionId) {
+    window.currentComplainQuestionId = questionId;
     document.getElementById('complainQuestionOverlay').classList.add('active');
     document.getElementById('complainQuestionForm').style.display = 'block';
     document.getElementById('complainQuestionThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-  };
 
-  window.closeComplainQuestionOverlay = function() {
+    var ta = document.getElementById('complainQuestionText');
+    var cc = document.getElementById('complainQuestionCharCount');
+    var et = document.getElementById('complainQuestionError');
+
+    if (ta) ta.value = '';
+    if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
+    if (et) et.style.display = 'none';
+};
+
+window.closeComplainQuestionOverlay = function() {
     document.getElementById('complainQuestionOverlay').classList.remove('active');
     document.body.style.overflow = '';
-  };
+};
 
-  window.submitComplainQuestion = function() {
-    const textarea = document.querySelector('#complainQuestionOverlay textarea');
+window.submitComplainQuestion = function() {
+    var ta = document.getElementById('complainQuestionText');
+    var et = document.getElementById('complainQuestionError');
+    var btn = document.querySelector('#complainQuestionOverlay .complain-submit-btn');
 
-    if (!textarea.value.trim()) {
-        textarea.style.border = '1px solid red';
+    if (!ta.value.trim()) {
+        if (et) { et.textContent = 'Введите текст жалобы'; et.style.display = 'block'; }
         return;
     }
 
-    document.getElementById('complainQuestionForm').style.display = 'none';
-    document.getElementById('complainQuestionThanks').style.display = 'block';
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    fetch('/complaint/?question_id=' + window.currentComplainQuestionId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'description=' + encodeURIComponent(ta.value)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        if (d.ok) {
+            document.getElementById('complainQuestionForm').style.display = 'none';
+            document.getElementById('complainQuestionThanks').style.display = 'block';
+        } else {
+            if (et) { et.textContent = d.error || 'Ошибка'; et.style.display = 'block'; }
+        }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        if (et) { et.textContent = 'Ошибка сети'; et.style.display = 'block'; }
+    });
 };
+
+function getCSRF() {
+    var c = document.cookie.split(';');
+    for (var i = 0; i < c.length; i++) {
+        var p = c[i].trim();
+        if (p.startsWith('csrftoken=')) return p.substring(10);
+    }
+    return '';
+}
 </script>

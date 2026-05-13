@@ -1,29 +1,32 @@
 {% load static %}
 <div class="complain-overlay" id="complainUserOverlay">
+  <input type="hidden" id="complainUserId" value="{{ user.id }}">
   <div class="complain-backdrop" onclick="closeComplainUserOverlay()"></div>
   <div class="complain-modal">
     <div id="complainUserForm">
       <div class="complain-header">
         <span class="complain-title">Пожаловаться на пользователя</span>
       </div>
-
       <div class="complain-body">
         <p class="complain-subtitle">Введите причину жалобы:</p>
-        <textarea id="complainUserText" class="complain-textarea" placeholder="Опишите её здесь"></textarea>
+        <textarea id="complainUserText" class="complain-textarea" placeholder="Опишите её здесь" maxlength="500"></textarea>
+        <div class="complain-char-row">
+          <span class="complain-error-text" id="complainUserError" style="display: none;"></span>
+          <span class="complain-char-count" id="complainUserCharCount">0/500</span>
+        </div>
       </div>
-
       <div class="complain-footer">
         <button class="complain-cancel-btn" onclick="closeComplainUserOverlay()">Отмена</button>
         <button class="complain-submit-btn" onclick="submitComplainUser()">Отправить жалобу</button>
       </div>
     </div>
-
     <div id="complainUserThanks" style="display: none;">
       <div class="complain-header">
-        <span class="complain-title">Спасибо что помогаете улучшать сообщество!</span>
+        <span class="complain-title">Спасибо, что помогаете улучшать сообщество! ❤️</span>
       </div>
       <div class="complain-body">
         <p class="complain-subtitle">Ваша жалоба отправлена. Мы рассмотрим её в ближайшее время.</p>
+        <p class="complain-subtitle">Спасибо за ваш вклад в безопасность платформы!</p>
       </div>
       <div class="complain-footer">
         <button class="complain-submit-btn" onclick="closeComplainUserOverlay()">Закрыть</button>
@@ -33,39 +36,95 @@
 </div>
 
 <script>
-  function openComplainUserOverlay() {
+// Счетчик символов
+document.addEventListener('input', function(e) {
+    if (e.target.id === 'complainUserText') {
+        var len = e.target.value.length;
+        var cc = document.getElementById('complainUserCharCount');
+        var et = document.getElementById('complainUserError');
+
+        if (cc) {
+            cc.textContent = len + '/500';
+            if (len > 450) cc.style.color = '#e53935';
+            else if (len > 400) cc.style.color = '#ff9800';
+            else cc.style.color = '#888';
+        }
+
+        if (et && e.target.value.trim()) {
+            et.style.display = 'none';
+        }
+    }
+});
+
+window.openComplainUserOverlay = function() {
     document.getElementById('complainUserOverlay').classList.add('active');
     document.getElementById('complainUserForm').style.display = 'block';
     document.getElementById('complainUserThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
-  }
 
-  function closeComplainUserOverlay() {
+    var ta = document.getElementById('complainUserText');
+    var cc = document.getElementById('complainUserCharCount');
+    var et = document.getElementById('complainUserError');
+
+    if (ta) ta.value = '';
+    if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
+    if (et) et.style.display = 'none';
+};
+
+window.closeComplainUserOverlay = function() {
     document.getElementById('complainUserOverlay').classList.remove('active');
     document.body.style.overflow = '';
-  }
+};
 
-  function submitComplainUser() {
-    const textarea = document.getElementById('complainUserText');
+window.submitComplainUser = function() {
+    var ta = document.getElementById('complainUserText');
+    var et = document.getElementById('complainUserError');
+    var btn = document.querySelector('#complainUserOverlay .complain-submit-btn');
 
-    if (!textarea.value.trim()) {
-        textarea.style.border = '1px solid red';
+    if (!ta.value.trim()) {
+        et.textContent = 'Введите текст жалобы';
+        et.style.display = 'block';
         return;
     }
 
-    fetch('/complaint/?user_id={{ user.id }}', {
+    btn.disabled = true;
+    btn.textContent = 'Отправка...';
+
+    fetch('/complaint/?user_id=' + document.getElementById('complainUserId').value, {
         method: 'POST',
         headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': getCSRF(),
+            'X-Requested-With': 'XMLHttpRequest'
         },
-        body: 'description=' + encodeURIComponent(textarea.value)
-    }).then(function(response) {
-        if (response.ok) {
+        body: 'description=' + encodeURIComponent(ta.value)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        if (d.ok) {
             document.getElementById('complainUserForm').style.display = 'none';
             document.getElementById('complainUserThanks').style.display = 'block';
-            textarea.value = '';
+        } else {
+            et.textContent = d.error || 'Ошибка';
+            et.style.display = 'block';
         }
+    })
+    .catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Отправить жалобу';
+        et.textContent = 'Ошибка сети';
+        et.style.display = 'block';
     });
+};
+
+function getCSRF() {
+    var c = document.cookie.split(';');
+    for (var i = 0; i < c.length; i++) {
+        var p = c[i].trim();
+        if (p.startsWith('csrftoken=')) return p.substring(10);
+    }
+    return '';
 }
 </script>

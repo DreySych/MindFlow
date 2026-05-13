@@ -77,8 +77,8 @@
                 </button>
             {% endif %}
 
-            {% if request.user != question.author and not request.user.is_staff %}
-                <!-- Кнопка жалобы -->
+            {% if request.user != question.author %}
+                <!-- Кнопка жалобы для всех пользователей кроме автора -->
                 <button type="button"
                     class="action-btn report gradient-border"
                     onclick="openComplainQuestionOverlay({{ question.id }})"

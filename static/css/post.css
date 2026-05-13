@@ -132,6 +132,7 @@ body {
     border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
 }
 
+/* === Стили кнопок, приведённые к question_card.css === */
 .post-detail-card .vote-group {
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
@@ -153,11 +154,11 @@ body {
     border: none;
     background: transparent;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
     padding: 8px;
-    border-radius: 50%;
+    border-radius: 20px;
     color: #1671FE;
     transition: background 0.2s ease;
 }
@@ -190,7 +191,6 @@ body {
 
 .post-detail-card .vote-btn.upvote.active {
     background: rgba(76, 175, 80, 0.25) !important;
-    border-radius: 50%;
 }
 
 .post-detail-card .vote-btn.upvote.active img {
@@ -199,26 +199,50 @@ body {
 
 .post-detail-card .vote-btn.downvote.active {
     background: rgba(244, 67, 54, 0.25) !important;
-    border-radius: 50%;
 }
 
 .post-detail-card .vote-btn.downvote.active img {
     filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
 }
 
-.post-detail-card .action-btn.report {
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
-    border-radius: 20px;
-    border: 1px solid transparent;
-    width: 44px;
+/* Общие стили для action кнопок (comment/report/edit/delete) */
+.post-detail-card .action-btn {
     height: 44px;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 20px;
+    border: 1px solid transparent;
     cursor: pointer;
+    font-family: 'Mallanna', sans-serif;
+    text-decoration: none;
+}
+
+.post-detail-card .action-btn.comment {
+    width: 78px;
+    gap: 8px;
+    color: #1671FE;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+}
+
+.post-detail-card .action-btn.comment:hover {
+    background: #e3f2fd;
+    border-color: #1671FE;
+}
+
+.post-detail-card .action-btn.comment span {
+    font-size: 24px;
+    font-weight: 400;
+    color: #1671FE;
+}
+
+.post-detail-card .action-btn.report {
+    width: 44px;
     color: #aaa;
+    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
 }
 
 .post-detail-card .action-btn.report:hover {
@@ -227,25 +251,11 @@ body {
     color: #e53935;
 }
 
-.post-detail-card .action-btn.report img {
-    width: 20px;
-    height: 20px;
-    opacity: 1;
-}
-
 .post-detail-card .action-btn.edit {
+    width: 44px;
+    color: #1671FE;
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    text-decoration: none;
 }
 
 .post-detail-card .action-btn.edit:hover {
@@ -253,24 +263,11 @@ body {
     border-color: #1671FE;
 }
 
-.post-detail-card .action-btn.edit img {
-    width: 18px;
-    height: 18px;
-    opacity: 1;
-}
-
 .post-detail-card .action-btn.delete {
+    width: 44px;
+    color: #e53935;
     background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
                 linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
 }
 
 .post-detail-card .action-btn.delete:hover {
@@ -278,12 +275,13 @@ body {
     border-color: #e53935;
 }
 
-.post-detail-card .action-btn.delete img {
-    width: 18px;
-    height: 18px;
+.post-detail-card .action-btn img {
+    width: 20px;
+    height: 20px;
     opacity: 1;
 }
 
+/* Медиа-запросы для мобильных устройств */
 @media (max-width: 768px) {
     .content-wrapper {
         margin-left: 0;
@@ -332,20 +330,25 @@ body {
         font-size: 18px;
     }
 
+    .post-detail-card .action-btn {
+        height: 40px;
+    }
+
+    .post-detail-card .action-btn.comment {
+        width: 70px;
+    }
+
+    .post-detail-card .action-btn.comment span {
+        font-size: 18px;
+    }
+
     .post-detail-card .action-btn.report,
     .post-detail-card .action-btn.edit,
     .post-detail-card .action-btn.delete {
         width: 40px;
-        height: 40px;
     }
 
-    .post-detail-card .action-btn.edit img,
-    .post-detail-card .action-btn.delete img {
-        width: 16px;
-        height: 16px;
-    }
-
-    .post-detail-card .action-btn.report img {
+    .post-detail-card .action-btn img {
         width: 18px;
         height: 18px;
     }
