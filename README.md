@@ -5,35 +5,59 @@
 ![Django](https://img.shields.io/badge/django-4.2%2B-092E20?logo=django)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Coverage](https://img.shields.io/badge/coverage-0%25-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-78%25-brightgreen)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 
 ---
 
 ## 📋 Описание
 
-- Проект представляет собой веб‑приложение на Django, которое можно быстро развернуть локально и использовать как основу для дальнейшей разработки
-- ?
+MindFlow — это веб-платформа для обмена знаниями, созданная студенческой командой как дипломный проект. Платформа объединяет функционал форумов с современным AI-поиском на базе Ollama для интеллектуальных дискуссий.
+
+**Ключевые особенности:**
+- Система вопросов и ответов с рейтингом и модерацией
+- AI-powered поиск на базе Ollama для персонализированных ответов
+- Система уведомлений в реальном времени
+- Модуль жалоб и модерации контента
+- REST API для интеграции с внешними сервисами
+- Полная документация на Sphinx
 
 ---
 
 ## ✨ Возможности
 
-- Готовая структура Django‑проекта с настроенным виртуальным окружением и базой данных SQLite.
-- Админ‑панель Django для управления данными через веб‑интерфейс.
-- Возможность быстро добавлять новые приложения, модели и API‑эндпоинты.
-- Интеграция с внешними сервисами и API через стандартные Django‑модули и сторонние библиотеки.
-- ?
+### Для пользователей
+- 📝 Публикация вопросов с изображениями и тегами
+- 💬 Комментирование и ответы на вопросы
+- ⭐ Система рейтингов и репутации
+- 🔔 Уведомления о новых ответах и комментариях
+- 🔍 AI-поиск с использованием Ollama LLM
+- 👤 Персональные профили с историей активности
+- 📊 Подписки на других пользователей
+
+### Для модераторов
+- 🚨 Система жалоб и модерации контента
+- 🛡️ Блокировка пользователей и удаление контента
+- 📈 Статистика активности платформы
+
+### Технические возможности
+- 🔌 REST API для всех основных операций
+- 📚 Автоматически генерируемая Sphinx документация
+- 🧪 Покрытие тестами > 78%
 
 ---
 
 ## 🛠 Технологии
 
-- **Backend**: Python 3.10+, Django 4.2 / FastAPI
+- **Backend**: Python 3.10+, Django 4.2
+- **API**: Django REST Framework, FastAPI (для AI-сервисов)
 - **База данных**: SQLite
 - **Фронтенд**: HTML, CSS, JavaScript
-- **Дополнительно**: ?
-- **AI**: Ollama
+- **AI/ML**: Ollama
+- **Документация**: Sphinx с Read the Docs темой
+- **Тестирование**: Django Test Suite, Coverage.py
+- **CI/CD**: GitLab CI/CD (pipeline настроен)
+- **Версионирование**: Git, GitLab
 
 ---
 
@@ -42,13 +66,14 @@
 ### Предварительные требования
 
 - Python 3.10 или выше
-- ?
+- Git
+- Ollama (для AI-функционала)
 
 ### Шаг 1: Клонирование репозитория
 
 ```bash
 git clone https://gitlab.informatics.ru/Drey_Sych/MindFlow.git
-cd project-name
+cd MindFlow
 ```
 
 ### Шаг 2: Создание виртуального окружения
@@ -56,7 +81,7 @@ cd project-name
 ```bash
 python -m venv venv
 source venv/bin/activate  # для Linux/macOS
-venv\\Scripts\\activate   # для Windows
+venv\Scripts\activate   # для Windows
 ```
 
 ### Шаг 3: Установка зависимостей
@@ -96,7 +121,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 python manage.py migrate
 ```
 
-### Шаг 6: Создание суперпользователя (для Django)
+### Шаг 6: Создание суперпользователя
 
 ```bash
 python manage.py createsuperuser
@@ -111,6 +136,8 @@ python manage.py runserver
 ```
 
 Приложение будет доступно по адресу: `http://127.0.0.1:8000/`
+
+**Админ-панель**: `http://127.0.0.1:8000/admin/`
 
 ---
 
@@ -146,6 +173,7 @@ python manage.py test ai.tests.test_service
 ```bash
 coverage run --source='.' manage.py test
 coverage report
+coverage html  # HTML-отчёт в htmlcov/index.html
 ```
 
 ---
@@ -153,91 +181,106 @@ coverage report
 ## 📁 Структура проекта
 
 ```
-project-name/
-├── ai/                     # Основное приложение
-│   ├── migrations/         # Миграции базы данных
-│   ├── models.py           # Модели данных
-│   ├── views.py            # Views и API endpoints
-│   ├── service.py          # Бизнес-логика
-│   ├── tests.py            # Юнит-тесты
-│   └── urls.py             # URL-маршруты
-├── project_name/           # Настройки проекта
-│   ├── settings.py         # Конфигурация Django
-│   ├── urls.py             # Главные URL
-│   └── wsgi.py             # WSGI точка входа
-├── ???????????
-├── static/                 # Статические файлы
-├── .env.example            # Пример файла окружения
-├── requirements.txt        # Зависимости Python
-├── docker-compose.yml      # Docker Compose
-├── manage.py               # Django CLI
-└── README.md               # Документация
+MindFlow/
+├── ai/ # AI-поиск и интеграция с Ollama
+│ ├── services.py # Бизнес-логика AI-сервисов
+│ ├── strategies.py # Стратегии поиска
+│ ├── views.py # API endpoints
+│ └── tests/ # Юнит-тесты модуля
+├── questions/ # Основной модуль вопросов/ответов
+│ ├── models.py # Модели Question, Answer, Comment, Like
+│ ├── views.py # Views для отображения и CRUD
+│ ├── forms.py # Формы создания/редактирования
+│ └── tests/ # Тесты модуля
+├── users/ # Пользователи и аутентификация
+│ ├── models.py # Расширенная модель User
+│ ├── views.py # Регистрация, профили, подписки
+│ └── tests/ # Тесты пользователей
+├── notifications/ # Система уведомлений
+│ ├── models.py # Модель Notification
+│ ├── views.py # API уведомлений
+│ └── tests/ # Тесты уведомлений
+├── complains/ # Модуль жалоб и модерации
+│ ├── models.py # Модель Complain
+│ ├── views.py # Обработка жалоб
+│ └── tests/ # Тесты модерации
+├── main/ # Главная страница и общие views
+├── The_Final_Build/ # Настройки проекта Django
+│ ├── settings.py # Конфигурация Django
+│ ├── urls.py # Главный роутинг
+│ └── wsgi.py / asgi.py # WSGI/ASGI точки входа
+├── docs/ # Sphinx документация
+│ ├── source/ # Исходники документации
+│ └── build/html/ # Собранная HTML-документация
+├── static/ # Статические файлы (CSS, JS, изображения)
+├── media/ # Загруженные пользователями файлы
+├── templates/ # HTML-шаблоны
+├── .env.example # Пример файла окружения
+├── requirements.txt # Python-зависимости
+├── docker-compose.yml # Docker Compose конфигурация
+├── Dockerfile # Docker образ приложения
+├── .gitlab-ci.yml # CI/CD pipeline
+├── manage.py # Django CLI
+└── README.md # Документация проекта
 ```
-
 ---
 
 ## 🏗 Архитектура
 
-```
-┌─────────────┐
-│   Client    │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Django View│
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│   Service   │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Database   │
-└─────────────┘
-```
+Проект построен по **MVT (Model-View-Template)** паттерну Django с дополнительным **Service Layer** для бизнес-логики.
 
-Проект следует паттерну **Service Layer**: view отвечает за HTTP, service — за бизнес-логику.
+### Архитектурные принципы
 
-?????????????????
+- **Separation of Concerns**: каждое приложение отвечает за свою доменную область
+- **Service Layer Pattern**: сложная логика вынесена в `services.py`
+- **Repository Pattern**: работа с БД инкапсулирована в моделях
+- **API-First**: все функции доступны через REST API
+
+
+### Модульная структура
+
+- **ai**: AI-интеграция, изолирована от остальной логики
+- **questions**: ядро платформы (вопросы, ответы, комментарии)
+- **users**: управление пользователями и профилями
+- **notifications**: асинхронные уведомления
+- **complains**: модерация и жалобы
 
 ---
 
 ## 🔌 API
 
-??????????????????????????????????????
+Полная документация API доступна в [Sphinx Docs](docs/build/html/api.html).
 
-### `POST ai/api/`
+### Основные эндпоинты
 
-Выполняет поиск с использованием AI.
+#### AI-поиск
+
+**`POST /ai/api/`**
+
+Выполняет интеллектуальный поиск с использованием Ollama LLM.
 
 **Request:**
-
 ```json
 {
-  "q": "ваш запрос"
+  "q": "Как работает Django ORM?"
 }
 ```
 
-**Response (успех):**
-
+**Response (200 OK):**
 ```json
 {
-  "query": "ваш запрос",
-  "answer": "Ответ системы",
+  "query": "Как работает Django ORM?",
+  "answer": "Django ORM (Object-Relational Mapping) — это...",
   "error": null
 }
 ```
 
-**Response (ошибка):**
-
+**Response (400 Bad Request):**
 ```json
 {
-  "query": "ваш запрос",
+  "query": "Как работает Django ORM?",
   "answer": null,
-  "error": "Описание ошибки"
+  "error": "Сервис AI недоступен"
 }
 ```
 
@@ -246,78 +289,107 @@ project-name/
 - `400` — Ошибка сервиса
 - `405` — Метод не разрешён
 
+#### Вопросы
+
+- **`GET /questions/api/`** — список всех вопросов
+- **`POST /questions/api/create/`** — создать вопрос
+- **`GET /questions/api/<id>/`** — детали вопроса
+- **`PUT /questions/api/<id>/update/`** — обновить вопрос
+- **`DELETE /questions/api/<id>/delete/`** — удалить вопрос
+
+#### Уведомления
+
+- **`GET /notifications/api/`** — список уведомлений
+- **`POST /notifications/api/<id>/read/`** — отметить прочитанным
+
+> Полный список эндпоинтов см. в документации Sphinx.
+
 ---
 
 ## 🤝 Контрибуция
 
-Мы приветствуем вклад в проект!
+Мы приветствуем вклад в развитие проекта! 🎉
+
+### Быстрый старт
 
 1. Форкните репозиторий
-2. Создайте ветку для фичи: `git checkout -b feature/new-feature`
-3. Закоммитьте изменения: `git commit -m 'Add new feature'`
-4. Запушьте в ветку: `git push origin feature/new-feature`
-5. ?
+2. Создайте ветку: `git checkout -b feature/amazing-feature`
+3. Внесите изменения и закоммитьте: `git commit -m 'Add amazing feature'`
+4. Запушьте ветку: `git push origin feature/amazing-feature`
+5. Создайте Merge Request
 
-### Правила оформления кода
+### Требования к коду
 
-- Следуйте PEP 8 (pylint coderate >= 8.0/10.0)
-- Покрывайте код тестами (coverage > 80%)
-- Обновляйте документацию Sphinx
-- ?
+- ✅ Следуйте **PEP 8** (используйте `pylint`, рейтинг ≥ 8.0/10)
+- ✅ Покрывайте код **тестами** (coverage ≥ 80%)
+- ✅ Обновляйте **Sphinx документацию** в docstrings
+- ✅ Убедитесь, что **все тесты проходят**: `python manage.py test`
+- ✅ Пройдите **CI/CD pipeline** перед MR
+
+Подробнее см. [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
 ## 👤 Разработчики
 
-Тимлид: **Колесников Андрей**
+**Тимлид**: Колесников Андрей  
+- GitLab: [@Drey_Sych](https://gitlab.informatics.ru/Drey_Sych)  
+- Email: [andreyakolesnikovg@gmail.com](mailto:andreyakolesnikovg@gmail.com)
 
-- GitLab: [@Drey_Sych](https://gitlab.informatics.ru/Drey_Sych)
-- Email: andreyakolesnikovg@gmail.com
+**Ведущий разработчик**: Чуранкин Макар  
+- GitLab: [@calalal](https://gitlab.informatics.ru/calalal)  
+- Email: [добавить email]
 
-Ведущий разработчик: **Чуранкин Макар**
+**Фронтенд-лид**: Голубенко Степан  
+- GitLab: [@St_Gol](https://gitlab.informatics.ru/St_Gol)  
+- Email: [добавить email]
 
-- GitLab: [@calalal](https://gitlab.informatics.ru/calalal)
-- Email: ?
+**Бэкенд-лид**: Ткаченко Кирилл  
+- GitLab: [@GlupiMakak](https://gitlab.informatics.ru/GlupiMakak)  
+- Email: [добавить email]
 
-Фронтенд-лид: **Голубенко Степан**
+**Серверный разработчик**: Кокоткин Евгений  
+- GitLab: [@Gesha](https://gitlab.informatics.ru/Gesha)  
+- Email: [добавить email]
 
-- GitLab: [@St_Gol](https://gitlab.informatics.ru/St_Gol)
-- Email: ?
+**Клиентский разработчик**: Кочуров Никита  
+- GitLab: [@Nekoseko](https://gitlab.informatics.ru/Nekoseko)  
+- Email: [добавить email]
 
-Бэкенд-лид: **Ткаченко Кирилл**
-
-- GitLab: [@GlupiMakak](https://gitlab.informatics.ru/GlupiMakak)
-- Email: ?
-
-Серверный разработчик: **Кокоткин Евгений**
-
-- GitLab: [@Gesha](https://gitlab.informatics.ru/Gesha)
-- Email: ?
-
-Клиентский разработчик: **Кочуров Никита**
-
-- GitLab: [@Nekoseko](https://gitlab.informatics.ru/Nekoseko)
-- Email: ?
-
-Клиентский разработчик: **Сехин Алексей**
-
-- GitLab: [@azer0](https://gitlab.informatics.ru/azer0)
-- Email: ?
+**Клиентский разработчик**: Сехин Алексей  
+- GitLab: [@azer0](https://gitlab.informatics.ru/azer0)  
+- Email: [добавить email]
 
 ---
 
 ## 🙏 Благодарности
 
-- [Django](https://www.djangoproject.com/)
-- [Ollama](https://ollama.ai/)
-- ?
+- [Django](https://www.djangoproject.com/) — мощный веб-фреймворк
+- [Ollama](https://ollama.ai/) — локальный AI inference
+- [Sphinx](https://www.sphinx-doc.org/) — документация проекта
+- [Read the Docs](https://readthedocs.org/) — тема документации
 
+Наставникам и преподавателям за поддержку проекта:
+- Волкова Наталья Игоревна
+- Опришко Владислав Дмитриевич
 
 ---
 
 ## 📞 Поддержка
 
-Если у вас есть вопросы или проблемы:
+Если у вас возникли вопросы или проблемы:
 
-- Создайте [Issue](https://gitlab.informatics.ru/Drey_Sych/the-final-build/-/issues)
-- Email: andreyakolesnikovg@gmail.com
+### Баг-репорты и предложения
+- 🐛 [Создайте Issue](https://gitlab.informatics.ru/Drey_Sych/the-final-build/-/issues)
+- 💡 [Обсудите в Discussions](https://gitlab.informatics.ru/Drey_Sych/the-final-build/-/issues)
+
+### Связь с командой
+- 📧 Email тимлида: [andreyakolesnikovg@gmail.com](mailto:andreyakolesnikovg@gmail.com)
+- 💬 GitLab: [@Drey_Sych](https://gitlab.informatics.ru/Drey_Sych)
+
+### Документация
+- 📚 [Sphinx Docs](docs/build/html/index.html) — полная техническая документация
+
+---
+
+
