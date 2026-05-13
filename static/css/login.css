@@ -169,3 +169,45 @@
         .notification-close:hover {
             opacity: 1;
         }
+
+.back-button {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #D1D9E6;
+    border-radius: 30px;
+    padding: 8px 18px;
+    text-decoration: none;
+    color: #1a1a2e;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.back-button:hover {
+    background: #ffffff;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #4A90E2;
+}
+
+.back-icon {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s ease;
+}
+
+.back-button:hover .back-icon {
+    transform: translateX(-3px);
+}
+
+body {
+    position: relative;
+}

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+
 </head>
 <body>
     {% include 'header.html' %}
@@ -46,7 +47,7 @@
                     <p class="post-text">{{ question.description }}</p>
 
                     <div class="actions">
-                        <div class="vote-group gradient-border">
+                        <div class="vote-group">
                             <a href="{% url 'like' %}?id={{ question.id }}&to={{ request.path }}%23question-{{ question.id }}"
                                class="vote-btn upvote question-vote-btn {% if user_rating == 1 %}active{% endif %}">
                                 <img src="{% static 'images/like.png' %}" alt="Лайк">
@@ -62,17 +63,17 @@
 
                         {% if request.user == question.author %}
                             <a href="{% url 'edit_question' %}?id={{ question.id }}"
-                               class="action-btn edit gradient-border" title="Редактировать">
+                               class="action-btn edit" title="Редактировать">
                                 <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                             </a>
                             <button type="button"
-                                    class="action-btn delete gradient-border"
+                                    class="action-btn delete"
                                     onclick="deleteQuestion({{ question.id }})"
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
                             </button>
                         {% else %}
-                            <button type="button" class="action-btn report gradient-border"
+                            <button type="button" class="action-btn report"
                                     onclick="openComplainQuestionOverlay({{ question.id }})">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
@@ -111,7 +112,6 @@
     {% include 'complain_comment.html' %}
 
     <script>
-    // Утилиты
     function getCookie(name) {
         let value = null;
         document.cookie.split(';').forEach(c => {
@@ -155,26 +155,7 @@
         });
     }
 
-    function updateVoteButtons(group, data) {
-        const count = group.querySelector('.vote-count');
-        const upvoteBtn = group.querySelector('.upvote');
-        const downvoteBtn = group.querySelector('.downvote');
-
-        if (count) count.textContent = data.rating;
-
-        if (data.user_rating === 1) {
-            upvoteBtn?.classList.add('active');
-            downvoteBtn?.classList.remove('active');
-        } else if (data.user_rating === -1) {
-            downvoteBtn?.classList.add('active');
-            upvoteBtn?.classList.remove('active');
-        } else {
-            upvoteBtn?.classList.remove('active');
-            downvoteBtn?.classList.remove('active');
-        }
-    }
-
-    //  Авто-высота textarea
+    // Авто-высота textarea
     document.querySelectorAll('.comment-input').forEach(textarea => {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
@@ -184,7 +165,7 @@
 
     // Голосование (вопросы + комментарии)
     document.addEventListener('click', function(event) {
-        const button = event.target.closest('.question-vote-btn, .ajax-comment-vote');
+        const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
         if (!button) return;
 
         event.preventDefault();
@@ -201,7 +182,24 @@
             }
 
             const group = button.closest('.vote-group') || button.closest('.comment-vote-group');
-            if (group) updateVoteButtons(group, data);
+            if (!group) return;
+
+            const count = group.querySelector('.vote-count') || group.querySelector('.comment-vote-count');
+            const upvoteBtn = group.querySelector('.upvote');
+            const downvoteBtn = group.querySelector('.downvote');
+
+            if (count) count.textContent = data.rating;
+
+            if (data.user_rating === 1) {
+                upvoteBtn?.classList.add('active');
+                downvoteBtn?.classList.remove('active');
+            } else if (data.user_rating === -1) {
+                downvoteBtn?.classList.add('active');
+                upvoteBtn?.classList.remove('active');
+            } else {
+                upvoteBtn?.classList.remove('active');
+                downvoteBtn?.classList.remove('active');
+            }
         })
         .catch(err => console.error('Vote error:', err));
     });
@@ -231,7 +229,6 @@
                 ${data.data.html}
             `;
 
-            // Перепривязываем авто-высоту для новых textarea
             commentsSection.querySelectorAll('.comment-input').forEach(textarea => {
                 textarea.addEventListener('input', function() {
                     this.style.height = 'auto';
@@ -239,7 +236,6 @@
                 });
             });
 
-            // Скрываем кнопки жалобы на свои комментарии
             commentsSection.querySelectorAll('.comment-report-btn').forEach(btn => {
                 if (btn.dataset.authorId == "{{ request.user.id }}") {
                     btn.style.display = 'none';
@@ -269,7 +265,6 @@
         .then(data => {
             if (data.ok) {
                 form.reset();
-                // Сбрасываем высоту textarea
                 const textarea = form.querySelector('textarea');
                 if (textarea) textarea.style.height = 'auto';
             } else if (data.error) {
@@ -278,10 +273,16 @@
         });
     });
 
-    // Скрываем кнопки жалобы на свои комментарии при загрузке
     document.querySelectorAll('.comment-report-btn').forEach(btn => {
         if (btn.dataset.authorId == "{{ request.user.id }}") {
             btn.style.display = 'none';
+        }
+    });
+
+    document.getElementById('commentInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('commentForm').dispatchEvent(new Event('submit'));
         }
     });
     </script>
