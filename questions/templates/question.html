@@ -237,39 +237,23 @@
             data.data.question_id == currentQuestionId &&
             (data.data.event_type === 'new_comment' || data.data.event_type === 'new_answer')
         ) {
-            const commentsSection = document.getElementById('commentsSection');
-            if (!commentsSection) return;
-
-            commentsSection.innerHTML = `
-                <h3 class="comments-title">Комментарии (${data.data.count})</h3>
-                ${data.data.html}
-            `;
-
-            commentsSection.querySelectorAll('.comment-input').forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-                });
-            });
-
-            commentsSection.querySelectorAll('.comment-report-btn').forEach(btn => {
-                if (btn.dataset.authorId == "{{ request.user.id }}") {
-                    btn.style.display = 'none';
-                }
-            });
+            window.location.reload();
         }
     };
 
-    // Отправка комментариев и ответов
+    // Отправка комментариев
     document.addEventListener('submit', function(event) {
         const form = event.target;
-        if (form.id !== 'commentForm' && !form.classList.contains('answerForm')) return;
+        if (form.id !== 'commentForm') return;
 
         event.preventDefault();
 
         const formData = new FormData(form);
+        const text = formData.get('text');
 
-        fetch(form.action || window.location.href, {
+        if (!text || !text.trim()) return;
+
+        fetch(window.location.href, {
             method: 'POST',
             body: formData,
             headers: {
@@ -283,16 +267,11 @@
                 form.reset();
                 const textarea = form.querySelector('textarea');
                 if (textarea) textarea.style.height = 'auto';
+                window.location.reload();
             } else if (data.error) {
                 showError(data.error);
             }
         });
-    });
-
-    document.querySelectorAll('.comment-report-btn').forEach(btn => {
-        if (btn.dataset.authorId == "{{ request.user.id }}") {
-            btn.style.display = 'none';
-        }
     });
 
     document.getElementById('commentInput').addEventListener('keypress', function(e) {

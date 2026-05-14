@@ -363,6 +363,8 @@ def dislike_comment(request):
 
 def make_answer_page(request, comment_id):
     if not can_act(request.user):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
         return redirect('/')
 
     comment = get_object_or_404(Comment, id=comment_id)
@@ -370,15 +372,16 @@ def make_answer_page(request, comment_id):
     if request.method == "POST":
         text = request.POST.get('text')
 
-        if text:
+        if text and text.strip():
             answer = Answer(
-                answer=text,
+                answer=text.strip(),
                 rating=0,
                 author=request.user,
                 creation_date=timezone.now(),
                 comment=comment
             )
             answer.save()
+
             if comment.author != request.user:
                 Notification.objects.create(
                     user=comment.author,
@@ -386,8 +389,12 @@ def make_answer_page(request, comment_id):
                     link=f'/question/{comment.question.id}/#comment-{comment.id}'
                 )
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': True})
+
+        return redirect('/question/' + str(comment.question.id) + '/')
+
+    return redirect('/question/' + str(comment.question.id) + '/')
 
     return redirect('/question/' + str(comment.question.id) + '/')
 

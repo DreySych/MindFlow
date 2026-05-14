@@ -55,9 +55,7 @@
 
                 <button type="button"
                         class="comment-action-btn reply-toggle"
-                        {% if user.is_authenticated %}
-                            onclick="document.getElementById('replyForm{{ comment.id }}').style.display='flex'"
-                        {% endif %}>
+                        onclick="toggleReplyForm({{ comment.id }})">
 
                     <img src="{% static 'images/comment.png' %}" alt="Ответить">
 
@@ -65,13 +63,14 @@
 
                 </button>
 
+                {% if request.user != comment.author %}
                 <button type="button"
                         class="comment-report-btn"
                         data-author-id="{{ comment.author.id }}"
                         onclick="openComplainCommentOverlay({{ comment.id }})">
                     <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                 </button>
-
+                {% endif %}
 
             </div>
 
@@ -81,7 +80,7 @@
 
     {% for answer in comment.answer_set.all %}
 
-        <div class="reply-item">
+        <div class="reply-item" id="answer-{{ answer.id }}">
 
             <a href="{% url 'profile_general' username=answer.author.username %}" class="comment-avatar-link">
 
@@ -115,14 +114,12 @@
                     {{ answer.answer }}
                 </p>
 
-
-
                 <div class="comment-actions-row">
 
                     <div class="comment-vote-group">
 
                         <a href="{% url 'like_answer' %}?id={{ answer.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
-                           class="comment-vote-btn upvote ajax-comment-vote">
+                           class="comment-vote-btn upvote ajax-comment-vote {% if answer.user_rating == 1 %}active{% endif %}">
                             <img src="{% static 'images/like.png' %}" alt="Лайк">
                         </a>
 
@@ -133,18 +130,20 @@
                         </span>
 
                         <a href="{% url 'dislike_answer' %}?id={{ answer.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
-                           class="comment-vote-btn downvote ajax-comment-vote">
+                           class="comment-vote-btn downvote ajax-comment-vote {% if answer.user_rating == -1 %}active{% endif %}">
                             <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                         </a>
 
                     </div>
-                <button type="button"
-                        class="comment-report-btn"
-                        data-author-id="{{ answer.author.id }}"
-                        onclick="openComplainAnswerOverlay({{ answer.id }})">
-                    <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
-                </button>
 
+                    {% if request.user != answer.author %}
+                    <button type="button"
+                            class="comment-report-btn"
+                            data-author-id="{{ answer.author.id }}"
+                            onclick="openComplainAnswerOverlay({{ answer.id }})">
+                        <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                    </button>
+                    {% endif %}
 
                 </div>
 
@@ -161,37 +160,103 @@
       id="replyForm{{ comment.id }}"
       style="display: none;">
 
-    {% csrf_token %}
+        {% csrf_token %}
 
-    <div class="comment-input-wrapper reply-input-wrapper">
+        <div class="comment-input-wrapper reply-input-wrapper">
 
-        <textarea
-            name="text"
-            class="comment-input reply-input"
-            placeholder="Написать ответ..."
-            rows="1"></textarea>
+            <textarea
+                name="text"
+                class="comment-input reply-input"
+                placeholder="Написать ответ..."
+                rows="1"></textarea>
 
-        <div class="comment-input-actions">
+            <div class="comment-input-actions">
 
-            <button type="submit" class="submit-comment-btn">
-                <img src="{% static 'images/send.png' %}" alt="Отправить">
-            </button>
+                <button type="submit" class="submit-comment-btn">
+                    <img src="{% static 'images/send.png' %}" alt="Отправить">
+                </button>
+
+            </div>
 
         </div>
 
-    </div>
-
-</form>
+    </form>
 
 </div>
 
 <script>
-    document.querySelectorAll('.reply-toggle').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        {% if not user.is_authenticated %}
-            window.location.href = '/account/login/?next={{ request.path }}';
-            e.preventDefault();
-        {% endif %}
-    });
-});
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById('replyForm' + commentId);
+        if (form) {
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'flex';
+                const textarea = form.querySelector('textarea');
+                if (textarea) textarea.focus();
+            } else {
+                form.style.display = 'none';
+            }
+        }
+    }
+
+    // Авто-высота для textarea в ответах
+    function initReplyTextareas() {
+        document.querySelectorAll('.reply-input').forEach(textarea => {
+            if (!textarea.hasAttribute('data-listener')) {
+                textarea.setAttribute('data-listener', 'true');
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                });
+            }
+        });
+    }
+
+    initReplyTextareas();
+
+    // Отправка ответов через AJAX
+    function initAnswerForms() {
+        document.querySelectorAll('.answerForm').forEach(form => {
+            if (!form.hasAttribute('data-listener')) {
+                form.setAttribute('data-listener', 'true');
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const textarea = this.querySelector('textarea');
+                    const text = textarea.value.trim();
+
+                    if (!text) return;
+
+                    const formData = new FormData(this);
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': csrfToken
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.ok) {
+                            textarea.value = '';
+                            textarea.style.height = 'auto';
+                            this.style.display = 'none';
+                            // Перезагружаем страницу для обновления списка ответов
+                            window.location.reload();
+                        } else if (data.error) {
+                            alert(data.error);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        window.location.reload();
+                    });
+                });
+            }
+        });
+    }
+
+    initAnswerForms();
 </script>
