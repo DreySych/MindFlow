@@ -1,6 +1,5 @@
-<!-- complain_question.html -->
 {% load static %}
-<div class="complain-overlay" id="complainQuestionOverlay">
+<div class="complain-overlay" id="complainQuestionOverlay" style="display: none;">
   <div class="complain-backdrop" onclick="closeComplainQuestionOverlay()"></div>
   <div class="complain-modal">
     <div id="complainQuestionForm">
@@ -36,7 +35,6 @@
 </div>
 
 <script>
-
 document.addEventListener('input', function(e) {
     if (e.target.id === 'complainQuestionText') {
         var len = e.target.value.length;
@@ -58,7 +56,8 @@ document.addEventListener('input', function(e) {
 
 window.openComplainQuestionOverlay = function(questionId) {
     window.currentComplainQuestionId = questionId;
-    document.getElementById('complainQuestionOverlay').classList.add('active');
+    var overlay = document.getElementById('complainQuestionOverlay');
+    overlay.style.display = 'flex';
     document.getElementById('complainQuestionForm').style.display = 'block';
     document.getElementById('complainQuestionThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
@@ -73,7 +72,7 @@ window.openComplainQuestionOverlay = function(questionId) {
 };
 
 window.closeComplainQuestionOverlay = function() {
-    document.getElementById('complainQuestionOverlay').classList.remove('active');
+    document.getElementById('complainQuestionOverlay').style.display = 'none';
     document.body.style.overflow = '';
 };
 

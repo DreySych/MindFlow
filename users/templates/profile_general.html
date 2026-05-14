@@ -85,6 +85,7 @@
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
     {% include 'complain_user.html' %}
+    {% include 'confirm_delete.html' %}
 
     <script>
     function getCookie(name) {
@@ -94,6 +95,24 @@
             if (k === name) value = decodeURIComponent(v);
         });
         return value;
+    }
+
+    function showError(text) {
+        const errorBox = document.createElement('div');
+        errorBox.textContent = text;
+        Object.assign(errorBox.style, {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: '#ff4d4f',
+            color: 'white',
+            padding: '14px 18px',
+            borderRadius: '12px',
+            zIndex: '99999',
+            fontSize: '14px'
+        });
+        document.body.appendChild(errorBox);
+        setTimeout(() => errorBox.remove(), 3000);
     }
 
     function deleteQuestion(questionId) {
@@ -107,15 +126,39 @@
         .then(res => res.json())
         .then(data => {
             if (data.ok) {
-                document.getElementById(`question-${questionId}`)?.remove();
+                const questionElement = document.getElementById(`question-${questionId}`);
+                if (questionElement) {
+                    questionElement.remove();
+                } else {
+                    window.location.reload();
+                }
             }
-        });
+        })
+        .catch(err => console.error('Ошибка:', err));
     }
-    </script>
-</body>
-</html>
 
-<script>
+    function confirmDeleteQuestion(questionId) {
+        if (typeof openConfirmDeleteOverlay !== 'undefined') {
+            openConfirmDeleteOverlay('пост', function() {
+                deleteQuestion(questionId);
+            });
+        } else {
+            if (confirm('Вы уверены, что хотите удалить этот пост? Это действие невозможно отменить.')) {
+                deleteQuestion(questionId);
+            }
+        }
+    }
+
+    function openComplainQuestionOverlay(questionId) {
+        const overlay = document.getElementById('complainQuestionOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+            const input = document.getElementById('complain_question_id');
+            if (input) input.value = questionId;
+        }
+    }
+
+    // AJAX формы для подписки
     document.querySelectorAll('.ajax-form').forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -138,28 +181,46 @@
         });
     });
 
-</script>
+    // Голосование на странице профиля
+    document.addEventListener('click', function(event) {
+        const button = event.target.closest('.question-vote-btn');
+        if (!button) return;
 
-<script>
-    function showError(text) {
-    const errorBox = document.createElement('div');
+        event.preventDefault();
 
-    errorBox.textContent = text;
-    errorBox.style.position = 'fixed';
-    errorBox.style.top = '20px';
-    errorBox.style.right = '20px';
-    errorBox.style.background = '#ff4d4f';
-    errorBox.style.color = 'white';
-    errorBox.style.padding = '14px 18px';
-    errorBox.style.borderRadius = '12px';
-    errorBox.style.zIndex = '99999';
-    errorBox.style.fontSize = '14px';
+        fetch(button.href, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.ok) {
+                if (data.login) window.location.href = data.login;
+                if (data.error) showError(data.error);
+                return;
+            }
 
-    document.body.appendChild(errorBox);
+            const group = button.closest('.vote-group');
+            if (!group) return;
 
-    setTimeout(function() {
-        errorBox.remove();
-    }, 3000);
-}
-</script>
+            const count = group.querySelector('.vote-count');
+            const upvoteBtn = group.querySelector('.upvote');
+            const downvoteBtn = group.querySelector('.downvote');
 
+            if (count) count.textContent = data.rating;
+
+            if (data.user_rating === 1) {
+                upvoteBtn?.classList.add('active');
+                downvoteBtn?.classList.remove('active');
+            } else if (data.user_rating === -1) {
+                downvoteBtn?.classList.add('active');
+                upvoteBtn?.classList.remove('active');
+            } else {
+                upvoteBtn?.classList.remove('active');
+                downvoteBtn?.classList.remove('active');
+            }
+        })
+        .catch(err => console.error('Vote error:', err));
+    });
+    </script>
+</body>
+</html>

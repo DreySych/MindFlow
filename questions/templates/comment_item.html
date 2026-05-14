@@ -1,4 +1,3 @@
-<!-- comment_item.html -->
 {% load static %}
 {% load custom_filters %}
 <div class="comment-thread" id="comment-{{ comment.id }}">
@@ -36,7 +35,7 @@
 
                 <div class="comment-vote-group">
 
-                    <a href="{% url 'like_comment' %}?id={{ comment.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
+                    <a href="{% url 'like_comment' %}?id={{ comment.id }}&to={{ request.path }}%23comment-{{ comment.id }}"
                         class="comment-vote-btn upvote ajax-comment-vote {% if comment.user_rating == 1 %}active{% endif %}">
                         <img src="{% static 'images/like.png' %}" alt="Лайк">
                     </a>
@@ -45,20 +44,18 @@
                         {{ comment.rating }}
                     </span>
 
-                    <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
+                    <a href="{% url 'dislike_comment' %}?id={{ comment.id }}&to={{ request.path }}%23comment-{{ comment.id }}"
                         class="comment-vote-btn downvote ajax-comment-vote {% if comment.user_rating == -1 %}active{% endif %}">
                         <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                     </a>
 
                 </div>
 
-
                 <button type="button"
                         class="comment-action-btn reply-toggle"
-                        onclick="toggleReplyForm({{ comment.id }})">
+                        onclick="{% if user.is_authenticated %}toggleReplyForm({{ comment.id }}){% else %}window.location.href='{% url 'login' %}?next={{ request.path }}'{% endif %}">
 
                     <img src="{% static 'images/comment.png' %}" alt="Ответить">
-
                     <span>Ответить</span>
 
                 </button>
@@ -76,7 +73,6 @@
 
         </div>
     </div>
-
 
     {% for answer in comment.answer_set.all %}
 
@@ -118,18 +114,16 @@
 
                     <div class="comment-vote-group">
 
-                        <a href="{% url 'like_answer' %}?id={{ answer.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
+                        <a href="{% url 'like_answer' %}?id={{ answer.id }}&to={{ request.path }}%23comment-{{ comment.id }}"
                            class="comment-vote-btn upvote ajax-comment-vote {% if answer.user_rating == 1 %}active{% endif %}">
                             <img src="{% static 'images/like.png' %}" alt="Лайк">
                         </a>
 
                         <span class="comment-vote-count">
-
                             {{ answer.rating }}
-
                         </span>
 
-                        <a href="{% url 'dislike_answer' %}?id={{ answer.id }}&to=/question/{{ comment.question.id }}/%23comment-{{ comment.id }}"
+                        <a href="{% url 'dislike_answer' %}?id={{ answer.id }}&to={{ request.path }}%23comment-{{ comment.id }}"
                            class="comment-vote-btn downvote ajax-comment-vote {% if answer.user_rating == -1 %}active{% endif %}">
                             <img src="{% static 'images/dislike.png' %}" alt="Дизлайк">
                         </a>
@@ -153,7 +147,7 @@
 
     {% endfor %}
 
-
+    {% if user.is_authenticated %}
     <form method="post"
       action="{% url 'make_answer' comment.id %}"
       class="answerForm reply-form"
@@ -181,82 +175,62 @@
         </div>
 
     </form>
+    {% endif %}
 
 </div>
 
 <script>
-    function toggleReplyForm(commentId) {
-        const form = document.getElementById('replyForm' + commentId);
-        if (form) {
-            if (form.style.display === 'none' || form.style.display === '') {
-                form.style.display = 'flex';
-                const textarea = form.querySelector('textarea');
-                if (textarea) textarea.focus();
-            } else {
-                form.style.display = 'none';
-            }
+function toggleReplyForm(commentId) {
+    var form = document.getElementById('replyForm' + commentId);
+    if (form) {
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'flex';
+            var textarea = form.querySelector('textarea');
+            if (textarea) textarea.focus();
+        } else {
+            form.style.display = 'none';
         }
     }
+}
 
-    // Авто-высота для textarea в ответах
-    function initReplyTextareas() {
-        document.querySelectorAll('.reply-input').forEach(textarea => {
-            if (!textarea.hasAttribute('data-listener')) {
-                textarea.setAttribute('data-listener', 'true');
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-                });
+{% if user.is_authenticated %}
+document.querySelectorAll('.reply-input').forEach(function(textarea) {
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+});
+
+document.querySelectorAll('.answerForm').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var textarea = this.querySelector('textarea');
+        var text = textarea.value.trim();
+
+        if (!text) return;
+
+        var formData = new FormData(this);
+        var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken
+            }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                form.style.display = 'none';
+                window.location.reload();
             }
         });
-    }
-
-    initReplyTextareas();
-
-    // Отправка ответов через AJAX
-    function initAnswerForms() {
-        document.querySelectorAll('.answerForm').forEach(form => {
-            if (!form.hasAttribute('data-listener')) {
-                form.setAttribute('data-listener', 'true');
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    const textarea = this.querySelector('textarea');
-                    const text = textarea.value.trim();
-
-                    if (!text) return;
-
-                    const formData = new FormData(this);
-                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-                    fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRFToken': csrfToken
-                        }
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.ok) {
-                            textarea.value = '';
-                            textarea.style.height = 'auto';
-                            this.style.display = 'none';
-                            // Перезагружаем страницу для обновления списка ответов
-                            window.location.reload();
-                        } else if (data.error) {
-                            alert(data.error);
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        window.location.reload();
-                    });
-                });
-            }
-        });
-    }
-
-    initAnswerForms();
+    });
+});
+{% endif %}
 </script>

@@ -68,7 +68,7 @@
                 </a>
                 <button type="button"
                         class="action-btn delete gradient-border"
-                        onclick="deleteQuestion({{ question.id }})"
+                        onclick="if (typeof confirmDeleteQuestion !== 'undefined') confirmDeleteQuestion({{ question.id }}); else if (confirm('Вы уверены?')) deleteQuestion({{ question.id }})"
                         title="Удалить">
                     <img src="{% static 'images/krest.png' %}" alt="Удалить">
                 </button>
@@ -81,7 +81,7 @@
                 </button>
                 <button type="button"
                         class="action-btn delete gradient-border"
-                        onclick="deleteQuestion({{ question.id }})"
+                        onclick="if (typeof confirmDeleteQuestion !== 'undefined') confirmDeleteQuestion({{ question.id }}); else if (confirm('Вы уверены?')) deleteQuestion({{ question.id }})"
                         title="Удалить">
                     <img src="{% static 'images/krest.png' %}" alt="Удалить">
                 </button>

@@ -1,0 +1,68 @@
+{% load static %}
+<div class="complain-overlay" id="confirmDeleteOverlay" style="display: none;">
+  <div class="complain-backdrop" onclick="closeConfirmDeleteOverlay()"></div>
+  <div class="complain-modal">
+    <div id="confirmDeleteForm">
+      <div class="complain-header">
+        <span class="complain-title">Подтверждение удаления</span>
+      </div>
+      <div class="complain-body">
+        <p class="complain-subtitle" style="font-size: 16px; margin-bottom: 8px;">
+          Вы уверены, что хотите удалить этот <span id="deleteItemType">пост</span>?
+        </p>
+        <p class="complain-subtitle" style="color: #999;">
+          Это действие невозможно отменить.
+        </p>
+      </div>
+      <div class="complain-footer">
+        <button type="button" class="complain-cancel-btn" onclick="closeConfirmDeleteOverlay()">Отмена</button>
+        <button type="button" class="complain-submit-btn" id="confirmDeleteBtn" style="background: linear-gradient(135deg, #e53935 0%, #c62828 100%);">Удалить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let pendingDeleteCallback = null;
+
+window.openConfirmDeleteOverlay = function(itemType, onConfirm) {
+    var overlay = document.getElementById('confirmDeleteOverlay');
+    var itemTypeSpan = document.getElementById('deleteItemType');
+
+    if (itemTypeSpan) {
+        itemTypeSpan.textContent = itemType;
+    }
+
+    pendingDeleteCallback = onConfirm;
+
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeConfirmDeleteOverlay = function() {
+    var overlay = document.getElementById('confirmDeleteOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+    document.body.style.overflow = '';
+    pendingDeleteCallback = null;
+};
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        var overlay = document.getElementById('confirmDeleteOverlay');
+        if (overlay && overlay.style.display === 'flex') {
+            closeConfirmDeleteOverlay();
+        }
+    }
+});
+
+document.getElementById('confirmDeleteBtn')?.addEventListener('click', function() {
+    if (pendingDeleteCallback) {
+        pendingDeleteCallback();
+    }
+    closeConfirmDeleteOverlay();
+});
+</script>

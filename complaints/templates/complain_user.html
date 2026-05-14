@@ -1,5 +1,5 @@
 {% load static %}
-<div class="complain-overlay" id="complainUserOverlay">
+<div class="complain-overlay" id="complainUserOverlay" style="display: none;">
   <input type="hidden" id="complainUserId" value="{{ user.id }}">
   <div class="complain-backdrop" onclick="closeComplainUserOverlay()"></div>
   <div class="complain-modal">
@@ -36,7 +36,6 @@
 </div>
 
 <script>
-// Счетчик символов
 document.addEventListener('input', function(e) {
     if (e.target.id === 'complainUserText') {
         var len = e.target.value.length;
@@ -57,7 +56,8 @@ document.addEventListener('input', function(e) {
 });
 
 window.openComplainUserOverlay = function() {
-    document.getElementById('complainUserOverlay').classList.add('active');
+    var overlay = document.getElementById('complainUserOverlay');
+    overlay.style.display = 'flex';
     document.getElementById('complainUserForm').style.display = 'block';
     document.getElementById('complainUserThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
@@ -72,7 +72,7 @@ window.openComplainUserOverlay = function() {
 };
 
 window.closeComplainUserOverlay = function() {
-    document.getElementById('complainUserOverlay').classList.remove('active');
+    document.getElementById('complainUserOverlay').style.display = 'none';
     document.body.style.overflow = '';
 };
 

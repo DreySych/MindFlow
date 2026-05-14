@@ -28,6 +28,7 @@
 
     {% include 'footer.html' %}
     {% include 'complain_question.html' %}
+    {% include 'confirm_delete.html' %}
 
     <script>
     function getCookie(name) {
@@ -52,10 +53,27 @@
         .then(res => res.json())
         .then(data => {
             if (data.ok) {
-                document.getElementById(`question-${questionId}`)?.remove();
+                const questionElement = document.getElementById(`question-${questionId}`);
+                if (questionElement) {
+                    questionElement.remove();
+                } else {
+                    window.location.reload();
+                }
             }
         })
         .catch(err => console.error('Ошибка:', err));
+    }
+
+    function confirmDeleteQuestion(questionId) {
+        if (typeof openConfirmDeleteOverlay !== 'undefined') {
+            openConfirmDeleteOverlay('пост', function() {
+                deleteQuestion(questionId);
+            });
+        } else {
+            if (confirm('Вы уверены, что хотите удалить этот пост? Это действие невозможно отменить.')) {
+                deleteQuestion(questionId);
+            }
+        }
     }
 
     function openComplainQuestionOverlay(questionId) {

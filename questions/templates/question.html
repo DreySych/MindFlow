@@ -68,7 +68,7 @@
                             </a>
                             <button type="button"
                                     class="action-btn delete"
-                                    onclick="deleteQuestion({{ question.id }})"
+                                    onclick="confirmDeleteQuestion({{ question.id }})"
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
                             </button>
@@ -81,7 +81,7 @@
                             </button>
                             <button type="button"
                                     class="action-btn delete"
-                                    onclick="deleteQuestion({{ question.id }})"
+                                    onclick="confirmDeleteQuestion({{ question.id }})"
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
                             </button>
@@ -100,7 +100,7 @@
                     <form method="post" style="width: 100%;" id="commentForm">
                         {% csrf_token %}
                         <div class="comment-input-wrapper">
-                            <textarea class="comment-input" placeholder="Добавить комментарий..." rows="1" id="commentInput" name="text"></textarea>
+                            <textarea class="comment-input" placeholder="Добавить комментарий..." rows="1" id="commentInput" name="text" {% if not user.is_authenticated %}onclick="redirectToLogin()" onfocus="redirectToLogin()"{% endif %}></textarea>
                             <div class="comment-input-actions">
                                 <button type="submit" class="submit-comment-btn" id="submitComment">
                                     <img src="{% static 'images/send.png' %}" alt="Отправить">
@@ -108,6 +108,11 @@
                             </div>
                         </div>
                     </form>
+                    {% if not user.is_authenticated %}
+                        <div class="login-prompt" style="text-align: center; margin-top: 12px; font-family: 'Mallanna', sans-serif; color: #888;">
+                            <a href="{% url 'login' %}?next={{ request.path }}" style="color: #1671FE; text-decoration: none;">Войдите</a>, чтобы оставить комментарий
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="comments-section" id="commentsSection">
@@ -126,6 +131,7 @@
     {% include 'footer.html' %}
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
+    {% include 'confirm_delete.html' %}
 
     <script>
     function getCookie(name) {
@@ -155,6 +161,10 @@
         setTimeout(() => errorBox.remove(), 3000);
     }
 
+    function redirectToLogin() {
+        window.location.href = "{% url 'login' %}?next={{ request.path }}";
+    }
+
     function deleteQuestion(questionId) {
         fetch(`/question/${questionId}/delete/`, {
             method: 'POST',
@@ -171,15 +181,27 @@
         });
     }
 
-    // Авто-высота textarea
+    function confirmDeleteQuestion(questionId) {
+        if (typeof openConfirmDeleteOverlay !== 'undefined') {
+            openConfirmDeleteOverlay('пост', function() {
+                deleteQuestion(questionId);
+            });
+        } else {
+            if (confirm('Вы уверены, что хотите удалить этот пост? Это действие невозможно отменить.')) {
+                deleteQuestion(questionId);
+            }
+        }
+    }
+
+    {% if user.is_authenticated %}
     document.querySelectorAll('.comment-input').forEach(textarea => {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
     });
+    {% endif %}
 
-    // Голосование (вопросы + комментарии)
     document.addEventListener('click', function(event) {
         const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
         if (!button) return;
@@ -220,7 +242,6 @@
         .catch(err => console.error('Vote error:', err));
     });
 
-    // WebSocket для новых комментариев
     const csrfToken = '{{ csrf_token }}';
     const currentQuestionId = "{{ question.id }}";
 
@@ -241,7 +262,7 @@
         }
     };
 
-    // Отправка комментариев
+    {% if user.is_authenticated %}
     document.addEventListener('submit', function(event) {
         const form = event.target;
         if (form.id !== 'commentForm') return;
@@ -280,6 +301,12 @@
             document.getElementById('commentForm').dispatchEvent(new Event('submit'));
         }
     });
+    {% else %}
+    document.getElementById('commentForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        redirectToLogin();
+    });
+    {% endif %}
     </script>
 </body>
 </html>
