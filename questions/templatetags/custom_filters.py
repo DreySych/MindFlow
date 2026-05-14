@@ -3,6 +3,7 @@ from django.utils import timezone
 
 register = template.Library()
 
+
 @register.filter
 def smart_time(value):
     if not value:

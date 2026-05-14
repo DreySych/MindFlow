@@ -1,10 +1,9 @@
-from email.policy import default
 from django import forms
-from .models import *
 
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
+
 
 class MultipleFileField(forms.FileField):
     def __init__(self, *args, **kwargs):
@@ -19,14 +18,17 @@ class MultipleFileField(forms.FileField):
             result = single_file_clean(data, initial)
         return result
 
+
 class QuestionForm(forms.Form):
     title = forms.CharField()
     description = forms.CharField(required=False)
-    #tags = forms.CharField(required=False)
+    # tags = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
+
 
 class CommentForm(forms.Form):
     text = forms.CharField(label='Комментарий')
+
 
 class AnswerForm(forms.Form):
     text = forms.CharField()

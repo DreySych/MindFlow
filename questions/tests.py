@@ -38,7 +38,8 @@ class QuestionsViewsTest(TestCase):
     def test_create_post_post_valid(self, mock_model):
         mock_model.return_value.encode.return_value = [[0.1, 0.2, 0.3]]
         self.login('author')
-        response = self.client.post('/question/make/', {'title': 'New Post', 'description': 'New desc'})
+        response = self.client.post(
+            '/question/make/', {'title': 'New Post', 'description': 'New desc'})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Question.objects.filter(title='New Post').exists())
 
@@ -46,7 +47,8 @@ class QuestionsViewsTest(TestCase):
     def test_create_post_without_image(self, mock_model):
         mock_model.return_value.encode.return_value = [[0.1, 0.2, 0.3]]
         self.login('author')
-        self.client.post('/question/make/', {'title': 'No image post', 'description': 'Text'})
+        self.client.post('/question/make/',
+                         {'title': 'No image post', 'description': 'Text'})
         post = Question.objects.get(title='No image post')
         self.assertEqual(post.images, '')
 
@@ -102,31 +104,36 @@ class QuestionsViewsTest(TestCase):
 
     def test_create_comment_authenticated(self):
         self.login('other')
-        response = self.client.post(f'/question/{self.question.id}/', {'text': 'My new comment'})
+        response = self.client.post(
+            f'/question/{self.question.id}/', {'text': 'My new comment'})
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Comment.objects.filter(text='My new comment').exists())
 
     def test_create_comment_unauthenticated(self):
-        response = self.client.post(f'/question/{self.question.id}/', {'text': 'No auth comment'})
+        response = self.client.post(
+            f'/question/{self.question.id}/', {'text': 'No auth comment'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/')
 
     def test_create_comment_blocked_user(self):
         self.login('blocked')
-        response = self.client.post(f'/question/{self.question.id}/', {'text': 'Blocked comment'})
+        response = self.client.post(
+            f'/question/{self.question.id}/', {'text': 'Blocked comment'})
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/')
 
     def test_create_answer_to_comment(self):
         self.login('other')
-        response = self.client.post(f'/comment/{self.comment.id}/answer/', {'text': 'Answer text'})
+        response = self.client.post(
+            f'/comment/{self.comment.id}/answer/', {'text': 'Answer text'})
         self.assertEqual(response.status_code, 302)
         answer = Answer.objects.filter(answer='Answer text').first()
         self.assertIsNotNone(answer)
         self.assertEqual(answer.comment, self.comment)
 
     def test_answer_unauthenticated(self):
-        response = self.client.post(f'/comment/{self.comment.id}/answer/', {'text': 'No auth'})
+        response = self.client.post(
+            f'/comment/{self.comment.id}/answer/', {'text': 'No auth'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/')
 
@@ -168,7 +175,8 @@ class QuestionsViewsTest(TestCase):
         )
         data = response.json()
         self.assertFalse(data['ok'])
-        self.assertEqual(data['error'], 'Вы заблокированы и не можете выполнять это действие')
+        self.assertEqual(
+            data['error'], 'Вы заблокированы и не можете выполнять это действие')
 
     def test_like_answer(self):
         answer = Answer.objects.create(
@@ -251,9 +259,11 @@ class QuestionsViewsTest(TestCase):
         # Повторный лайк снимает лайк и уменьшает рейтинг
         self.login('other')
         # Первый лайк
-        self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.client.get(f'/like/?id={self.question.id}',
+                        HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         # Повторный лайк должен снять
-        response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
         self.assertTrue(data['ok'])
         self.assertEqual(data['rating'], 0)
@@ -261,7 +271,8 @@ class QuestionsViewsTest(TestCase):
     def test_dislike_post_decreases_rating(self):
         # Дизлайк уменьшает рейтинг
         self.login('other')
-        response = self.client.get(f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
         self.assertTrue(data['ok'])
         self.assertEqual(data['rating'], -1)
@@ -270,11 +281,13 @@ class QuestionsViewsTest(TestCase):
         # Переключение с дизлайка на лайк должно прибавить 2 к рейтингу
         self.login('other')
         # Сначала дизлайк
-        self.client.get(f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.client.get(
+            f'/dislike/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         q = Question.objects.get(id=self.question.id)
         self.assertEqual(q.rating, -1)
         # Затем лайк - ожидание: рейтинг = +1 (из -1 + 2)
-        response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
         self.assertTrue(data['ok'])
         self.assertEqual(data['rating'], 1)
@@ -282,7 +295,9 @@ class QuestionsViewsTest(TestCase):
     def test_blocked_user_cannot_like(self):
         # Забаненный пользователь не может ставить лайки на посты
         self.login('blocked')
-        response = self.client.get(f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
         self.assertFalse(data['ok'])
-        self.assertEqual(data['error'], 'Вы заблокированы и не можете выполнять это действие')
+        self.assertEqual(
+            data['error'], 'Вы заблокированы и не можете выполнять это действие')

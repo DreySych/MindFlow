@@ -8,8 +8,10 @@ import logging
 
 logger = logging.getLogger('project')
 
+
 def accept(request):
-    complaint = Complaint.objects.filter(id=request.GET.get('complaint_id')).first()
+    complaint = Complaint.objects.filter(
+        id=request.GET.get('complaint_id')).first()
     if complaint:
         if complaint.question:
             complaint.question.delete()
@@ -26,7 +28,8 @@ def accept(request):
 
 
 def decline(request):
-    complaint = Complaint.objects.filter(id=request.GET.get('complaint_id')).first()
+    complaint = Complaint.objects.filter(
+        id=request.GET.get('complaint_id')).first()
     if complaint:
         complaint.delete()
     return redirect(request.GET.get('to', '/'))
@@ -145,7 +148,8 @@ def complaint_question_panel_page(request):
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
-    complaints = Complaint.objects.filter(question__isnull=False).order_by('-id')
+    complaints = Complaint.objects.filter(
+        question__isnull=False).order_by('-id')
     context = {
         'complaints': complaints,
         'user': request.user,

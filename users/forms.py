@@ -1,10 +1,4 @@
 from django import forms
-from django.contrib.auth.hashers import make_password, check_password
-from django.core.exceptions import ValidationError
-import datetime
-from django.contrib.auth.models import User
-
-from django.forms import ImageField
 
 
 class SignUpForm(forms.Form):
@@ -16,7 +10,8 @@ class SignUpForm(forms.Form):
     username = forms.CharField(max_length=150, label='Никнейм')
     email = forms.EmailField(label='Почта', widget=forms.EmailInput)
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
-    password_confirm = forms.CharField(widget=forms.PasswordInput, label='Подтверждение пароля')
+    password_confirm = forms.CharField(
+        widget=forms.PasswordInput, label='Подтверждение пароля')
     sex = forms.TypedChoiceField(
         label='Пол',
         widget=forms.RadioSelect,
@@ -25,12 +20,14 @@ class SignUpForm(forms.Form):
         empty_value=None,
         coerce=int,
     )
-    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(
+        attrs={'type': 'date'}), required=False)
 
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=150, label='Никнейм')
     password = forms.CharField(widget=forms.PasswordInput, label='Пароль')
+
 
 class ProfileForm(forms.Form):
     sex_vatiants = [
@@ -48,8 +45,10 @@ class ProfileForm(forms.Form):
         coerce=int,
     )
     email = forms.EmailField(label='Почта', required=True)
-    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    birth_date = forms.DateField(label='Дата рождения', widget=forms.DateInput(
+        attrs={'type': 'date'}), required=False)
     image = forms.ImageField(label='Фото профиля', required=False)
+
 
 class PasswordRestoreEmailForm(forms.Form):
     email = forms.EmailField(
@@ -101,6 +100,7 @@ class PasswordRestoreNewForm(forms.Form):
             raise forms.ValidationError('Пароли не совпадают')
 
         if password1 and len(password1) < 6:
-            raise forms.ValidationError('Пароль должен быть не менее 6 символов')
+            raise forms.ValidationError(
+                'Пароль должен быть не менее 6 символов')
 
         return cleaned_data

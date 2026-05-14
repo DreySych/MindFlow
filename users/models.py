@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
-from django.contrib.auth.models import User
 from datetime import timedelta
 from django.utils import timezone
 import random
@@ -27,9 +26,8 @@ class MyUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-
 # Create your models here.
-class User(AbstractBaseUser, PermissionsMixin ):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.TextField(unique=True)
     password = models.CharField(max_length=128)
     email = models.TextField()
@@ -45,11 +43,15 @@ class User(AbstractBaseUser, PermissionsMixin ):
     objects = MyUserManager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email", "sex", "role", "birth_date", "registration_date", "reputation"]
+    REQUIRED_FIELDS = ["email", "sex", "role",
+                       "birth_date", "registration_date", "reputation"]
+
 
 class Subscription(models.Model):
-    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
-    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2')
+    user1 = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='user2')
 
 
 class RecoveryCode(models.Model):
@@ -70,7 +72,8 @@ class RecoveryCode(models.Model):
 
     @staticmethod
     def create_for_user(user):
-        RecoveryCode.objects.filter(user=user, is_used=False).update(is_used=True)
+        RecoveryCode.objects.filter(
+            user=user, is_used=False).update(is_used=True)
 
         code = RecoveryCode.generate_code()
         recovery = RecoveryCode.objects.create(user=user, code=code)

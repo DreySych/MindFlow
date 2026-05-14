@@ -1,27 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
-import datetime
-
-from django.template.context_processors import request
 
 from notifications.models import Notification
-from main.forms import SearchForm
 from main.model_loader import get_model
 from questions.forms import CommentForm
 from questions.models import Question, Like, Comment
 from questions.views import get_question_context
 from users.models import User, Subscription
-from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.utils import timezone
 
+
 def can_act(user):
     return user.is_authenticated and user.active
+
 
 def build_post_context(post, request):
     ctx = get_question_context(post.pk)
     ctx['comment_form'] = CommentForm()
     if request.user.is_authenticated:
-        user_like = Like.objects.filter(user=request.user, question=post).first()
+        user_like = Like.objects.filter(
+            user=request.user, question=post).first()
         ctx['user_rating'] = user_like.rating if user_like else 0
     else:
         ctx['user_rating'] = 0
@@ -35,8 +33,9 @@ def perform_search(search_text):
     results = []
     for q in questions:
         q_vec = q.get_embedding()
-        sim = model.similarity([q_vec], [input_vec])[0][0] if q_vec is not None else -1
-        results.append((q, sim))
+        similarity = model.similarity([q_vec], [input_vec])[
+            0][0][0][0] if q_vec is not None else -1
+        results.append((q, similarity))
     return [q for q, _ in sorted(results, key=lambda x: x[1], reverse=True)]
 
 
@@ -44,12 +43,16 @@ def get_default_questions(request):
     if not can_act(request.user):
         return Question.objects.all().order_by('-rating', '-creation_date')
 
-    friends_ids = Subscription.objects.filter(user1=request.user).values_list('user2_id', flat=True)
-    fresh_friends = Question.objects.filter(author_id__in=friends_ids).order_by('-creation_date')[:5]
+    friends_ids = Subscription.objects.filter(
+        user1=request.user).values_list('user2_id', flat=True)
+    fresh_friends = Question.objects.filter(
+        author_id__in=friends_ids).order_by('-creation_date')[:5]
     fresh_ids = [p.id for p in fresh_friends]
 
-    popular_all = Question.objects.exclude(id__in=fresh_ids).order_by('-rating', '-creation_date')
-    popular_friends = Question.objects.filter(author_id__in=friends_ids).exclude(id__in=fresh_ids).order_by('-rating', '-creation_date')
+    popular_all = Question.objects.exclude(
+        id__in=fresh_ids).order_by('-rating', '-creation_date')
+    popular_friends = Question.objects.filter(author_id__in=friends_ids).exclude(
+        id__in=fresh_ids).order_by('-rating', '-creation_date')
 
     result = list(fresh_friends)
     all_list = list(popular_all)
@@ -69,9 +72,12 @@ def get_default_questions(request):
     return unique
 
 # Create your views here.
+
+
 def index_page(request):
     if request.method == "POST" and 'question_id' in request.POST:
-        question = get_object_or_404(Question, pk=request.POST.get('question_id'))
+        question = get_object_or_404(
+            Question, pk=request.POST.get('question_id'))
         form = CommentForm(request.POST)
         if form.is_valid() and can_act(request.user):
             Comment.objects.create(
@@ -84,7 +90,8 @@ def index_page(request):
         return redirect('index')
 
     search_text = request.GET.get('q', '').strip()
-    results = perform_search(search_text) if search_text else get_default_questions(request)
+    results = perform_search(
+        search_text) if search_text else get_default_questions(request)
     posts_context = [build_post_context(p, request) for p in results]
     context = {
         "username": request.user.username if request.user.is_authenticated else "Профиль",
@@ -97,7 +104,7 @@ def index_page(request):
         'posts_context': posts_context,
         'user': request.user,
         'notifications': Notification.objects.filter(user=request.user).order_by('-created_at')[:20]
-                        if request.user.is_authenticated else [],
+        if request.user.is_authenticated else [],
     }
 
     if request.user.is_authenticated:
@@ -112,18 +119,19 @@ def index_page(request):
 
     return render(request, "index.html", context)
 
+
 def get_subscribed_authors(user):
     if not user.is_authenticated:
         return []
     return Subscription.objects.filter(user1=user).values_list('user2', flat=True)
+
 
 def delete_post(request):
     if can_act(request.user):
         question = Question.objects.filter(id=request.GET.get('id')).first()
         if question:
             question.delete()
-        page = request.GET.get('to', '/')
-        return redirect(page)
+        return redirect(request.GET.get('to', '/'))
     return redirect('/')
 
 
@@ -179,7 +187,6 @@ def _vote(request, delta):
         change_rating(request, question, delta)
     like_obj.save()
     question.save()
-    page = request.GET.get('to', 'index')
     return redirect('/#question-' + str(question_id))
 
 

@@ -18,12 +18,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Complaint',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('description', models.TextField()),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('comment', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='comment', to='questions.comment')),
-                ('question', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='question', to='questions.question')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user', to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('comment', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='comment', to='questions.comment')),
+                ('question', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='question', to='questions.question')),
+                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
+                 related_name='user', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

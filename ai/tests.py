@@ -173,7 +173,8 @@ class AiSearchApiViewTests(TestCase):
     @mock.patch("ai.views.service")
     def test_ai_search_api_success(self, mock_service):
         url = reverse("ai_search_api")
-        mock_result = AiSearchResult(query="совы", answer="Ответ от сервиса", error=None)
+        mock_result = AiSearchResult(
+            query="совы", answer="Ответ от сервиса", error=None)
         mock_service.search.return_value = mock_result
 
         response = self.client.post(
@@ -189,7 +190,8 @@ class AiSearchApiViewTests(TestCase):
     @mock.patch("ai.views.service")
     def test_ai_search_api_service_error(self, mock_service):
         url = reverse("ai_search_api")
-        mock_result = AiSearchResult(query="совы", answer=None, error="Ошибка сервиса")
+        mock_result = AiSearchResult(
+            query="совы", answer=None, error="Ошибка сервиса")
         mock_service.search.return_value = mock_result
 
         response = self.client.post(

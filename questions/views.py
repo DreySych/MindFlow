@@ -1,10 +1,8 @@
-import uuid, datetime
+import uuid
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
-from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
 from main.model_loader import get_model
 from questions.forms import CommentForm, QuestionForm
@@ -12,10 +10,10 @@ from questions.models import Answer, AnswerLike, Comment, CommentLike, Like, Que
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
+from sentence_transformers import SentenceTransformer  # noqa: F401
 from users.models import Subscription
 from django.utils import timezone
 import logging
-
 
 
 # Create your views here.
@@ -33,8 +31,10 @@ def get_question_context(question_id):
     if question is None:
         return None
 
-    comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
-    question_images = list(question.images.split(",")) if question.images else []
+    comments = Comment.objects.filter(
+        question=question).prefetch_related('answer_set')
+    question_images = list(question.images.split(",")
+                           ) if question.images else []
 
     return {
         'question': question,
@@ -88,7 +88,8 @@ def question_page(request, question_id, template_name='question.html'):
 
     # Добавляем информацию о лайке пользователя для вопроса
     if request.user.is_authenticated:
-        user_like = Like.objects.filter(user=request.user, question=question).first()
+        user_like = Like.objects.filter(
+            user=request.user, question=question).first()
         context['user_rating'] = user_like.rating if user_like else 0
     else:
         context['user_rating'] = 0
@@ -96,7 +97,8 @@ def question_page(request, question_id, template_name='question.html'):
     # Добавляем user_rating для каждого комментария
     for comment in context['comments']:
         if request.user.is_authenticated:
-            comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+            comment_like = CommentLike.objects.filter(
+                author=request.user, comment=comment).first()
             comment.user_rating = comment_like.rating if comment_like else 0
         else:
             comment.user_rating = 0
@@ -116,7 +118,8 @@ def question_page(request, question_id, template_name='question.html'):
         }
     )
     if request.user.is_authenticated:
-        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
+        context['subscriptions'] = Subscription.objects.filter(
+            user1=request.user)
     else:
         context['subscriptions'] = []
     return render(request, template_name=template_name, context=context)
@@ -139,7 +142,8 @@ def question_make_page(request):
                     description = form.cleaned_data['description']
 
                     images = request.FILES.getlist('images')
-                    logger.debug('Uploaded files for question: %s', request.FILES)
+                    logger.debug(
+                        'Uploaded files for question: %s', request.FILES)
                     logger.info('Question images count: %s', len(images))
 
                     image_paths = []
@@ -149,7 +153,8 @@ def question_make_page(request):
                     for image in images:
                         ext = image.name.split('.')[-1]
                         filename = f"question_images/{uuid.uuid4()}.{ext}"
-                        path = default_storage.save(filename, ContentFile(image.read()))
+                        path = default_storage.save(
+                            filename, ContentFile(image.read()))
                         image_paths.append(path)
 
                     images_str = ','.join(image_paths)
@@ -165,7 +170,8 @@ def question_make_page(request):
 
                     question.set_embedding(embeddings)
                     question.save()
-                    logger.info('Question created: id=%s, author=%s', question.id, request.user.username)
+                    logger.info('Question created: id=%s, author=%s',
+                                question.id, request.user.username)
                     return redirect(f'/profile/{request.user.username}/#question-{question.id}')
 
             else:
@@ -177,7 +183,8 @@ def question_make_page(request):
     else:
         return redirect('/account/login')
     if request.user.is_authenticated:
-        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
+        context['subscriptions'] = Subscription.objects.filter(
+            user1=request.user)
     else:
         context['subscriptions'] = []
     return render(request, template_name='make_edit_question.html', context=context)
@@ -208,12 +215,14 @@ def question_edit_page(request):
                 for image in images:
                     ext = image.name.split('.')[-1]
                     filename = f"question_images/{uuid.uuid4()}.{ext}"
-                    path = default_storage.save(filename, ContentFile(image.read()))
+                    path = default_storage.save(
+                        filename, ContentFile(image.read()))
                     image_paths.append(path)
 
                 question.images = ','.join(image_paths)
             question.save()
-            logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
+            logger.info('Question edited: id=%s, author=%s',
+                        question.id, request.user.username)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
     else:
         form = QuestionForm(initial={
@@ -227,7 +236,8 @@ def question_edit_page(request):
         'question_images': question.images.split(',') if question.images else [],
     }
     if request.user.is_authenticated:
-        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
+        context['subscriptions'] = Subscription.objects.filter(
+            user1=request.user)
     else:
         context['subscriptions'] = []
     return render(request, 'make_edit_question.html', context)
@@ -467,6 +477,7 @@ def dislike_answer(request):
         })
 
     return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
+
 
 def question_card(request):
     return render(request, template_name="questions.html")

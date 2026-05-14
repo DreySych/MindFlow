@@ -1,22 +1,24 @@
-import os
 import uuid
 from itertools import chain
-from operator import attrgetter
 
 from django.http import JsonResponse
 
 from .models import RecoveryCode
-from .forms import PasswordRestoreEmailForm, PasswordRestoreCodeForm, PasswordRestoreNewForm
 from .utils import send_recovery_code
 import logging
 from django.conf import settings
-from django.db.models import Prefetch
 from django.shortcuts import render, redirect, get_object_or_404
 from notifications.models import Notification
 from questions.forms import CommentForm
-from questions.models import Question, Comment, Like, QuestionLike, CommentLike, AnswerLike
-from users.forms import ProfileForm
-from users.forms import *
+from questions.models import Question, Comment, Like, CommentLike, AnswerLike
+from users.forms import (
+    LoginForm,
+    PasswordRestoreCodeForm,
+    PasswordRestoreEmailForm,
+    PasswordRestoreNewForm,
+    ProfileForm,
+    SignUpForm,
+)
 from users.models import User, Subscription
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.files.storage import default_storage
@@ -25,7 +27,6 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from questions.views import get_question_context
-import json
 import traceback
 
 logger = logging.getLogger('project')
@@ -101,7 +102,7 @@ def login_page(request):
         password = request.POST.get('password')
 
         try:
-            user_obj = User.objects.get(username=username)
+            User.objects.get(username=username)
         except User.DoesNotExist:
             messages.error(request, 'Пользователь с таким логином не найден')
             return redirect('login')
@@ -136,16 +137,19 @@ def password_restore_page(request):
                     logger.debug('Email settings: %s:%s, from %s', settings.EMAIL_HOST, settings.EMAIL_PORT,
                                  settings.DEFAULT_FROM_EMAIL)
 
-                    messages.success(request, 'Код восстановления отправлен на вашу почту!')
+                    messages.success(
+                        request, 'Код восстановления отправлен на вашу почту!')
                     return redirect('password_restore_code')
 
                 except Exception as e:
                     logger.error('Recovery email sending failed: %s', e)
                     logger.debug('Traceback: %s', traceback.format_exc())
-                    messages.error(request, f'Ошибка отправки письма: {str(e)}')
+                    messages.error(
+                        request, f'Ошибка отправки письма: {str(e)}')
 
                 else:
-                    messages.success(request, 'Если почта существует, код отправлен на неё.')
+                    messages.success(
+                        request, 'Если почта существует, код отправлен на неё.')
                     return redirect('password_restore')
     else:
         form = PasswordRestoreEmailForm()
@@ -176,7 +180,8 @@ def password_restore_code_page(request):
                 recovery.save()
                 request.session['restore_code_verified'] = True
 
-                messages.success(request, 'Код подтверждён! Теперь придумайте новый пароль.')
+                messages.success(
+                    request, 'Код подтверждён! Теперь придумайте новый пароль.')
                 return redirect('password_restore_new')
             else:
                 messages.error(request, 'Неверный или истёкший код')
@@ -206,7 +211,8 @@ def password_restore_new_page(request):
             del request.session['restore_user_id']
             del request.session['restore_code_verified']
 
-            messages.success(request, 'Пароль успешно изменён! Теперь войдите.')
+            messages.success(
+                request, 'Пароль успешно изменён! Теперь войдите.')
             return redirect('login')
 
     else:
@@ -219,14 +225,16 @@ def profile_page_general(request, username):
     if request.user.is_authenticated:
         user = request.user
         target_user = get_object_or_404(User, username=username)
-        posts = Question.objects.filter(author=target_user).order_by('-creation_date')
+        posts = Question.objects.filter(
+            author=target_user).order_by('-creation_date')
         is_owner = (request.user.is_authenticated and user == target_user)
         posts_context = []
         for post in posts:
             post_context = get_question_context(post.pk)
 
             if request.user.is_authenticated:
-                user_like = Like.objects.filter(user=request.user, question=post).first()
+                user_like = Like.objects.filter(
+                    user=request.user, question=post).first()
                 post_context['user_rating'] = user_like.rating if user_like else 0
             else:
                 post_context['user_rating'] = 0
@@ -267,7 +275,8 @@ def profile_page_settings(request):
             if image_file:
                 ext = image_file.name.split('.')[-1]
                 filename = f"avatars/{uuid.uuid4()}.{ext}"
-                path = default_storage.save(filename, ContentFile(image_file.read()))
+                path = default_storage.save(
+                    filename, ContentFile(image_file.read()))
                 user.image = path
 
             user.save()
@@ -294,7 +303,8 @@ def profile_page_settings(request):
 def profile_page_comments(request, username):
     if request.user.is_authenticated:
         target_user = get_object_or_404(User, username=username)
-        posts = Question.objects.filter(author=target_user).order_by('-creation_date')
+        posts = Question.objects.filter(
+            author=target_user).order_by('-creation_date')
         comments = Comment.objects.filter(author=target_user)
 
         # Создаем список с данными о комментариях и рейтингах пользователя
@@ -302,7 +312,8 @@ def profile_page_comments(request, username):
         for comment in comments:
             user_rating = 0
             if request.user.is_authenticated:
-                comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+                comment_like = CommentLike.objects.filter(
+                    author=request.user, comment=comment).first()
                 user_rating = comment_like.rating if comment_like else 0
 
             comments_data.append({
@@ -333,7 +344,8 @@ def profile_page_liked(request, username):
         target_user = get_object_or_404(User, username=username)
 
         question_likes = Like.objects.filter(user=target_user, rating=1)
-        comments_likes = CommentLike.objects.filter(author=target_user, rating=1)
+        comments_likes = CommentLike.objects.filter(
+            author=target_user, rating=1)
         answers_likes = AnswerLike.objects.filter(author=target_user, rating=1)
 
         def get_like_date(like):
@@ -377,7 +389,8 @@ def add_friend(request, user_id):
 
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
-    subscription_exists = Subscription.objects.filter(user1=current_user, user2=friend).exists()
+    subscription_exists = Subscription.objects.filter(
+        user1=current_user, user2=friend).exists()
     if not subscription_exists and current_user != friend:
         Subscription.objects.create(user1=current_user, user2=friend)
         Notification.objects.create(
@@ -386,7 +399,8 @@ def add_friend(request, user_id):
             link=f'/profile/{current_user.username}/'
         )
 
-    next_url = request.POST.get('next', request.GET.get('next', f'/profile/{friend.username}'))
+    next_url = request.POST.get('next', request.GET.get(
+        'next', f'/profile/{friend.username}'))
     return redirect(next_url)
 
 
@@ -395,11 +409,13 @@ def delete_friend(request, user_id):
         return redirect('/')
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
-    subscription = Subscription.objects.filter(user1=current_user, user2=friend).first()
+    subscription = Subscription.objects.filter(
+        user1=current_user, user2=friend).first()
     if subscription:
         subscription.delete()
 
-    next_url = request.POST.get('next', request.GET.get('next', f'/profile/{friend.username}'))
+    next_url = request.POST.get('next', request.GET.get(
+        'next', f'/profile/{friend.username}'))
     return redirect(next_url)
 
 
