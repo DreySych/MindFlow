@@ -6,9 +6,9 @@
 
         body {
             font-family: 'Manrope', sans-serif;
-            background: #FFFFFF;
+            background: var(--bg-primary);
             min-height: 100vh;
-            color: #1a1a2e;
+            color: var(--text-primary);
             display: flex;
             flex-direction: column;
         }
@@ -22,19 +22,19 @@
         }
 
         .auth-container {
-            background: #ffffff;
+            background: var(--bg-primary);
             border-radius: 16px;
             padding: 40px;
             width: 100%;
             max-width: 420px;
-            border: 2px solid #D1D9E6;
-            box-shadow: 0 4px 20px rgba(74,144,226,0.1);
+            border: 2px solid var(--border-primary);
+            box-shadow: 0 4px 20px rgba(107, 143, 207, 0.2);
         }
 
         .auth-title {
             font-size: 32px;
             font-weight: 700;
-            color: #1a1a2e;
+            color: var(--text-primary);
             margin-bottom: 30px;
             text-align: center;
         }
@@ -46,10 +46,10 @@
         .input-field {
             width: 100%;
             padding: 14px 20px;
-            border: 2px solid #D1D9E6;
+            border: 2px solid var(--border-primary);
             border-radius: 25px;
-            background: #F0F4F8;
-            color: #1a1a2e;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             font-family: 'Manrope', sans-serif;
             font-size: 15px;
             outline: none;
@@ -57,17 +57,17 @@
         }
 
         .input-field::placeholder {
-            color: #9CA3AF;
+            color: var(--text-secondary);
         }
 
         .input-field:focus {
-            border-color: #4A90E2;
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(74,144,226,0.2);
+            border-color: var(--accent-primary);
+            background: var(--bg-primary);
+            box-shadow: 0 2px 8px rgba(107, 143, 207, 0.3);
         }
 
         .input-field.error {
-            border-color: #EF4444;
+            border-color: var(--danger-primary);
             animation: shake 0.3s ease;
         }
 
@@ -86,14 +86,14 @@
         }
 
         .auth-link {
-            color: #6B7280;
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
             transition: color 0.2s ease;
         }
 
         .auth-link:hover {
-            color: #4A90E2;
+            color: var(--accent-primary);
         }
 
         .auth-button {
@@ -101,20 +101,20 @@
             padding: 14px;
             border: none;
             border-radius: 25px;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: var(--bg-primary);
             font-family: 'Manrope', sans-serif;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(74,144,226,0.3);
+            box-shadow: 0 2px 8px rgba(107, 143, 207, 0.4);
         }
 
         .auth-button:hover {
-            background: linear-gradient(135deg, #357ABD 0%, #2E6BAA 100%);
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-light) 100%);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(74,144,226,0.4);
+            box-shadow: 0 4px 12px rgba(107, 143, 207, 0.5);
         }
 
         .notification {
@@ -122,11 +122,11 @@
             top: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: #ffffff;
-            border: 2px solid #D1D9E6;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-primary);
             padding: 16px 24px;
             border-radius: 12px;
-            color: #1a1a2e;
+            color: var(--text-primary);
             font-size: 14px;
             font-weight: 600;
             opacity: 0;
@@ -136,7 +136,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
         .notification.show {
@@ -146,8 +146,8 @@
         }
 
         .notification.success {
-            border-color: #10B981;
-            color: #10B981;
+            border-color: var(--upvote-text);
+            color: var(--upvote-text);
         }
 
         .notification.error {

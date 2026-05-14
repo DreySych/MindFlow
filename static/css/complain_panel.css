@@ -19,7 +19,7 @@ body {
 .admin-title {
     font-size: 28px;
     font-weight: 500;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 24px;
 }
 
@@ -28,7 +28,7 @@ body {
     gap: 12px;
     margin-bottom: 32px;
     border-bottom: 1px solid;
-    border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+    border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
     padding-bottom: 16px;
 }
 
@@ -36,20 +36,20 @@ body {
     padding: 12px 28px;
     font-family: 'Mallanna', sans-serif;
     font-size: 16px;
-    color: #888;
+    color: var(--text-secondary);
     text-decoration: none;
     border-radius: 25px;
     transition: all 0.2s;
 }
 
 .admin-tab:hover {
-    color: #1671FE;
-    background: #f5f7fa;
+    color: var(--accent-primary);
+    background: var(--bg-hover);
 }
 
 .admin-tab.active {
-    color: #fff;
-    background: #1671FE;
+    color: var(--bg-primary);
+    background: var(--accent-primary);
 }
 
 .complaints-list {
@@ -59,8 +59,8 @@ body {
 }
 
 .complaint-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 12px;
     padding: 20px;
 }
@@ -72,7 +72,7 @@ body {
 .complaint-post-title {
     font-size: 20px;
     font-weight: 500;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 

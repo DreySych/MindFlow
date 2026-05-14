@@ -26,12 +26,12 @@
 
 .complain-modal {
   position: relative;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px;
   padding: 30px;
   width: 90%;
   max-width: 480px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   z-index: 1001;
 }
 
@@ -43,7 +43,7 @@
   font-family: 'Mallanna', sans-serif;
   font-size: 22px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 .complain-body {
@@ -53,7 +53,7 @@
 .complain-subtitle {
   font-family: 'Mallanna', sans-serif;
   font-size: 15px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0 0 12px 0;
 }
 
@@ -61,12 +61,12 @@
   width: 100%;
   min-height: 120px;
   padding: 12px 16px;
-  border: 2px solid #D1D9E6;
+  border: 2px solid var(--border-primary);
   border-radius: 12px;
-  background: #F0F4F8;
+  background: var(--bg-secondary);
   font-family: 'Mallanna', sans-serif;
   font-size: 15px;
-  color: #1a1a1a;
+  color: var(--text-primary);
   resize: vertical;
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -74,8 +74,8 @@
 }
 
 .complain-textarea:focus {
-  border-color: #4A90E2;
-  background: #ffffff;
+  border-color: var(--accent-primary);
+  background: var(--bg-primary);
 }
 
 .complain-textarea.complain-error {

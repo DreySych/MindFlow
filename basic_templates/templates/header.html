@@ -1,6 +1,7 @@
 {% load static %}
 {% load custom_filters %}
 <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/theme.css' %}">
 <link rel="stylesheet" href="{% static 'css/basic.css' %}">
 <link rel="stylesheet" href="{% static 'css/overlays_basic.css' %}">
 <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
@@ -44,6 +45,10 @@
       <span class="icon-plus">+</span>
       <span>Создать</span>
     </a>
+
+    <button id="theme-toggle-btn" class="icon-button theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+      <span class="theme-icon" id="theme-icon">🌙</span>
+    </button>
 
     <div class="notifications-dropdown">
       <button class="icon-button notifications-trigger" onclick="toggleNotificationsOverlay(event)">
@@ -93,6 +98,7 @@
   </div>
 </header>
 
+<script src="{% static 'js/theme-toggle.js' %}"></script>
 <script>
   function toggleProfileOverlay() {
     document.getElementById('profileOverlay').classList.toggle('active');

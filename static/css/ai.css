@@ -1,6 +1,6 @@
 .ai-response-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 12px;
     padding: 20px;
 }
@@ -11,7 +11,7 @@
     margin-bottom: 16px;
     gap: 10px;
     font-size: 14px;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .ai-icon {
@@ -21,7 +21,7 @@
 .ai-label {
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
-    color: #1a73e8;
+    color: var(--accent-primary);
 }
 
 .ai-copy {
@@ -29,16 +29,16 @@
     height: 44px;
     padding: 12px;
     margin-left: auto;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box, linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box, linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 12px;
     border: 1px solid transparent;
     cursor: pointer;
-    color: #1671FE;
+    color: var(--accent-primary);
     transition: all 1s ease;
 }
 
 .ai-copy:hover {
-    background: linear-gradient(#e8f0fe, #e8f0fe) padding-box, linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-hover), var(--bg-hover)) padding-box, linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
 }
 
 .ai-copy.copied img {
@@ -57,7 +57,7 @@
 
 .ai-response-body {
     font-size: 16px;
-    color: #333;
+    color: var(--text-primary);
 }
 
 .ai-response-body .ai-text {

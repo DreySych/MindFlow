@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-primary);
     margin-bottom: 20px;
 }
 
@@ -24,8 +24,8 @@
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    background: #1671FE;
-    color: #fff;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
     border: none;
     border-radius: 20px;
     font-size: 16px;
@@ -36,7 +36,7 @@
 }
 
 .add-friend-btn:hover {
-    background: #1258cc;
+    background: var(--accent-secondary);
 }
 
 .add-friend-btn img {

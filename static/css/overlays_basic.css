@@ -12,10 +12,10 @@
   position: absolute;
   top: 52px;
   right: 0;
-  background: #ffffff;
-  border: 1px solid #C6C6C6;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   min-width: 180px;
   padding: 8px 0;
   display: none;
@@ -32,7 +32,7 @@
   padding: 10px 16px;
   font-family: 'Mallanna', sans-serif;
   font-size: 15px;
-  color: #000000;
+  color: var(--text-primary);
   text-decoration: none;
   transition: background 0.15s ease;
   cursor: pointer;
@@ -44,15 +44,15 @@
 }
 
 .overlay-item:hover {
-  background: #F6F6F6;
+  background: var(--bg-hover);
 }
 
 .overlay-item-exit {
-  color: #E53935;
+  color: var(--danger-primary);
 }
 
 .overlay-item-exit:hover {
-  background: #FFF0F0;
+  background: var(--report-hover);
 }
 
 /* ===== поиск: оверлей ===== */
@@ -65,10 +65,10 @@
   top: 52px;
   left: 0;
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #C6C6C6;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   padding: 8px 0;
   display: none;
   z-index: 20;
@@ -95,7 +95,7 @@
 }
 
 .search-suggestion:hover {
-  background: #F6F6F6;
+  background: var(--bg-hover);
 }
 
 .search-suggestion-icon {
@@ -108,7 +108,7 @@
 .search-suggestion-text {
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  color: #000000;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

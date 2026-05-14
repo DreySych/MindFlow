@@ -20,7 +20,7 @@ body {
 /* Уникальный разделитель для домашней страницы */
 .question-card + .question-card {
     border-top: 1px solid;
-    border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+    border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
     padding-top: 20px;
 }
 
@@ -38,4 +38,4 @@ body {
         margin-left: 0;
         padding-top: 140px;
     }
-}}
+}

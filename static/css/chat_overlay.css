@@ -16,7 +16,7 @@
 
 .chat-modal {
   position: relative;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-radius: 16px 16px 0 0;
   width: 380px;
   max-width: 90vw;
@@ -25,7 +25,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.15), 0 0 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.1);
   z-index: 1;
   font-family: 'Mallanna', sans-serif;
   margin-right: 20px;
@@ -44,7 +44,7 @@
   justify-content: space-between;
   padding: 14px 20px;
   border-bottom: 1px solid;
-  border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+  border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
   flex-shrink: 0;
 }
 
@@ -65,7 +65,7 @@
 .chat-modal-username {
   font-family: 'Mallanna', sans-serif;
   font-size: 18px;
-  color: #1a1a1a;
+  color: var(--text-primary);
 }
 
 .chat-modal-close {

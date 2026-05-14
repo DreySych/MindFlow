@@ -1,0 +1,121 @@
+/* ===== ТЁМНАЯ ТЕМА - CSS ПЕРЕМЕННЫЕ ===== */
+:root {
+  /* Основные цвета */
+  --bg-primary: #1a1b1e;
+  --bg-secondary: #222326;
+  --bg-hover: #2a2b2e;
+  --bg-hover-alt: #252628;
+
+  /* Текст */
+  --text-primary: #e8e4dd;
+  --text-secondary: #8a857d;
+
+  /* Акцентные цвета */
+  --accent-primary: #8db4ff;
+  --accent-secondary: #6b8fcf;
+  --accent-light: #b0ccff;
+  --accent-gradient-start: #6b9fff;
+
+  /* Границы и разделители */
+  --border-primary: #3a3b3e;
+  --border-avatar: #3a3b3e;
+
+  /* Цвета действий */
+  --upvote-hover: rgba(107, 179, 128, 0.15);
+  --upvote-text: #7bbf8a;
+  --downvote-hover: rgba(207, 107, 107, 0.15);
+  --downvote-text: #e0817a;
+  --report-hover: #332525;
+  --report-text: #e0817a;
+  --danger-primary: #cf6b6b;
+  --danger-hover: #f0a09b;
+
+  /* Специальные эффекты */
+  --icon-filter: brightness(0.9) sepia(0.3) saturate(0.8);
+  --selection-bg: rgba(107, 143, 207, 0.4);
+  --hover-chat: rgba(107, 143, 207, 0.2);
+
+  /* Дополнительные hover-фоны */
+  --hover-comment: #252a33;
+  --input-bg: #222326;
+  --ai-button-hover: #7d9fd6;
+  --ai-text: #f5f0e8;
+
+  /* Границы и цвета для gradientов */
+  --gradient-start: #6b9fff;
+  --gradient-mid: #8db4ff;
+  --gradient-end: #b0ccff;
+}
+
+/* ===== СВЕТЛАЯ ТЕМА ===== */
+body.light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-hover: #f6f6f6;
+  --bg-hover-alt: #f0f0f0;
+
+  --text-primary: #000000;
+  --text-secondary: #666666;
+
+  --accent-primary: #1671FE;
+  --accent-secondary: #0047AB;
+  --accent-light: #044EB9;
+  --accent-gradient-start: #0047AB;
+
+  --border-primary: #C6C6C6;
+  --border-avatar: #C6C6C6;
+
+  --upvote-hover: rgba(107, 179, 128, 0.15);
+  --upvote-text: #7bbf8a;
+  --downvote-hover: rgba(207, 107, 107, 0.15);
+  --downvote-text: #e0817a;
+  --report-hover: #FFF0F0;
+  --report-text: #e0817a;
+  --danger-primary: #cf6b6b;
+  --danger-hover: #f0a09b;
+
+  --icon-filter: brightness(1) sepia(0) saturate(1);
+  --selection-bg: rgba(22, 113, 254, 0.2);
+  --hover-chat: rgba(22, 113, 254, 0.1);
+
+  --hover-comment: #f8f8f8;
+  --input-bg: #ffffff;
+  --ai-button-hover: #1671FE;
+  --ai-text: #ffffff;
+
+  --gradient-start: #0047AB;
+  --gradient-mid: #044EB9;
+  --gradient-end: #1671FE;
+}
+
+/* ===== СТИЛИ ДЛЯ ОБЕИХ ТЕМ ===== */
+body {
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html, body {
+  scrollbar-color: var(--accent-secondary) var(--bg-secondary);
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: var(--accent-secondary);
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}

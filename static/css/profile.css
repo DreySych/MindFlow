@@ -21,17 +21,17 @@
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #1671FE;
+    border: 2px solid var(--accent-primary);
 }
 .profile-info { flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; }
 .profile-nick {
     font-size: 28px;
     font-family: 'Mallanna', sans-serif;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin: 0 0 4px 0;
     font-weight: 400;
 }
-.profile-id { font-size: 14px; color: #888; font-family: monospace; }
+.profile-id { font-size: 14px; color: var(--text-secondary); font-family: monospace; }
 .profile-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .profile-actions-header {
     margin-left: auto;
@@ -45,12 +45,12 @@
     padding: 8px 20px;
     border-radius: 20px;
     border: 1px solid transparent;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     cursor: pointer;
     font-family: 'Mallanna', sans-serif;
     font-size: 14px;
-    color: #1671FE;
+    color: var(--accent-primary);
     text-decoration: none;
     transition: all 0.2s ease;
     display: inline-flex;
@@ -58,7 +58,7 @@
     justify-content: center;
     white-space: nowrap;
 }
-.profile-action-btn:hover { background: #e3f2fd; border-color: #1671FE; }
+.profile-action-btn:hover { background: var(--bg-hover); border-color: var(--accent-primary); }
 
 .friend-btn {
     display: flex;
@@ -73,13 +73,13 @@
 }
 
 .add-friend-btn {
-    background: #1671FE;
-    color: #fff;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
     border: none;
 }
 
 .add-friend-btn:hover {
-    background: #1258cc;
+    background: var(--accent-secondary);
     border-color: transparent;
 }
 
