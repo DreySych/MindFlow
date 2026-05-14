@@ -51,8 +51,11 @@ def get_default_questions(request):
 
     popular_all = Question.objects.exclude(
         id__in=fresh_ids).order_by('-rating', '-creation_date')
-    popular_friends = Question.objects.filter(author_id__in=friends_ids).exclude(
-        id__in=fresh_ids).order_by('-rating', '-creation_date')
+    popular_friends = Question.objects.filter(
+        author_id__in=friends_ids).exclude(
+        id__in=fresh_ids).order_by(
+            '-rating',
+        '-creation_date')
 
     result = list(fresh_friends)
     all_list = list(popular_all)
@@ -98,11 +101,13 @@ def index_page(request):
         "page1": 'Логин',
         "link2": "account/signup/",
         "page2": 'Регистрация',
-        'subscriptions': Subscription.objects.filter(user1=request.user) if request.user.is_authenticated else [],
+        'subscriptions': Subscription.objects.filter(
+            user1=request.user) if request.user.is_authenticated else [],
         'posts_context': posts_context,
         'user': request.user,
-        'notifications': Notification.objects.filter(user=request.user).order_by('-created_at')[:20]
-        if request.user.is_authenticated else [],
+        'notifications': Notification.objects.filter(
+            user=request.user).order_by('-created_at')[
+                :20] if request.user.is_authenticated else [],
     }
 
     if request.user.is_authenticated:
@@ -121,7 +126,9 @@ def index_page(request):
 def get_subscribed_authors(user):
     if not user.is_authenticated:
         return []
-    return Subscription.objects.filter(user1=user).values_list('user2', flat=True)
+    return Subscription.objects.filter(
+        user1=user).values_list(
+        'user2', flat=True)
 
 
 def delete_post(request):

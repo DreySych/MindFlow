@@ -133,9 +133,11 @@ class QuestionsViewsTest(TestCase):
 
     def test_answer_unauthenticated(self):
         response = self.client.post(
-            f'/comment/{self.comment.id}/answer/', {'text': 'No auth'})
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/')
+            f'/comment/{self.comment.id}/answer/', {'text': 'No auth'}
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertFalse(data['ok'])
 
     def test_like_comment(self):
         self.login('other')
@@ -175,8 +177,7 @@ class QuestionsViewsTest(TestCase):
         )
         data = response.json()
         self.assertFalse(data['ok'])
-        self.assertEqual(
-            data['error'], 'Вы заблокированы и не можете выполнять это действие')
+        self.assertEqual(data['error'], 'Вы заблокированы')
 
     def test_like_answer(self):
         answer = Answer.objects.create(
@@ -299,5 +300,4 @@ class QuestionsViewsTest(TestCase):
             f'/like/?id={self.question.id}', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
         self.assertFalse(data['ok'])
-        self.assertEqual(
-            data['error'], 'Вы заблокированы и не можете выполнять это действие')
+        self.assertEqual(data['error'], 'Вы заблокированы')

@@ -170,7 +170,8 @@ def question_make_page(request):
                     question.save()
                     logger.info('Question created: id=%s, author=%s',
                                 question.id, request.user.username)
-                    return redirect(f'/profile/{request.user.username}/#question-{question.id}')
+                    return redirect(
+                        f'/profile/{request.user.username}/#question-{question.id}')
 
             else:
                 form = QuestionForm()
@@ -185,7 +186,10 @@ def question_make_page(request):
             user1=request.user)
     else:
         context['subscriptions'] = []
-    return render(request, template_name='make_edit_question.html', context=context)
+    return render(
+        request,
+        template_name='make_edit_question.html',
+        context=context)
 
 
 def question_edit_page(request):
@@ -221,7 +225,8 @@ def question_edit_page(request):
             question.save()
             logger.info('Question edited: id=%s, author=%s',
                         question.id, request.user.username)
-            return redirect(f'/profile/{request.user.username}/#question-{question.id}')
+            return redirect(
+                f'/profile/{request.user.username}/#question-{question.id}')
     else:
         form = QuestionForm(initial={
             'title': question.title,
@@ -255,13 +260,19 @@ def make_comment_page(request, question_id):
                 author = request.user
                 creation_date = timezone.now()
                 question = get_object_or_404(Question, pk=question_id)
-                comment = Comment(text=text, rating=rating, author=author, creation_date=creation_date,
-                                  question=question)
+                comment = Comment(
+                    text=text,
+                    rating=rating,
+                    author=author,
+                    creation_date=creation_date,
+                    question=question)
                 comment.save()
                 return redirect('/')
             else:
                 form = CommentForm()
-                return render(request, 'make_comment_answer.html', {'form': form})
+                return render(
+                    request, 'make_comment_answer.html', {
+                        'form': form})
 
         else:
             form = CommentForm()
@@ -369,7 +380,8 @@ def make_answer_page(request, comment_id):
 
         if not text or not text.strip():
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'ok': False, 'error': 'Введите текст ответа'})
+                return JsonResponse(
+                    {'ok': False, 'error': 'Введите текст ответа'})
             return redirect('/question/' + str(comment.question.id) + '/')
 
         answer = Answer(
@@ -482,11 +494,15 @@ def dislike_answer(request):
             'user_rating': like_obj.rating
         })
     return JsonResponse({'ok': False, 'error': 'Неверный запрос'})
+
+
 def question_card(request):
     return render(request, template_name="questions.html")
+
+
 def delete_question(request, question_id):
     if request.method != 'POST':
-      return JsonResponse({'ok': False, 'error': 'Только POST'})
+        return JsonResponse({'ok': False, 'error': 'Только POST'})
     if not can_act(request.user):
         return JsonResponse({'ok': False, 'error': 'Нет доступа'})
     question = get_object_or_404(Question, id=question_id)
