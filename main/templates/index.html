@@ -141,6 +141,70 @@
             console.error('Vote error:', error);
         });
     });
+        document.addEventListener('click', function(event) {
+    const button = event.target.closest('.question-vote-btn');
+
+    if (!button) {
+        return;
+    }
+
+    event.preventDefault();
+
+    // Проверка на блокировку
+    {% if user.is_authenticated and not user.active %}
+        showError('Вы заблокированы');
+        return;
+    {% elif not user.is_authenticated %}
+        showError('Требуется авторизация');
+        return;
+    {% endif %}
+
+    fetch(button.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.ok) {
+            if (data.login) {
+                window.location.href = data.login;
+            }
+            if (data.error) {
+                showError(data.error);
+            }
+            return;
+        }
+
+        const voteGroup = button.closest('.vote-group');
+        if (!voteGroup) {
+            return;
+        }
+
+        const count = voteGroup.querySelector('.vote-count');
+        const upvoteBtn = voteGroup.querySelector('.upvote');
+        const downvoteBtn = voteGroup.querySelector('.downvote');
+
+        if (count) {
+            count.textContent = data.rating;
+        }
+
+        if (data.user_rating === 1) {
+            if (upvoteBtn) upvoteBtn.classList.add('active');
+            if (downvoteBtn) downvoteBtn.classList.remove('active');
+        } else if (data.user_rating === -1) {
+            if (downvoteBtn) downvoteBtn.classList.add('active');
+            if (upvoteBtn) upvoteBtn.classList.remove('active');
+        } else {
+            if (upvoteBtn) upvoteBtn.classList.remove('active');
+            if (downvoteBtn) downvoteBtn.classList.remove('active');
+        }
+    })
+    .catch(error => {
+        console.error('Vote error:', error);
+        showError('Ошибка голосования');
+    });
+});
     </script>
 </body>
 </html>
