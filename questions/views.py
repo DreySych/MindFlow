@@ -86,7 +86,6 @@ def question_page(request, question_id, template_name='question.html'):
         form = CommentForm()
     context['comment_form'] = form
 
-    # Добавляем информацию о лайке пользователя для вопроса
     if request.user.is_authenticated:
         user_like = Like.objects.filter(
             user=request.user, question=question).first()
@@ -94,7 +93,6 @@ def question_page(request, question_id, template_name='question.html'):
     else:
         context['user_rating'] = 0
 
-    # Добавляем user_rating для каждого комментария
     for comment in context['comments']:
         if request.user.is_authenticated:
             comment_like = CommentLike.objects.filter(
@@ -276,12 +274,12 @@ def like_comment(request):
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
 
     comment_id = request.GET.get('id')
     comment = get_object_or_404(Comment, id=comment_id)
@@ -310,22 +308,21 @@ def like_comment(request):
             'ok': True,
             'rating': comment.rating,
             'user_rating': like_obj.rating
-
         })
 
-    return redirect(request.GET.get('to', '/'))
+    return JsonResponse({'ok': False, 'error': 'Неверный запрос'})
 
 
 def dislike_comment(request):
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
 
     comment_id = request.GET.get('id')
     comment = get_object_or_404(Comment, id=comment_id)
@@ -351,50 +348,53 @@ def dislike_comment(request):
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
-
             'ok': True,
             'rating': comment.rating,
             'user_rating': like_obj.rating
-
         })
 
-    return redirect(request.GET.get('to', '/'))
+    return JsonResponse({'ok': False, 'error': 'Неверный запрос'})
 
 
 def make_answer_page(request, comment_id):
     if not can_act(request.user):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
-        return redirect('/')
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
 
     comment = get_object_or_404(Comment, id=comment_id)
 
     if request.method == "POST":
         text = request.POST.get('text')
 
-        if text and text.strip():
-            answer = Answer(
-                answer=text.strip(),
-                rating=0,
-                author=request.user,
-                creation_date=timezone.now(),
-                comment=comment
-            )
-            answer.save()
+        if not text or not text.strip():
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'ok': False, 'error': 'Введите текст ответа'})
+            return redirect('/question/' + str(comment.question.id) + '/')
 
-            if comment.author != request.user:
-                Notification.objects.create(
-                    user=comment.author,
-                    text=f'{request.user.username} ответил на ваш комментарий',
-                    link=f'/question/{comment.question.id}/#comment-{comment.id}'
-                )
+        answer = Answer(
+            answer=text.strip(),
+            rating=0,
+            author=request.user,
+            creation_date=timezone.now(),
+            comment=comment
+        )
+        answer.save()
+
+        if comment.author != request.user:
+            Notification.objects.create(
+                user=comment.author,
+                text=f'{request.user.username} ответил на ваш комментарий',
+                link=f'/question/{comment.question.id}/#comment-{comment.id}'
+            )
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': True})
 
         return redirect('/question/' + str(comment.question.id) + '/')
 
-    return redirect('/question/' + str(comment.question.id) + '/')
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': False, 'error': 'Метод не разрешен'})
 
     return redirect('/question/' + str(comment.question.id) + '/')
 
@@ -403,12 +403,12 @@ def like_answer(request):
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
 
     answer_id = request.GET.get('id')
     answer = get_object_or_404(Answer, id=answer_id)
@@ -439,19 +439,19 @@ def like_answer(request):
             'user_rating': like_obj.rating,
         })
 
-    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
+    return JsonResponse({'ok': False, 'error': 'Неверный запрос'})
 
 
 def dislike_answer(request):
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
 
     answer_id = request.GET.get('id')
     answer = get_object_or_404(Answer, id=answer_id)
@@ -480,32 +480,21 @@ def dislike_answer(request):
             'ok': True,
             'rating': answer.rating,
             'user_rating': like_obj.rating
-
         })
-
-    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
-
-
+    return JsonResponse({'ok': False, 'error': 'Неверный запрос'})
 def question_card(request):
     return render(request, template_name="questions.html")
-
-
 def delete_question(request, question_id):
     if request.method != 'POST':
-        return JsonResponse({'ok': False, 'error': 'Только POST'})
-
+      return JsonResponse({'ok': False, 'error': 'Только POST'})
     if not can_act(request.user):
         return JsonResponse({'ok': False, 'error': 'Нет доступа'})
-
     question = get_object_or_404(Question, id=question_id)
-
     if question.author != request.user and not request.user.is_staff:
         return JsonResponse({'ok': False, 'error': 'Нет прав'})
-
     if question.images:
         for path in question.images.split(','):
             if path and default_storage.exists(path):
                 default_storage.delete(path)
-
     question.delete()
     return JsonResponse({'ok': True})

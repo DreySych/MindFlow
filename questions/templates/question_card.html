@@ -63,12 +63,14 @@
 
             {% if request.user == question.author %}
                 <a href="{% url 'edit_question' %}?id={{ question.id }}"
-                   class="action-btn edit gradient-border" title="Редактировать">
+                   class="action-btn edit gradient-border"
+                   onclick="return checkEditPermission(event)"
+                   title="Редактировать">
                     <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                 </a>
                 <button type="button"
                         class="action-btn delete gradient-border"
-                        onclick="if (typeof confirmDeleteQuestion !== 'undefined') confirmDeleteQuestion({{ question.id }}); else if (confirm('Вы уверены?')) deleteQuestion({{ question.id }})"
+                        onclick="confirmDeleteQuestion({{ question.id }})"
                         title="Удалить">
                     <img src="{% static 'images/krest.png' %}" alt="Удалить">
                 </button>
@@ -81,7 +83,7 @@
                 </button>
                 <button type="button"
                         class="action-btn delete gradient-border"
-                        onclick="if (typeof confirmDeleteQuestion !== 'undefined') confirmDeleteQuestion({{ question.id }}); else if (confirm('Вы уверены?')) deleteQuestion({{ question.id }})"
+                        onclick="confirmDeleteQuestion({{ question.id }})"
                         title="Удалить">
                     <img src="{% static 'images/krest.png' %}" alt="Удалить">
                 </button>
@@ -97,3 +99,92 @@
         </div>
     </div>
 </article>
+
+<script>
+function showError(text) {
+    var errorBox = document.getElementById('globalErrorBox');
+    if (errorBox) {
+        errorBox.remove();
+    }
+    errorBox = document.createElement('div');
+    errorBox.id = 'globalErrorBox';
+    errorBox.textContent = text;
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.right = '20px';
+    errorBox.style.background = '#ff4d4f';
+    errorBox.style.color = 'white';
+    errorBox.style.padding = '14px 18px';
+    errorBox.style.borderRadius = '12px';
+    errorBox.style.zIndex = '99999';
+    errorBox.style.fontSize = '14px';
+    errorBox.style.fontFamily = 'Mallanna, sans-serif';
+    errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    document.body.appendChild(errorBox);
+    setTimeout(function() {
+        if (errorBox) errorBox.remove();
+    }, 3000);
+}
+
+function checkEditPermission(event) {
+    {% if not user.is_authenticated %}
+        event.preventDefault();
+        showError('Требуется авторизация');
+        return false;
+    {% elif not user.active %}
+        event.preventDefault();
+        showError('Вы заблокированы');
+        return false;
+    {% endif %}
+    return true;
+}
+
+function deleteQuestion(questionId) {
+    var csrftoken = null;
+    document.cookie.split(';').forEach(function(c) {
+        var pair = c.trim().split('=');
+        if (pair[0] === 'csrftoken') csrftoken = decodeURIComponent(pair[1]);
+    });
+
+    fetch('/question/' + questionId + '/delete/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            var questionElement = document.getElementById('question-' + questionId);
+            if (questionElement) questionElement.remove();
+        } else if (data.error) {
+            showError(data.error);
+        }
+    })
+    .catch(function(err) {
+        console.error('Ошибка:', err);
+        showError('Ошибка при удалении');
+    });
+}
+
+function confirmDeleteQuestion(questionId) {
+    {% if not user.is_authenticated %}
+        showError('Требуется авторизация');
+        return;
+    {% elif not user.active %}
+        showError('Вы заблокированы');
+        return;
+    {% endif %}
+
+    if (typeof openConfirmDeleteOverlay !== 'undefined') {
+        openConfirmDeleteOverlay('пост', function() {
+            deleteQuestion(questionId);
+        });
+    } else {
+        if (confirm('Вы уверены, что хотите удалить этот пост?')) {
+            deleteQuestion(questionId);
+        }
+    }
+}
+</script>

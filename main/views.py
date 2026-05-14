@@ -71,8 +71,6 @@ def get_default_questions(request):
             seen.add(p.id)
     return unique
 
-# Create your views here.
-
 
 def index_page(request):
     if request.method == "POST" and 'question_id' in request.POST:
@@ -198,7 +196,7 @@ def like(request):
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
         return redirect('/')
 
     question_id = request.GET.get('id')
@@ -229,7 +227,6 @@ def like(request):
         )
     question.save()
 
-    # ВСЕГДА возвращаем JSON для AJAX запросов
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,
@@ -248,7 +245,7 @@ def dislike(request):
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
         return redirect('/')
 
     question_id = request.GET.get('id')
@@ -273,7 +270,6 @@ def dislike(request):
     like_obj.save()
     question.save()
 
-    # ВСЕГДА возвращаем JSON для AJAX запросов
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
             'ok': True,

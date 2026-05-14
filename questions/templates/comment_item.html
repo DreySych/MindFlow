@@ -53,7 +53,7 @@
 
                 <button type="button"
                         class="comment-action-btn reply-toggle"
-                        onclick="{% if user.is_authenticated %}toggleReplyForm({{ comment.id }}){% else %}window.location.href='{% url 'login' %}?next={{ request.path }}'{% endif %}">
+                        onclick="toggleReplyForm({{ comment.id }})">
 
                     <img src="{% static 'images/comment.png' %}" alt="Ответить">
                     <span>Ответить</span>
@@ -147,7 +147,6 @@
 
     {% endfor %}
 
-    {% if user.is_authenticated %}
     <form method="post"
       action="{% url 'make_answer' comment.id %}"
       class="answerForm reply-form"
@@ -175,7 +174,6 @@
         </div>
 
     </form>
-    {% endif %}
 
 </div>
 
@@ -193,7 +191,31 @@ function toggleReplyForm(commentId) {
     }
 }
 
-{% if user.is_authenticated %}
+function showError(text) {
+    var errorBox = document.getElementById('globalErrorBox');
+    if (errorBox) {
+        errorBox.remove();
+    }
+    errorBox = document.createElement('div');
+    errorBox.id = 'globalErrorBox';
+    errorBox.textContent = text;
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.right = '20px';
+    errorBox.style.background = '#ff4d4f';
+    errorBox.style.color = 'white';
+    errorBox.style.padding = '14px 18px';
+    errorBox.style.borderRadius = '12px';
+    errorBox.style.zIndex = '99999';
+    errorBox.style.fontSize = '14px';
+    errorBox.style.fontFamily = 'Mallanna, sans-serif';
+    errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    document.body.appendChild(errorBox);
+    setTimeout(function() {
+        if (errorBox) errorBox.remove();
+    }, 3000);
+}
+
 document.querySelectorAll('.reply-input').forEach(function(textarea) {
     textarea.addEventListener('input', function() {
         this.style.height = 'auto';
@@ -228,9 +250,63 @@ document.querySelectorAll('.answerForm').forEach(function(form) {
                 textarea.style.height = 'auto';
                 form.style.display = 'none';
                 window.location.reload();
+            } else if (data.error) {
+                showError(data.error);
+            } else if (data.login) {
+                showError('Требуется авторизация');
             }
+        })
+        .catch(function(err) {
+            console.error('Error:', err);
+            showError('Ошибка соединения');
         });
     });
 });
-{% endif %}
+
+// Голосование за комментарии и ответы
+document.addEventListener('click', function(event) {
+    var button = event.target.closest('.ajax-comment-vote');
+    if (!button) return;
+
+    event.preventDefault();
+
+    fetch(button.href, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (!data.ok) {
+            if (data.login) {
+                showError('Требуется авторизация');
+            } else if (data.error) {
+                showError(data.error);
+            }
+            return;
+        }
+
+        var group = button.closest('.comment-vote-group');
+        if (!group) return;
+
+        var count = group.querySelector('.comment-vote-count');
+        var upvoteBtn = group.querySelector('.upvote');
+        var downvoteBtn = group.querySelector('.downvote');
+
+        if (count) count.textContent = data.rating;
+
+        if (data.user_rating === 1) {
+            if (upvoteBtn) upvoteBtn.classList.add('active');
+            if (downvoteBtn) downvoteBtn.classList.remove('active');
+        } else if (data.user_rating === -1) {
+            if (downvoteBtn) downvoteBtn.classList.add('active');
+            if (upvoteBtn) upvoteBtn.classList.remove('active');
+        } else {
+            if (upvoteBtn) upvoteBtn.classList.remove('active');
+            if (downvoteBtn) downvoteBtn.classList.remove('active');
+        }
+    })
+    .catch(function(err) {
+        console.error('Vote error:', err);
+        showError('Ошибка голосования');
+    });
+});
 </script>

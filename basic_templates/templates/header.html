@@ -12,7 +12,7 @@
 
   <div class="header-search">
     <form class="search-wrapper" method="get" action="{% url 'index' %}">
-
+        <img src="{% static 'images/logo.png' %}" alt="Лого" class="search-logo-img" style="width: 41px; height: 41px; object-fit: contain; margin-right: -4px;">
         <input
             type="text"
             placeholder="Поиск..."
@@ -20,9 +20,7 @@
             name="q"
             value="{{ request.GET.q }}"
         >
-
       <span class="search-divider"></span>
-
       <button type="submit">
         <img src="{% static 'images/loop.png' %}" alt="Поиск" class="icon-lupa">
       </button>
@@ -40,10 +38,12 @@
   </div>
 
   <div class="header-right">
-    <a href="{% url 'make_question' %}" class="create-button">
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'make_question' %}" class="create-button" onclick="return checkCreatePermission(event)">
       <span class="icon-plus">+</span>
       <span>Создать</span>
     </a>
+    {% endif %}
 
     <div class="notifications-dropdown">
       <button class="icon-button notifications-trigger" onclick="toggleNotificationsOverlay(event)">
@@ -68,11 +68,9 @@
         </a>
         {% endif %}
         {% if request.user.is_superuser %}
-
         <a href="{% url 'complains_panel_page_p' %}" class="overlay-item">
           <span>Панель жалоб</span>
         </a>
-
         {% endif %}
         {% if request.user.is_authenticated %}
         <a href="{% url 'settings' %}" class="overlay-item">
@@ -94,6 +92,40 @@
 </header>
 
 <script>
+  function showError(text) {
+    var errorBox = document.getElementById('globalErrorBox');
+    if (errorBox) {
+      errorBox.remove();
+    }
+    errorBox = document.createElement('div');
+    errorBox.id = 'globalErrorBox';
+    errorBox.textContent = text;
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.right = '20px';
+    errorBox.style.background = '#ff4d4f';
+    errorBox.style.color = 'white';
+    errorBox.style.padding = '14px 18px';
+    errorBox.style.borderRadius = '12px';
+    errorBox.style.zIndex = '99999';
+    errorBox.style.fontSize = '14px';
+    errorBox.style.fontFamily = 'Mallanna, sans-serif';
+    errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    document.body.appendChild(errorBox);
+    setTimeout(function() {
+      if (errorBox) errorBox.remove();
+    }, 3000);
+  }
+
+  function checkCreatePermission(event) {
+    {% if request.user.is_authenticated and not request.user.active %}
+      event.preventDefault();
+      showError('Вы заблокированы и не можете создавать посты');
+      return false;
+    {% endif %}
+    return true;
+  }
+
   function toggleProfileOverlay() {
     document.getElementById('profileOverlay').classList.toggle('active');
     document.getElementById('searchOverlay').classList.remove('active');
