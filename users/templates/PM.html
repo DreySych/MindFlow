@@ -42,6 +42,7 @@ let selectedUserId = null;
 const currentUserId = "{{ request.user.id }}";
 const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
 const isUserActive = {{ request.user.active|yesno:"true,false" }};
+const defaultAvatarUrl = "{% static 'images/default.png' %}";
 
 function showError(text) {
     const errorBox = document.createElement('div');
@@ -56,33 +57,30 @@ function showError(text) {
     errorBox.style.zIndex = '99999';
     errorBox.style.fontSize = '14px';
     document.body.appendChild(errorBox);
-    setTimeout(() => errorBox.remove(), 3000);
+    setTimeout(function() {
+        errorBox.remove();
+    }, 3000);
 }
 
-function openChatOverlay(userId, username, avatarUrl = null) {
-    selectedUserId = userId;
+function saveChatState(userId, username, avatarUrl) {
     localStorage.setItem('chatOpen', 'true');
     localStorage.setItem('chatUserId', userId);
-    localStorage.setItem('chatUsername', username);
+    localStorage.setItem('chatUsername', username || 'Пользователь');
 
     if (avatarUrl) {
         localStorage.setItem('chatAvatarUrl', avatarUrl);
     } else {
         localStorage.removeItem('chatAvatarUrl');
     }
+}
+
+function openChatOverlay(userId, username, avatarUrl = null) {
+    selectedUserId = userId;
+    saveChatState(userId, username, avatarUrl);
 
     document.getElementById('chatOverlay').classList.add('active');
-    document.getElementById('chatUserName').textContent = username;
-
-    // Устанавливаем аватар
-    const avatarImg = document.getElementById('chatAvatar');
-    if (avatarUrl) {
-        avatarImg.src = avatarUrl;
-    } else {
-        avatarImg.src = "{% static 'images/default.png' %}";
-    }
-
-    document.body.style.overflow = '';
+    document.getElementById('chatUserName').textContent = username || 'Пользователь';
+    document.getElementById('chatAvatar').src = avatarUrl || defaultAvatarUrl;
 
     loadChatMessages(userId);
     connectChatSocket(userId);
@@ -94,6 +92,7 @@ function closeChatOverlay() {
     localStorage.removeItem('chatUserId');
     localStorage.removeItem('chatUsername');
     localStorage.removeItem('chatAvatarUrl');
+
     if (chatSocket) {
         chatSocket.close();
         chatSocket = null;
@@ -117,8 +116,6 @@ function loadChatMessages(userId) {
             data.messages.forEach(function(message) {
                 addMessageToChat(message.text, message.sender_id, message.time);
             });
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         });
 }
 
@@ -127,14 +124,11 @@ function connectChatSocket(userId) {
         chatSocket.close();
     }
 
-    const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    chatSocket = new WebSocket(protocol + window.location.host + '/ws/chat/' + userId + '/');
 
-    chatSocket = new WebSocket(
-        protocol + window.location.host + "/ws/chat/" + userId + "/"
-    );
-
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
         addMessageToChat(data.message, data.sender_id, data.time);
     };
 }
@@ -147,12 +141,11 @@ function addMessageToChat(text, senderId, time) {
     }
 
     let messageClass = 'chat-message-other';
-
     if (senderId == currentUserId) {
         messageClass = 'chat-message-my';
     }
 
-    const messageHtml = `
+    messagesContainer.innerHTML += `
         <div class="chat-message ${messageClass}">
             <div class="chat-message-bubble">
                 <p>${escapeHtml(text)}</p>
@@ -160,8 +153,6 @@ function addMessageToChat(text, senderId, time) {
             </div>
         </div>
     `;
-
-    messagesContainer.innerHTML += messageHtml;
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
@@ -171,54 +162,48 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-document.getElementById('chat-message-submit').onclick = function() {
+function sendChatMessage() {
     if (!isAuthenticated) {
         window.location.href = '/account/login/?next=' + encodeURIComponent(window.location.pathname);
         return;
     }
+
     if (!isUserActive) {
         showError('Вы заблокированы');
         return;
     }
+
     const input = document.getElementById('chat-message-input');
-    const message = input.value;
+    const message = input.value.trim();
 
-    if (!chatSocket || message.trim() === '') {
+    if (!chatSocket || !message) {
         return;
     }
+
+    chatSocket.send(JSON.stringify({
+        message: message
+    }));
     input.value = '';
-};
+}
 
-
-document.addEventListener('DOMContentLoaded', function() {
+function openSavedChat() {
     const params = new URLSearchParams(window.location.search);
+    const chatId = params.get('open_chat') || localStorage.getItem('chatUserId');
+    const username = params.get('chat_username') || localStorage.getItem('chatUsername');
+    const avatarUrl = params.get('chat_avatar') || localStorage.getItem('chatAvatarUrl');
 
+    if (chatId && username && (params.get('open_chat') || localStorage.getItem('chatOpen') === 'true')) {
+        openChatOverlay(chatId, username, avatarUrl);
+    }
+}
 
-document.getElementById('chat-message-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        document.getElementById('chat-message-submit').click();
+document.getElementById('chat-message-submit').onclick = sendChatMessage;
+
+document.getElementById('chat-message-input').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        sendChatMessage();
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const params = new URLSearchParams(window.location.search);
-    const chatId = params.get('open_chat');
-    const chatUsername = params.get('chat_username');
-    const chatAvatar = params.get('chat_avatar');
-
-    if (chatId) {
-        openChatOverlay(chatId, chatUsername, chatAvatar);
-        return;
-    }
-
-    if (localStorage.getItem('chatOpen') === 'true') {
-        const userId = localStorage.getItem('chatUserId');
-        const username = localStorage.getItem('chatUsername');
-        const avatarUrl = localStorage.getItem('chatAvatarUrl');
-
-        if (userId && username) {
-            openChatOverlay(userId, username, avatarUrl);
-        }
-    }
-});
+document.addEventListener('DOMContentLoaded', openSavedChat);
 </script>

@@ -16,7 +16,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ SECRET_KEY = 'django-insecure-s2rjmxhai3tc@i6i253h%&8_%8mqei825&y0x(#w5-!d)g8!e+
 DEBUG = True
 
 ALLOWED_HOSTS = ["188.127.251.228", "localhost", "127.0.0.1"]
-
 
 # Application definition
 
@@ -84,7 +82,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'The_Final_Build.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
@@ -94,7 +91,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -114,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -125,7 +120,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -147,8 +141,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -156,7 +148,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'support.mindflow@gmail.com'
 EMAIL_HOST_PASSWORD = 'fsxwrwccxnhahgya'
 DEFAULT_FROM_EMAIL = 'MindFlow <support.mindflow@gmail.com>'
-
 
 LOG_DIR = BASE_DIR / 'logs'
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -195,3 +186,5 @@ LOGGING = {
         },
     },
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

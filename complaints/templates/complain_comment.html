@@ -1,6 +1,5 @@
-!-- complain_comment.html -->
 {% load static %}
-<div class="complain-overlay" id="complainCommentOverlay">
+<div class="complain-overlay" id="complainCommentOverlay" style="display: none;">
   <div class="complain-backdrop" onclick="closeComplainCommentOverlay()"></div>
   <div class="complain-modal">
     <div id="complainCommentForm">
@@ -36,7 +35,6 @@
 </div>
 
 <script>
-
 document.addEventListener('input', function(e) {
     if (e.target.id === 'complainCommentText') {
         var len = e.target.value.length;
@@ -59,7 +57,8 @@ document.addEventListener('input', function(e) {
 window.openComplainCommentOverlay = function(commentId) {
     window.currentComplainAnswerId = null;
     window.currentComplainCommentId = commentId;
-    document.getElementById('complainCommentOverlay').classList.add('active');
+    var overlay = document.getElementById('complainCommentOverlay');
+    overlay.style.display = 'flex';
     document.getElementById('complainCommentForm').style.display = 'block';
     document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
@@ -72,20 +71,22 @@ window.openComplainCommentOverlay = function(commentId) {
     if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
     if (et) et.style.display = 'none';
 };
+
 window.openComplainAnswerOverlay = function(answerId) {
     window.currentComplainCommentId = null;
     window.currentComplainAnswerId = answerId;
-
-    document.getElementById('complainCommentOverlay').classList.add('active');
+    var overlay = document.getElementById('complainCommentOverlay');
+    overlay.style.display = 'flex';
     document.getElementById('complainCommentForm').style.display = 'block';
     document.getElementById('complainCommentThanks').style.display = 'none';
     document.body.style.overflow = 'hidden';
 
-    document.getElementById('complainCommentText').value = '';
+    var ta = document.getElementById('complainCommentText');
+    if (ta) ta.value = '';
 };
 
 window.closeComplainCommentOverlay = function() {
-    document.getElementById('complainCommentOverlay').classList.remove('active');
+    document.getElementById('complainCommentOverlay').style.display = 'none';
     document.body.style.overflow = '';
 };
 
@@ -102,8 +103,7 @@ window.submitComplainComment = function() {
     btn.disabled = true;
     btn.textContent = 'Отправка...';
 
-    let url = '/complaint/?';
-
+    var url = '/complaint/?';
     if (window.currentComplainAnswerId) {
         url += 'answer_id=' + window.currentComplainAnswerId;
     } else {
@@ -127,7 +127,6 @@ window.submitComplainComment = function() {
         if (d.ok) {
             document.getElementById('complainCommentForm').style.display = 'none';
             document.getElementById('complainCommentThanks').style.display = 'block';
-
             window.currentComplainAnswerId = null;
             window.currentComplainCommentId = null;
         } else {

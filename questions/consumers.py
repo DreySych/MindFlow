@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+
 class SimpleDataConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.group_name = "group"

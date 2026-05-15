@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import ollama
-from .strategies import SearchStrategy, LastNQuestionsStrategy
+from .strategies import LastNQuestionsStrategy
 from typing import Optional
 
 ollama_client = ollama.Client(host="http://127.0.0.1:11434")
@@ -70,6 +70,7 @@ class AskOllamaClient:
 
 class AiSearchService:
     """ Хранит ссылку на текущую стратегию и использует её для выбора вопросов. """
+
     def __init__(self, strategy):
         # по умолчанию — только последние N вопросов
         self.strategy = strategy or LastNQuestionsStrategy(30)

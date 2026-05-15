@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import CASCADE
 from users.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -11,6 +10,7 @@ import logging
 logger = logging.getLogger('project')
 
 # Create your models here.
+
 
 class Question(models.Model):
     title = models.TextField()
@@ -31,13 +31,14 @@ class Question(models.Model):
     def image_list(self):
         if not self.images:
             return [[]]
-        l = []
+        images = []
         for i in self.images.split(','):
-            l.append("media/"+i)
+            images.append("media/" + i)
 
-        logger.debug('Question image list: %s', l)
+        logger.debug('Question image list: %s', images)
 
-        return l
+        return images
+
 
 class Comment(models.Model):
     text = models.TextField()
@@ -49,6 +50,7 @@ class Comment(models.Model):
     class Meta:
         ordering = ['-rating', '-creation_date']
 
+
 class Answer(models.Model):
     answer = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -59,12 +61,14 @@ class Answer(models.Model):
     class Meta:
         ordering = ['-rating', 'creation_date']
 
+
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     rating = models.IntegerField(default=0)
+
 
 class QuestionLike(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -75,6 +79,7 @@ class QuestionLike(models.Model):
     class Meta:
         unique_together = ('author', 'question')
 
+
 class AnswerLike(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
@@ -84,6 +89,7 @@ class AnswerLike(models.Model):
     class Meta:
         unique_together = ('author', 'answer')
 
+
 class CommentLike(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
@@ -92,6 +98,7 @@ class CommentLike(models.Model):
 
     class Meta:
         unique_together = ('author', 'comment')
+
 
 @receiver(post_save, sender=Question)
 def announce_new_data(sender, instance, **kwargs):
@@ -112,6 +119,7 @@ def announce_new_data(sender, instance, **kwargs):
         }
     )
 
+
 @receiver(post_save, sender=Comment)
 def announce_new_comment(sender, instance, created, **kwargs):
     if created:
@@ -119,7 +127,8 @@ def announce_new_comment(sender, instance, created, **kwargs):
 
         question = instance.question
         all_comments = question.comment_set.all().order_by('-creation_date')
-        html_content = render_to_string('comments.html', {'comments': all_comments})
+        html_content = render_to_string(
+            'comments.html', {'comments': all_comments})
 
         async_to_sync(channel_layer.group_send)(
             "group",
@@ -134,6 +143,7 @@ def announce_new_comment(sender, instance, created, **kwargs):
             }
         )
 
+
 @receiver(post_save, sender=Answer)
 def announce_new_answer(sender, instance, created, **kwargs):
     if created:
@@ -141,7 +151,8 @@ def announce_new_answer(sender, instance, created, **kwargs):
 
         question = instance.comment.question
         all_comments = question.comment_set.all().order_by('-creation_date')
-        html_content = render_to_string('comments.html', {'comments': all_comments})
+        html_content = render_to_string(
+            'comments.html', {'comments': all_comments})
 
         async_to_sync(channel_layer.group_send)(
             "group",

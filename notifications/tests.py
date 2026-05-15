@@ -5,6 +5,7 @@ from notifications.models import Notification
 from django.utils import timezone
 from questions.models import Question, Comment
 
+
 class NotificationsTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -71,17 +72,18 @@ class NotificationsTest(TestCase):
     except ImportError:
         NOTIFICATIONS_ENABLED = False
 
-
     def test_notification_list(self):
         self.client.login(username='notify_user', password='pass')
-        response = self.client.get('/notifications/list/', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            '/notifications/list/', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertIn('notifications', data)
 
     def test_notification_on_comment_to_others_post(self):
         self.client.login(username='other', password='pass')
-        self.client.post(f'/question/{self.question.id}/', {'text': 'Test comment'})
+        self.client.post(
+            f'/question/{self.question.id}/', {'text': 'Test comment'})
         self.assertTrue(Notification.objects.filter(
             user=self.author,
             text__contains='комментарий'
@@ -89,7 +91,8 @@ class NotificationsTest(TestCase):
 
     def test_notification_on_reply_to_comment(self):
         self.client.login(username='other', password='pass')
-        self.client.post(f'/comment/{self.comment.id}/answer/', {'text': 'Reply'})
+        self.client.post(
+            f'/comment/{self.comment.id}/answer/', {'text': 'Reply'})
         self.assertTrue(Notification.objects.filter(
             user=self.author,
             text__contains='ответил'

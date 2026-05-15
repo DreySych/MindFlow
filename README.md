@@ -1,6 +1,6 @@
 # MindFlow — Платформа для обмена знаний
 
-> MindFlow — это социальная платформа для обмена знаниями и идеями, вдохновлённая концепцией Reddit, но с акцентом на интеллектуальные дискуссии и персонализированный контент. Платформа объединяет классические возможности форумов с современными технологиями искусственного интеллекта для создания уникального опыта взаимодействия.
+> MindFlow — это социальная платформа для обмена знаниями и идеями, вдохновлённая концепцией Reddit, но с акцентом на интеллектуальные дискуссии и персонализированный контент. Платформа объединяет классические возможности форумов с современными технологиями искусственного интеллекта для создания уникального опыта взаимодействия
 
 ![Django](https://img.shields.io/badge/django-4.2%2B-092E20?logo=django)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python)
@@ -12,15 +12,16 @@
 
 ## 📋 Описание
 
-MindFlow — это веб-платформа для обмена знаниями, созданная студенческой командой как дипломный проект. Платформа объединяет функционал форумов с современным AI-поиском на базе Ollama для интеллектуальных дискуссий.
+MindFlow — это веб-платформа для обмена знаниями, созданная студенческой командой как дипломный проект. Платформа объединяет функционал форумов с современным AI-поиском на базе Ollama
 
 **Ключевые особенности:**
+
 - Система вопросов и ответов с рейтингом и модерацией
-- AI-powered поиск на базе Ollama для персонализированных ответов
 - Система уведомлений в реальном времени
 - Модуль жалоб и модерации контента
-- REST API для интеграции с внешними сервисами
-- Полная документация на Sphinx
+- Семантический поиск на основе векторных эмбеддингов для поиска по смыслу
+- AI-ассистент на базе **Ollama** для интеллектуальных ответов на вопросы
+- Автоматически генерируемая документация на **Sphinx**
 
 ---
 
@@ -31,14 +32,14 @@ MindFlow — это веб-платформа для обмена знаниям
 - 💬 Комментирование и ответы на вопросы
 - ⭐ Система рейтингов и репутации
 - 🔔 Уведомления о новых ответах и комментариях
-- 🔍 AI-поиск с использованием Ollama LLM
+- 🔍 Семантический поиск по смыслу через векторные эмбеддинги
+- 🤖 AI-ассистент на базе Ollama для интеллектуальных ответов
 - 👤 Персональные профили с историей активности
 - 📊 Подписки на других пользователей
 
 ### Для модераторов
 - 🚨 Система жалоб и модерации контента
 - 🛡️ Блокировка пользователей и удаление контента
-- 📈 Статистика активности платформы
 
 ### Технические возможности
 - 🔌 REST API для всех основных операций
@@ -54,7 +55,8 @@ MindFlow — это веб-платформа для обмена знаниям
 - **База данных**: SQLite
 - **Фронтенд**: HTML, CSS, JavaScript
 - **AI/ML**: Ollama
-- **Документация**: Sphinx с Read the Docs темой
+- **Real-time**: Django Channels (WebSocket для уведомлений, чата и комментариев)
+- **Документация**: Sphinx
 - **Тестирование**: Django Test Suite, Coverage.py
 - **CI/CD**: GitLab CI/CD (pipeline настроен)
 - **Версионирование**: Git, GitLab
@@ -92,7 +94,7 @@ pip install -r requirements.txt
 
 ### Шаг 4: Настройка переменных окружения
 
-Создайте файл `.env` в корне проекта для хранения конфиденциальных настроек.
+Создайте файл `.env` в корне проекта для хранения конфиденциальных настроек
 
 #### Генерация SECRET_KEY
 
@@ -102,7 +104,7 @@ pip install -r requirements.txt
 python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
 ```
 
-Скопируйте полученную строку.
+Скопируйте полученную строку
 
 #### Создание файла .env
 
@@ -173,7 +175,6 @@ python manage.py test ai.tests.test_service
 ```bash
 coverage run --source='.' manage.py test
 coverage report
-coverage html  # HTML-отчёт в htmlcov/index.html
 ```
 
 ---
@@ -183,28 +184,52 @@ coverage html  # HTML-отчёт в htmlcov/index.html
 ```
 MindFlow/
 ├── ai/ # AI-поиск и интеграция с Ollama
+│ ├── templates/ # HTML-шаблоны
 │ ├── services.py # Бизнес-логика AI-сервисов
 │ ├── strategies.py # Стратегии поиска
 │ ├── views.py # API endpoints
-│ └── tests/ # Юнит-тесты модуля
+│ └── tests.py # Юнит-тесты модуля
 ├── questions/ # Основной модуль вопросов/ответов
+│ ├── templates/ # HTML-шаблоны
 │ ├── models.py # Модели Question, Answer, Comment, Like
 │ ├── views.py # Views для отображения и CRUD
 │ ├── forms.py # Формы создания/редактирования
-│ └── tests/ # Тесты модуля
+│ ├── consumers.py # real-time обновления вопросов и комментариев
+│ ├── routing.py # WebSocket маршруты
+│ └── tests.py # Тесты модуля
 ├── users/ # Пользователи и аутентификация
+│ ├── templates/ # HTML-шаблоны
 │ ├── models.py # Расширенная модель User
 │ ├── views.py # Регистрация, профили, подписки
-│ └── tests/ # Тесты пользователей
+│ ├── utils.py # Восстановление пароля
+│ └── tests.py # Тесты пользователей
 ├── notifications/ # Система уведомлений
+│ ├── templates/ # HTML-шаблоны
 │ ├── models.py # Модель Notification
 │ ├── views.py # API уведомлений
-│ └── tests/ # Тесты уведомлений
-├── complains/ # Модуль жалоб и модерации
+│ └── tests.py # Тесты уведомлений
+├── complains/ # Модуль панели жалоб
+│ ├── templates/ # HTML-шаблоны
+│ └── views.py # Обработка жалоб
+├── complaints/ # Модуль жалоб и модерации
+│ ├── templates/ # HTML-шаблоны
 │ ├── models.py # Модель Complain
 │ ├── views.py # Обработка жалоб
-│ └── tests/ # Тесты модерации
+│ ├── forms.py # Формы для жалоб
+│ └── tests.py # Тесты модерации
+├── private_messages/ # Модуль ЛС
+│ ├── templates/ # HTML-шаблоны
+│ ├── models.py # Модель ЛС
+│ ├── views.py # Обработка ЛС
+│ ├── urls.py # Роутинги ЛС
+│ ├── consumers.py # real-time обновления вопросов и комментариев
+│ ├── routing.py # WebSocket маршруты
+│ └── tests.py # Тесты ЛС
 ├── main/ # Главная страница и общие views
+│ ├── templates/ # HTML-шаблоны
+│ ├── views.py # Обработчики запросов (главная страница, поиск)
+│ ├── forms.py # Формы для пользовательского ввода
+│ └── tests.py # Тесты для views и форм
 ├── The_Final_Build/ # Настройки проекта Django
 │ ├── settings.py # Конфигурация Django
 │ ├── urls.py # Главный роутинг
@@ -213,21 +238,24 @@ MindFlow/
 │ ├── source/ # Исходники документации
 │ └── build/html/ # Собранная HTML-документация
 ├── static/ # Статические файлы (CSS, JS, изображения)
-├── media/ # Загруженные пользователями файлы
-├── templates/ # HTML-шаблоны
+├── basic_elements/ # Базовые шаблоны
 ├── .env.example # Пример файла окружения
 ├── requirements.txt # Python-зависимости
-├── docker-compose.yml # Docker Compose конфигурация
-├── Dockerfile # Docker образ приложения
 ├── .gitlab-ci.yml # CI/CD pipeline
+├── .coverage # Файл с данными о покрытии
+├── .pylintrc # Файл конфигурации для Pylint
+├── .gitignore # Исключения из репозитория
+├── LICENSE # Лицензия
 ├── manage.py # Django CLI
+├── patterns.txt # Обоснование использования паттернов 
+├── CONTRIBUTING.md # Информация для разработчиков
 └── README.md # Документация проекта
 ```
 ---
 
 ## 🏗 Архитектура
 
-Проект построен по **MVT (Model-View-Template)** паттерну Django с дополнительным **Service Layer** для бизнес-логики.
+Проект построен по **MVT (Model-View-Template)** паттерну Django с дополнительным **Service Layer** для бизнес-логики
 
 ### Архитектурные принципы
 
@@ -239,17 +267,18 @@ MindFlow/
 
 ### Модульная структура
 
-- **ai**: AI-интеграция, изолирована от остальной логики
+- **main**: рекомендации, подписки, лайки
 - **questions**: ядро платформы (вопросы, ответы, комментарии)
 - **users**: управление пользователями и профилями
 - **notifications**: асинхронные уведомления
-- **complains**: модерация и жалобы
+- **complaints**: модерация и жалобы
+- **complains**: панель жалоб
+- **private_messages**: ЛС
+- **ai**: AI-интеграция, изолирована от остальной логики
 
 ---
 
 ## 🔌 API
-
-Полная документация API доступна в [Sphinx Docs](docs/build/html/api.html).
 
 ### Основные эндпоинты
 
@@ -257,7 +286,7 @@ MindFlow/
 
 **`POST /ai/api/`**
 
-Выполняет интеллектуальный поиск с использованием Ollama LLM.
+Выполняет интеллектуальный поиск с использованием Ollama LLM
 
 **Request:**
 ```json
@@ -302,7 +331,7 @@ MindFlow/
 - **`GET /notifications/api/`** — список уведомлений
 - **`POST /notifications/api/<id>/read/`** — отметить прочитанным
 
-> Полный список эндпоинтов см. в документации Sphinx.
+> Полный список эндпоинтов см. в документации Sphinx
 
 ---
 
@@ -321,10 +350,10 @@ MindFlow/
 ### Требования к коду
 
 - ✅ Следуйте **PEP 8** (используйте `pylint`, рейтинг ≥ 8.0/10)
-- ✅ Покрывайте код **тестами** (coverage ≥ 80%)
+- ✅ Покрывайте код **тестами** (coverage ≥ 70%)
 - ✅ Обновляйте **Sphinx документацию** в docstrings
 - ✅ Убедитесь, что **все тесты проходят**: `python manage.py test`
-- ✅ Пройдите **CI/CD pipeline** перед MR
+- ✅ Пройдите **CI/CD pipeline** перед Merge Request
 
 Подробнее см. [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -338,27 +367,27 @@ MindFlow/
 
 **Ведущий разработчик**: Чуранкин Макар  
 - GitLab: [@calalal](https://gitlab.informatics.ru/calalal)  
-- Email: [добавить email]
+- Email: [calalcalalx2@gmail.com](mailto:calalcalalx2@gmail.com)
 
 **Фронтенд-лид**: Голубенко Степан  
 - GitLab: [@St_Gol](https://gitlab.informatics.ru/St_Gol)  
-- Email: [добавить email]
+- Email: [stepangolubenko77@gmail.com](mailto:stepangolubenko77@gmail.com)
 
 **Бэкенд-лид**: Ткаченко Кирилл  
 - GitLab: [@GlupiMakak](https://gitlab.informatics.ru/GlupiMakak)  
-- Email: [добавить email]
+- Email: [glupimakak@gmail.com](mailto:glupimakak@gmail.com)
 
 **Серверный разработчик**: Кокоткин Евгений  
 - GitLab: [@Gesha](https://gitlab.informatics.ru/Gesha)  
-- Email: [добавить email]
+- Email: [zhenechka.ko@mail.ru](mailto:zhenechka.ko@mail.ru)
 
 **Клиентский разработчик**: Кочуров Никита  
 - GitLab: [@Nekoseko](https://gitlab.informatics.ru/Nekoseko)  
-- Email: [добавить email]
+- Email: [nekokrator@mail.ru](mailto:nekokrator@mail.ru)
 
 **Клиентский разработчик**: Сехин Алексей  
 - GitLab: [@azer0](https://gitlab.informatics.ru/azer0)  
-- Email: [добавить email]
+- Email: [sigmaalfamale123@gmail.com](mailto:sigmaalfamale123@gmail.com)
 
 ---
 
@@ -375,6 +404,12 @@ MindFlow/
 
 ---
 
+## 📄 Лицензия
+
+Этот проект создан в образовательных целях. Все права защищены © 2026 MindFlow Team
+
+---
+
 ## 📞 Поддержка
 
 Если у вас возникли вопросы или проблемы:
@@ -388,8 +423,6 @@ MindFlow/
 - 💬 GitLab: [@Drey_Sych](https://gitlab.informatics.ru/Drey_Sych)
 
 ### Документация
-- 📚 [Sphinx Docs](docs/build/html/index.html) — полная техническая документация
+- 📚 Sphinx Docs — полная техническая документация (см. `docs/build/html/index.html`)
 
 ---
-
-

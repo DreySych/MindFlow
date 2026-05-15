@@ -63,12 +63,14 @@
 
                         {% if request.user == question.author %}
                             <a href="{% url 'edit_question' %}?id={{ question.id }}"
-                               class="action-btn edit" title="Редактировать">
+                               class="action-btn edit"
+                               onclick="return checkEditPermission(event)"
+                               title="Редактировать">
                                 <img src="{% static 'images/pencil.png' %}" alt="Редактировать">
                             </a>
                             <button type="button"
                                     class="action-btn delete"
-                                    onclick="deleteQuestion({{ question.id }})"
+                                    onclick="confirmDeleteQuestion({{ question.id }})"
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
                             </button>
@@ -81,16 +83,9 @@
                             </button>
                             <button type="button"
                                     class="action-btn delete"
-                                    onclick="deleteQuestion({{ question.id }})"
+                                    onclick="confirmDeleteQuestion({{ question.id }})"
                                     title="Удалить">
                                 <img src="{% static 'images/krest.png' %}" alt="Удалить">
-                            </button>
-                        {% elif request.user != question.author %}
-                            <button type="button"
-                                    class="action-btn report"
-                                    onclick="openComplainQuestionOverlay({{ question.id }})"
-                                    title="Пожаловаться">
-                                <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
                             </button>
                         {% endif %}
                     </div>
@@ -100,7 +95,7 @@
                     <form method="post" style="width: 100%;" id="commentForm">
                         {% csrf_token %}
                         <div class="comment-input-wrapper">
-                            <textarea class="comment-input" placeholder="Добавить комментарий..." rows="1" id="commentInput" name="text"></textarea>
+                            <textarea class="comment-input" placeholder="Добавить комментарий..." rows="1" id="commentInput" name="text" {% if not user.is_authenticated %}onclick="redirectToLogin()" onfocus="redirectToLogin()"{% endif %}></textarea>
                             <div class="comment-input-actions">
                                 <button type="submit" class="submit-comment-btn" id="submitComment">
                                     <img src="{% static 'images/send.png' %}" alt="Отправить">
@@ -108,6 +103,11 @@
                             </div>
                         </div>
                     </form>
+                    {% if not user.is_authenticated %}
+                        <div class="login-prompt" style="text-align: center; margin-top: 12px; font-family: 'Mallanna', sans-serif; color: #888;">
+                            <a href="{% url 'login' %}?next={{ request.path }}" style="color: #1671FE; text-decoration: none;">Войдите</a>, чтобы оставить комментарий
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="comments-section" id="commentsSection">
@@ -126,6 +126,7 @@
     {% include 'footer.html' %}
     {% include 'complain_question.html' %}
     {% include 'complain_comment.html' %}
+    {% include 'confirm_delete.html' %}
 
     <script>
     function getCookie(name) {
@@ -155,6 +156,10 @@
         setTimeout(() => errorBox.remove(), 3000);
     }
 
+    function redirectToLogin() {
+        window.location.href = "{% url 'login' %}?next={{ request.path }}";
+    }
+
     function deleteQuestion(questionId) {
         fetch(`/question/${questionId}/delete/`, {
             method: 'POST',
@@ -171,15 +176,27 @@
         });
     }
 
-    // Авто-высота textarea
+    function confirmDeleteQuestion(questionId) {
+        if (typeof openConfirmDeleteOverlay !== 'undefined') {
+            openConfirmDeleteOverlay('пост', function() {
+                deleteQuestion(questionId);
+            });
+        } else {
+            if (confirm('Вы уверены, что хотите удалить этот пост? Это действие невозможно отменить.')) {
+                deleteQuestion(questionId);
+            }
+        }
+    }
+
+    {% if user.is_authenticated %}
     document.querySelectorAll('.comment-input').forEach(textarea => {
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
     });
+    {% endif %}
 
-    // Голосование (вопросы + комментарии)
     document.addEventListener('click', function(event) {
         const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
         if (!button) return;
@@ -220,7 +237,6 @@
         .catch(err => console.error('Vote error:', err));
     });
 
-    // WebSocket для новых комментариев
     const csrfToken = '{{ csrf_token }}';
     const currentQuestionId = "{{ question.id }}";
 
@@ -237,39 +253,23 @@
             data.data.question_id == currentQuestionId &&
             (data.data.event_type === 'new_comment' || data.data.event_type === 'new_answer')
         ) {
-            const commentsSection = document.getElementById('commentsSection');
-            if (!commentsSection) return;
-
-            commentsSection.innerHTML = `
-                <h3 class="comments-title">Комментарии (${data.data.count})</h3>
-                ${data.data.html}
-            `;
-
-            commentsSection.querySelectorAll('.comment-input').forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-                });
-            });
-
-            commentsSection.querySelectorAll('.comment-report-btn').forEach(btn => {
-                if (btn.dataset.authorId == "{{ request.user.id }}") {
-                    btn.style.display = 'none';
-                }
-            });
+            window.location.reload();
         }
     };
 
-    // Отправка комментариев и ответов
+    {% if user.is_authenticated %}
     document.addEventListener('submit', function(event) {
         const form = event.target;
-        if (form.id !== 'commentForm' && !form.classList.contains('answerForm')) return;
+        if (form.id !== 'commentForm') return;
 
         event.preventDefault();
 
         const formData = new FormData(form);
+        const text = formData.get('text');
 
-        fetch(form.action || window.location.href, {
+        if (!text || !text.trim()) return;
+
+        fetch(window.location.href, {
             method: 'POST',
             body: formData,
             headers: {
@@ -283,16 +283,11 @@
                 form.reset();
                 const textarea = form.querySelector('textarea');
                 if (textarea) textarea.style.height = 'auto';
+                window.location.reload();
             } else if (data.error) {
                 showError(data.error);
             }
         });
-    });
-
-    document.querySelectorAll('.comment-report-btn').forEach(btn => {
-        if (btn.dataset.authorId == "{{ request.user.id }}") {
-            btn.style.display = 'none';
-        }
     });
 
     document.getElementById('commentInput').addEventListener('keypress', function(e) {
@@ -301,6 +296,137 @@
             document.getElementById('commentForm').dispatchEvent(new Event('submit'));
         }
     });
+    {% else %}
+    document.getElementById('commentForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        redirectToLogin();
+    });
+    {% endif %}
+    function showError(text) {
+            var errorBox = document.getElementById('globalErrorBox');
+            if (errorBox) {
+                errorBox.remove();
+            }
+            errorBox = document.createElement('div');
+            errorBox.id = 'globalErrorBox';
+            errorBox.textContent = text;
+            errorBox.style.position = 'fixed';
+            errorBox.style.top = '20px';
+            errorBox.style.right = '20px';
+            errorBox.style.background = '#ff4d4f';
+            errorBox.style.color = 'white';
+            errorBox.style.padding = '14px 18px';
+            errorBox.style.borderRadius = '12px';
+            errorBox.style.zIndex = '99999';
+            errorBox.style.fontSize = '14px';
+            errorBox.style.fontFamily = 'Mallanna, sans-serif';
+            errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            document.body.appendChild(errorBox);
+            setTimeout(function() {
+                if (errorBox) errorBox.remove();
+            }, 3000);
+        }
+
+        function checkEditPermission(event) {
+            {% if not user.is_authenticated %}
+                event.preventDefault();
+                showError('Требуется авторизация');
+                return false;
+            {% elif not user.active %}
+                event.preventDefault();
+                showError('Вы заблокированы');
+                return false;
+            {% endif %}
+            return true;
+        }
+
+        function deleteQuestion(questionId) {
+            fetch('/question/' + questionId + '/delete/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.ok) {
+                    window.location.href = '/';
+                } else if (data.error) {
+                    showError(data.error);
+                }
+            });
+        }
+
+        function confirmDeleteQuestion(questionId) {
+            {% if not user.is_authenticated %}
+                showError('Требуется авторизация');
+                return;
+            {% elif not user.active %}
+                showError('Вы заблокированы');
+                return;
+            {% endif %}
+
+            if (typeof openConfirmDeleteOverlay !== 'undefined') {
+                openConfirmDeleteOverlay('пост', function() {
+                    deleteQuestion(questionId);
+                });
+            } else {
+                if (confirm('Вы уверены, что хотите удалить этот пост?')) {
+                    deleteQuestion(questionId);
+                }
+            }
+        }
+        document.addEventListener('click', function(event) {
+            const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
+            if (!button) return;
+
+            event.preventDefault();
+
+            // Проверка на блокировку
+            {% if user.is_authenticated and not user.active %}
+                showError('Вы заблокированы и не можете голосовать');
+                return;
+            {% elif not user.is_authenticated %}
+                showError('Требуется авторизация');
+                return;
+            {% endif %}
+
+            fetch(button.href, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.ok) {
+                    if (data.login) {
+                        window.location.href = data.login;
+                    }
+                    if (data.error) showError(data.error);
+                    return;
+                }
+
+                const group = button.closest('.vote-group') || button.closest('.comment-vote-group');
+                if (!group) return;
+
+                const count = group.querySelector('.vote-count') || group.querySelector('.comment-vote-count');
+                const upvoteBtn = group.querySelector('.upvote');
+                const downvoteBtn = group.querySelector('.downvote');
+
+                if (count) count.textContent = data.rating;
+
+                if (data.user_rating === 1) {
+                    upvoteBtn?.classList.add('active');
+                    downvoteBtn?.classList.remove('active');
+                } else if (data.user_rating === -1) {
+                    downvoteBtn?.classList.add('active');
+                    upvoteBtn?.classList.remove('active');
+                } else {
+                    upvoteBtn?.classList.remove('active');
+                    downvoteBtn?.classList.remove('active');
+                }
+            })
+            .catch(err => console.error('Vote error:', err));
+        });
     </script>
 </body>
 </html>

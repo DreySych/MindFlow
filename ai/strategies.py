@@ -12,12 +12,14 @@ class SearchStrategy(ABC):
 
 class AllQuestionsStrategy(SearchStrategy):
     """ Берём все вопросы. """
+
     def get_questions(self, query):
         return Question.objects.all()
 
 
 class LastNQuestionsStrategy(SearchStrategy):
     """ Берём только последние n вопросов. """
+
     def __init__(self, n):
         self.n = n
 
