@@ -1,9 +1,9 @@
 // ===== ПЕРЕКЛЮЧЕНИЕ ТЕМЫ =====
 
 function initTheme() {
-  const savedTheme = localStorage.getItem('mindflow-theme') || 'dark';
+  const savedTheme = localStorage.getItem('mindflow-theme') || 'light';
   applyTheme(savedTheme);
-  updateThemeButton();
+  updateThemeRadios();
 }
 
 function applyTheme(theme) {
@@ -14,23 +14,46 @@ function applyTheme(theme) {
     document.body.classList.remove('light-theme');
     localStorage.setItem('mindflow-theme', 'dark');
   }
-  updateThemeButton();
+  updateThemeRadios();
 }
 
-function toggleTheme() {
-  const currentTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  applyTheme(newTheme);
-}
-
-function updateThemeButton() {
-  const btn = document.getElementById('theme-toggle-btn');
-  if (btn) {
-    const isDarkMode = !document.body.classList.contains('light-theme');
-    btn.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-    btn.title = isDarkMode ? 'Светлая тема' : 'Тёмная тема';
+function updateThemeRadios() {
+  const isDarkMode = !document.body.classList.contains('light-theme');
+  const lightRadio = document.getElementById('themeLight');
+  const darkRadio = document.getElementById('themeDark');
+  
+  if (lightRadio && darkRadio) {
+    lightRadio.checked = !isDarkMode;
+    darkRadio.checked = isDarkMode;
   }
 }
+
+function openThemeDialog(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const dialog = document.getElementById('themeDialog');
+  if (dialog) {
+    dialog.style.display = 'flex';
+    document.getElementById('profileOverlay').classList.remove('active');
+  }
+}
+
+function closeThemeDialog() {
+  const dialog = document.getElementById('themeDialog');
+  if (dialog) {
+    dialog.style.display = 'none';
+  }
+}
+
+// Закрытие диалога при клике вне его
+document.addEventListener('click', function(event) {
+  const dialog = document.getElementById('themeDialog');
+  const dialogContent = document.querySelector('.theme-dialog-content');
+  
+  if (dialog && dialog.style.display === 'flex' && !dialogContent.contains(event.target)) {
+    closeThemeDialog();
+  }
+});
 
 // Инициализация при загрузке страницы
 if (document.readyState === 'loading') {

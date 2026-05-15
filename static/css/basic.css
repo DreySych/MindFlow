@@ -180,6 +180,9 @@ header {
 .icon-lupa {
   width: 20px;
   height: 20px;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
 }
 
 /* ===== ИИ ===== */
