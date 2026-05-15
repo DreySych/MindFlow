@@ -1,9 +1,7 @@
-import uuid, datetime
-
+import uuid
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
 from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
 from main.model_loader import get_model
@@ -16,10 +14,6 @@ from users.models import Subscription
 from django.utils import timezone
 import logging
 
-
-
-# Create your views here.
-
 logger = logging.getLogger('project')
 
 
@@ -29,18 +23,69 @@ def can_act(user):
 
 def get_question_context(question_id):
     question = Question.objects.filter(pk=question_id).first()
-
     if question is None:
         return None
-
     comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
     question_images = list(question.images.split(",")) if question.images else []
-
     return {
         'question': question,
         'question_images': question_images,
         'comments': comments,
     }
+
+
+def process_comment(request, question):
+    if not can_act(request.user):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+        return redirect('/')
+    form = CommentForm(request.POST)
+    if form.is_valid() and request.user.is_authenticated:
+        comment = Comment(
+            text=form.cleaned_data['text'],
+            author=request.user,
+            question=question,
+            creation_date=timezone.now(),
+            rating=0
+        )
+        comment.save()
+        if question.author != request.user:
+            Notification.objects.create(
+                user=question.author,
+                text=f'{request.user.username} оставил комментарий к вашему посту',
+                link=f'/question/{question.id}/'
+            )
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True})
+    return redirect('question', question_id=question.id)
+
+
+def build_question_context(question, request):
+    comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
+    question_images = list(question.images.split(",")) if question.images else []
+    context = {
+        'question': question,
+        'question_images': question_images,
+        'comments': comments,
+    }
+    if request.user.is_authenticated:
+        user_like = Like.objects.filter(user=request.user, question=question).first()
+        context['user_rating'] = user_like.rating if user_like else 0
+    else:
+        context['user_rating'] = 0
+
+    for comment in context['comments']:
+        if request.user.is_authenticated:
+            comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+            comment.user_rating = comment_like.rating if comment_like else 0
+        else:
+            comment.user_rating = 0
+
+    if request.user.is_authenticated:
+        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
+    else:
+        context['subscriptions'] = []
+    return context
 
 
 def question_themes_page(request):
@@ -49,138 +94,101 @@ def question_themes_page(request):
 
 def question_page(request, question_id, template_name='question.html'):
     context = get_question_context(question_id)
-
     if context is None:
         return redirect('/')
-
     question = context['question']
 
     if request.method == 'POST':
-        if not can_act(request.user):
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
-            return redirect('/')
+        return process_comment(request, question)
 
-        form = CommentForm(request.POST)
-        if form.is_valid() and request.user.is_authenticated:
-            text = form.cleaned_data['text']
-            comment = Comment(
-                text=text,
-                author=request.user,
-                question=question,
-                creation_date=timezone.now(),
-                rating=0
-            )
-            comment.save()
-            if question.author != request.user:
-                Notification.objects.create(
-                    user=question.author,
-                    text=f'{request.user.username} оставил комментарий к вашему посту',
-                    link=f'/question/{question.id}/'
-                )
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': True})
-
-        return redirect('question', question_id=question_id)
-    else:
-        form = CommentForm()
+    form = CommentForm()
     context['comment_form'] = form
-
-    # Добавляем информацию о лайке пользователя для вопроса
-    if request.user.is_authenticated:
-        user_like = Like.objects.filter(user=request.user, question=question).first()
-        context['user_rating'] = user_like.rating if user_like else 0
-    else:
-        context['user_rating'] = 0
-
-    # Добавляем user_rating для каждого комментария
-    for comment in context['comments']:
-        if request.user.is_authenticated:
-            comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
-            comment.user_rating = comment_like.rating if comment_like else 0
-        else:
-            comment.user_rating = 0
-
-    context_for_update = {
-        'question_rating': context['question'].rating,
-        'question_title': context['question'].title,
-        'question_description': context['question'].description,
-    }
+    context.update(build_question_context(question, request))
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         "group",
         {
             "type": "send_data",
-            "message": context_for_update
+            "message": {
+                'question_rating': question.rating,
+                'question_title': question.title,
+                'question_description': question.description,
+            }
         }
     )
-    if request.user.is_authenticated:
-        context['subscriptions'] = Subscription.objects.filter(user1=request.user)
-    else:
-        context['subscriptions'] = []
-    return render(request, template_name=template_name, context=context)
+    return render(request, template_name, context=context)
+
+
+def save_uploaded_images(images):
+    image_paths = []
+    for image in images:
+        ext = image.name.split('.')[-1]
+        filename = f"question_images/{uuid.uuid4()}.{ext}"
+        path = default_storage.save(filename, ContentFile(image.read()))
+        image_paths.append(path)
+    return ','.join(image_paths)
+
+
+def create_question_from_form(form, request):
+    model = get_model()
+    title = form.cleaned_data['title']
+    description = form.cleaned_data['description']
+    images = request.FILES.getlist('images')
+    logger.debug('Uploaded files for question: %s', request.FILES)
+    logger.info('Question images count: %s', len(images))
+
+    text = f"{title}\n{description}"
+    embeddings = model.encode([text])[0]
+
+    images_str = save_uploaded_images(images) if images else ''
+
+    question = Question(
+        title=title,
+        description=description,
+        rating=0,
+        creation_date=timezone.now(),
+        images=images_str,
+        author=request.user,
+    )
+    question.set_embedding(embeddings)
+    question.save()
+    logger.info('Question created: id=%s, author=%s', question.id, request.user.username)
+    return question
+
+
+def update_question_from_form(question, form, request):
+    question.title = form.cleaned_data['title']
+    question.description = form.cleaned_data['description']
+
+    images = request.FILES.getlist('images')
+    if images:
+        question.images = save_uploaded_images(images)
+    question.save()
+    logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
+    return question
 
 
 def question_make_page(request):
-    context = {}
-
-    if request.user.is_authenticated:
-        if request.user.is_authenticated and request.user.active:
-            if request.method == "POST":
-                form = QuestionForm(request.POST, request.FILES)
-
-                if form.is_valid():
-
-                    model = get_model()
-
-                    time = timezone.now()
-                    title = form.cleaned_data['title']
-                    description = form.cleaned_data['description']
-
-                    images = request.FILES.getlist('images')
-                    logger.debug('Uploaded files for question: %s', request.FILES)
-                    logger.info('Question images count: %s', len(images))
-
-                    image_paths = []
-                    text = f"{title}\n{description}"
-                    embeddings = model.encode([text])[0]
-
-                    for image in images:
-                        ext = image.name.split('.')[-1]
-                        filename = f"question_images/{uuid.uuid4()}.{ext}"
-                        path = default_storage.save(filename, ContentFile(image.read()))
-                        image_paths.append(path)
-
-                    images_str = ','.join(image_paths)
-
-                    question = Question(
-                        title=title,
-                        description=description,
-                        rating=0,
-                        creation_date=time,
-                        images=images_str,
-                        author=request.user,
-                    )
-
-                    question.set_embedding(embeddings)
-                    question.save()
-                    logger.info('Question created: id=%s, author=%s', question.id, request.user.username)
-                    return redirect(f'/profile/{request.user.username}/#question-{question.id}')
-
-            else:
-                form = QuestionForm()
-
-            context['form'] = form
-        else:
-            return redirect('/')
-    else:
+    if not request.user.is_authenticated:
         return redirect('/account/login')
+    if not request.user.active:
+        return redirect('/')
+
+    context = {}
+    if request.method == "POST":
+        form = QuestionForm(request.POST, request.FILES)
+        if form.is_valid():
+            question = create_question_from_form(form, request)
+            return redirect(f'/profile/{request.user.username}/#question-{question.id}')
+    else:
+        form = QuestionForm()
+    context['form'] = form
     if request.user.is_authenticated:
         context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     else:
         context['subscriptions'] = []
-    return render(request, template_name='make_edit_question.html', context=context)
+    return render(request, 'make_edit_question.html', context=context)
 
 
 def question_edit_page(request):
@@ -195,31 +203,15 @@ def question_edit_page(request):
 
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES)
-
         if form.is_valid():
-            question.title = form.cleaned_data['title']
-            question.description = form.cleaned_data['description']
-
-            images = request.FILES.getlist('images')
-
-            if images:
-                image_paths = []
-
-                for image in images:
-                    ext = image.name.split('.')[-1]
-                    filename = f"question_images/{uuid.uuid4()}.{ext}"
-                    path = default_storage.save(filename, ContentFile(image.read()))
-                    image_paths.append(path)
-
-                question.images = ','.join(image_paths)
-            question.save()
-            logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
+            update_question_from_form(question, form, request)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
     else:
         form = QuestionForm(initial={
             'title': question.title,
             'description': question.description,
         })
+
     context = {
         'form': form,
         'question': question,
@@ -230,7 +222,7 @@ def question_edit_page(request):
         context['subscriptions'] = Subscription.objects.filter(user1=request.user)
     else:
         context['subscriptions'] = []
-    return render(request, 'make_edit_question.html', context)
+    return render(request, 'make_edit_question.html', context=context)
 
 
 def themes_page(request):
@@ -238,235 +230,111 @@ def themes_page(request):
 
 
 def make_comment_page(request, question_id):
-    if can_act(request.user):
-        if request.method == "POST":
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                text = form.cleaned_data['text']
-                rating = 0
-                author = request.user
-                creation_date = timezone.now()
-                question = get_object_or_404(Question, pk=question_id)
-                comment = Comment(text=text, rating=rating, author=author, creation_date=creation_date,
-                                  question=question)
-                comment.save()
-                return redirect('/')
-            else:
-                form = CommentForm()
-                return render(request, 'make_comment_answer.html', {'form': form})
-
+    if not can_act(request.user):
+        return redirect('/account/login')
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            Comment.objects.create(
+                text=form.cleaned_data['text'],
+                rating=0,
+                author=request.user,
+                creation_date=timezone.now(),
+                question=get_object_or_404(Question, pk=question_id)
+            )
+            return redirect('/')
         else:
             form = CommentForm()
             return render(request, 'make_comment_answer.html', {'form': form})
     else:
-        return redirect('/account/login')
+        form = CommentForm()
+        return render(request, 'make_comment_answer.html', {'form': form})
+
+
+def generic_like_dislike(request, model_class, like_model, obj_id_field, obj_name):
+    if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
+        return redirect('/account/login/')
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
+        return redirect('/')
+
+    obj_id = request.GET.get('id')
+    obj = get_object_or_404(model_class, id=obj_id)
+
+    like_obj, created = like_model.objects.get_or_create(
+        author=request.user,
+        **{obj_id_field: obj},
+        defaults={'rating': 0, 'created_at': timezone.now()}
+    )
+
+    is_like = 'like' in request.path
+    delta = 1 if is_like else -1
+
+    if (delta == 1 and like_obj.rating == 1) or (delta == -1 and like_obj.rating == -1):
+        like_obj.rating = 0
+        obj.rating -= delta
+    elif like_obj.rating == 0:
+        like_obj.rating = delta
+        obj.rating += delta
+    elif (delta == 1 and like_obj.rating == -1) or (delta == -1 and like_obj.rating == 1):
+        like_obj.rating = delta
+        obj.rating += 2 * delta
+
+    like_obj.save()
+    obj.save()
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'ok': True,
+            'rating': obj.rating,
+            'user_rating': like_obj.rating,
+        })
+    return redirect(request.GET.get('to', '/'))
 
 
 def like_comment(request):
-    if not request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
-
-    if not request.user.active:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
-
-    comment_id = request.GET.get('id')
-    comment = get_object_or_404(Comment, id=comment_id)
-
-    like_obj, created = CommentLike.objects.get_or_create(
-        author=request.user,
-        comment=comment,
-        defaults={'rating': 0, 'created_at': timezone.now()}
-    )
-
-    if like_obj.rating == 1:
-        like_obj.rating = 0
-        comment.rating -= 1
-    elif like_obj.rating == 0:
-        like_obj.rating = 1
-        comment.rating += 1
-    elif like_obj.rating == -1:
-        like_obj.rating = 1
-        comment.rating += 2
-
-    like_obj.save()
-    comment.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-            'ok': True,
-            'rating': comment.rating,
-            'user_rating': like_obj.rating
-
-        })
-
-    return redirect(request.GET.get('to', '/'))
+    return generic_like_dislike(request, Comment, CommentLike, 'comment', 'comment')
 
 
 def dislike_comment(request):
-    if not request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
+    return generic_like_dislike(request, Comment, CommentLike, 'comment', 'comment')
 
-    if not request.user.active:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
 
-    comment_id = request.GET.get('id')
-    comment = get_object_or_404(Comment, id=comment_id)
+def like_answer(request):
+    return generic_like_dislike(request, Answer, AnswerLike, 'answer', 'answer')
 
-    like_obj, created = CommentLike.objects.get_or_create(
-        author=request.user,
-        comment=comment,
-        defaults={'rating': 0, 'created_at': timezone.now()}
-    )
 
-    if like_obj.rating == -1:
-        like_obj.rating = 0
-        comment.rating += 1
-    elif like_obj.rating == 0:
-        like_obj.rating = -1
-        comment.rating -= 1
-    elif like_obj.rating == 1:
-        like_obj.rating = -1
-        comment.rating -= 2
-
-    like_obj.save()
-    comment.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-
-            'ok': True,
-            'rating': comment.rating,
-            'user_rating': like_obj.rating
-
-        })
-
-    return redirect(request.GET.get('to', '/'))
+def dislike_answer(request):
+    return generic_like_dislike(request, Answer, AnswerLike, 'answer', 'answer')
 
 
 def make_answer_page(request, comment_id):
     if not can_act(request.user):
         return redirect('/')
-
     comment = get_object_or_404(Comment, id=comment_id)
-
     if request.method == "POST":
         text = request.POST.get('text')
-
         if text:
-            answer = Answer(
+            Answer.objects.create(
                 answer=text,
                 rating=0,
                 author=request.user,
                 creation_date=timezone.now(),
                 comment=comment
             )
-            answer.save()
             if comment.author != request.user:
                 Notification.objects.create(
                     user=comment.author,
                     text=f'{request.user.username} ответил на ваш комментарий',
                     link=f'/question/{comment.question.id}/#comment-{comment.id}'
                 )
-
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'ok': True})
-
     return redirect('/question/' + str(comment.question.id) + '/')
 
-
-def like_answer(request):
-    if not request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
-
-    if not request.user.active:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
-
-    answer_id = request.GET.get('id')
-    answer = get_object_or_404(Answer, id=answer_id)
-
-    like_obj, created = AnswerLike.objects.get_or_create(
-        author=request.user,
-        answer=answer,
-        defaults={'rating': 0, 'created_at': timezone.now()}
-    )
-
-    if like_obj.rating == 1:
-        like_obj.rating = 0
-        answer.rating -= 1
-    elif like_obj.rating == 0:
-        like_obj.rating = 1
-        answer.rating += 1
-    elif like_obj.rating == -1:
-        like_obj.rating = 1
-        answer.rating += 2
-
-    like_obj.save()
-    answer.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-            'ok': True,
-            'rating': answer.rating,
-            'user_rating': like_obj.rating,
-        })
-
-    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
-
-
-def dislike_answer(request):
-    if not request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
-
-    if not request.user.active:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы и не можете выполнять это действие'})
-        return redirect('/')
-
-    answer_id = request.GET.get('id')
-    answer = get_object_or_404(Answer, id=answer_id)
-
-    like_obj, created = AnswerLike.objects.get_or_create(
-        author=request.user,
-        answer=answer,
-        defaults={'rating': 0, 'created_at': timezone.now()}
-    )
-
-    if like_obj.rating == -1:
-        like_obj.rating = 0
-        answer.rating += 1
-    elif like_obj.rating == 0:
-        like_obj.rating = -1
-        answer.rating -= 1
-    elif like_obj.rating == 1:
-        like_obj.rating = -1
-        answer.rating -= 2
-
-    like_obj.save()
-    answer.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-            'ok': True,
-            'rating': answer.rating,
-            'user_rating': like_obj.rating
-
-        })
-
-    return redirect(request.GET.get('to', '/question/' + str(answer.comment.question.id) + '/'))
 
 def question_card(request):
     return render(request, template_name="questions.html")
@@ -475,19 +343,14 @@ def question_card(request):
 def delete_question(request, question_id):
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'})
-
     if not can_act(request.user):
         return JsonResponse({'ok': False, 'error': 'Нет доступа'})
-
     question = get_object_or_404(Question, id=question_id)
-
     if question.author != request.user and not request.user.is_staff:
         return JsonResponse({'ok': False, 'error': 'Нет прав'})
-
     if question.images:
         for path in question.images.split(','):
             if path and default_storage.exists(path):
                 default_storage.delete(path)
-
     question.delete()
     return JsonResponse({'ok': True})
