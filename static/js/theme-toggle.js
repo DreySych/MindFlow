@@ -33,6 +33,7 @@ function openThemeDialog(event) {
   event.stopPropagation();
   const dialog = document.getElementById('themeDialog');
   if (dialog) {
+    updateThemeRadios();
     dialog.style.display = 'flex';
     document.getElementById('profileOverlay').classList.remove('active');
   }
