@@ -61,7 +61,6 @@ header {
   background: transparent;
   cursor: pointer;
   padding: 0;
-  transition: background 0.2s ease;
   flex-shrink: 0;
   overflow: hidden;
   text-decoration: none;
@@ -99,7 +98,6 @@ header {
   font-family: 'Mallanna', sans-serif;
   font-size: 16px;
   color: var(--accent-primary);
-  transition: background 0.2s ease, color 0.2s ease;
   flex-shrink: 0;
   text-decoration: none;
 }
@@ -139,7 +137,6 @@ header {
   height: 44px;
   flex: 1 1 auto;
   min-width: 0;
-  transition: flex-basis 0.3s ease;
   overflow: hidden;
 }
 
@@ -198,7 +195,6 @@ header {
   width: 44px;
   height: 44px;
   border-radius: 25px;
-  transition: width 0.3s ease, gap 0.3s ease, padding 0.3s ease, background 0.2s ease;
   overflow: hidden;
   white-space: nowrap;
   flex-shrink: 0;
@@ -219,7 +215,6 @@ header {
   font-size: 14px;
   color: var(--ai-text);
   opacity: 0;
-  transition: opacity 0.2s ease;
   white-space: nowrap;
   line-height: 44px;
   order: 0;
@@ -284,7 +279,6 @@ main {
   box-sizing: border-box;
   color: var(--text-primary);
   background: var(--input-bg);
-  transition: border-color 0.2s ease;
 }
 
 .sidebar-search-input:focus {
@@ -331,7 +325,6 @@ main {
   gap: 4px;
   padding: 4px 8px;
   border-radius: 12px;
-  transition: background 0.15s ease;
   flex-shrink: 0;
 }
 
@@ -388,7 +381,6 @@ main {
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition: background 0.2s ease;
   text-decoration: none;
 }
 
@@ -464,7 +456,6 @@ footer {
   background: transparent;
   cursor: pointer;
   padding: 0;
-  transition: background 0.2s ease;
   flex-shrink: 0;
   overflow: hidden;
   text-decoration: none;

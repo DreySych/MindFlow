@@ -45,9 +45,12 @@ document.addEventListener('input', function(e) {
 
         if (cc) {
             cc.textContent = len + '/500';
-            if (len > 450) cc.style.color = '#e53935';
-            else if (len > 400) cc.style.color = '#ff9800';
-            else cc.style.color = '#888';
+            // От 0 до 400: серый
+            // От 400 до 450: оранжевый
+            // От 450: красный
+            if (len > 450) cc.style.color = getComputedStyle(document.documentElement).getPropertyValue('--danger-primary');
+            else if (len > 400) cc.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
+            else cc.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary');
         }
 
         if (et && e.target.value.trim()) {
@@ -67,7 +70,7 @@ window.openComplainUserOverlay = function() {
     var et = document.getElementById('complainUserError');
 
     if (ta) ta.value = '';
-    if (cc) { cc.textContent = '0/500'; cc.style.color = '#888'; }
+    if (cc) { cc.textContent = '0/500'; cc.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'); }
     if (et) et.style.display = 'none';
 };
 

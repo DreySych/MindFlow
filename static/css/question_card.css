@@ -14,7 +14,6 @@
     border-radius: 12px;
     padding: 8px;
     margin: -8px;
-    transition: background 0.2s;
 }
 
 .question-card:hover .question-card-content {
@@ -44,7 +43,6 @@
     align-items: center;
     text-decoration: none;
     line-height: 0;
-    transition: opacity 0.2s;
 }
 
 .user-avatar {
@@ -60,7 +58,6 @@
     font-family: 'Mallanna', sans-serif;
     color: var(--text-primary);
     text-decoration: none;
-    transition: color 0.2s;
     display: inline-flex;
     align-items: center;
 }
@@ -145,7 +142,6 @@
     padding: 8px;
     border-radius: 20px;
     color: var(--accent-primary);
-    transition: background 0.2s ease;
 }
 
 .vote-btn.upvote:hover {

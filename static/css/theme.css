@@ -92,7 +92,6 @@ body.light-theme {
 body {
   color: var(--text-primary);
   background: var(--bg-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 html, body {

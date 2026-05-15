@@ -52,7 +52,6 @@
     font-size: 14px;
     color: var(--accent-primary);
     text-decoration: none;
-    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -106,16 +105,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 20px;
     border: 1px solid transparent;
     cursor: pointer;
 }
 
 .report-btn:hover {
-    background: #ffebee;
-    border-color: #e53935;
+    background: rgba(207, 107, 107, 0.15);
+    border-color: var(--danger-primary);
 }
 
 .report-btn img {
@@ -136,23 +135,22 @@
     display: flex;
     gap: 8px;
     margin-bottom: 20px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-primary);
 }
 
 .nav-btn {
     padding: 10px 24px;
     font-size: 18px;
     font-family: 'Mallanna', sans-serif;
-    color: #666;
+    color: var(--text-secondary);
     text-decoration: none;
-    transition: all 0.2s ease;
     position: relative;
     background: none;
     border: none;
     cursor: pointer;
 }
-.nav-btn:hover { color: #1671FE; }
-.nav-btn.active { color: #1671FE; }
+.nav-btn:hover { color: var(--accent-primary); }
+.nav-btn.active { color: var(--accent-primary); }
 .nav-btn.active::after {
     content: '';
     position: absolute;
@@ -160,7 +158,7 @@
     left: 24px;
     right: 24px;
     height: 2px;
-    background: #1671FE;
+    background: var(--accent-primary);
 }
 .posts-list .user-info {
     display: flex;
@@ -196,7 +194,7 @@
     font-weight: 400;
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
-    color: #1a1a1a;
+    color: var(--text-primary);
     text-decoration: none;
     cursor: default;
     display: inline-flex;
@@ -205,29 +203,28 @@
 .self-user-name::after {
     content: "•";
     font-family: sans-serif;
-    color: #999;
+    color: var(--text-secondary);
     font-size: 20px;
     margin-left: 8px;
     margin-right: 4px;
     display: inline-block;
 }
-.self-user-name:hover { color: #1a1a1a; }
+.self-user-name:hover { color: var(--text-primary); }
 .comment-post-link {
     font-size: 17px;
     font-family: 'Mallanna', sans-serif;
-    color: #888;
+    color: var(--text-secondary);
     text-decoration: none;
     margin-left: 4px;
-    transition: color 0.2s;
     display: inline-flex;
     align-items: center;
 }
-.comment-post-link:hover { color: #1671FE; }
+.comment-post-link:hover { color: var(--accent-primary); }
 .comment-text {
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
     line-height: 1.5;
-    color: #222;
+    color: var(--text-primary);
     margin: 0 0 10px 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -242,19 +239,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 20px;
     border: 1px solid transparent;
     cursor: pointer;
     font-size: 16px;
     font-family: 'Mallanna', sans-serif;
-    color: #1671FE;
+    color: var(--accent-primary);
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
 }
-.action-btn.edit:hover { background: #e3f2fd; border-color: #1671FE; }
+.action-btn.edit:hover { background: rgba(22, 113, 254, 0.1); border-color: var(--accent-primary); }
 .action-btn.edit img { width: 18px; height: 18px; opacity: 1; }
 
 /* Комментарии */

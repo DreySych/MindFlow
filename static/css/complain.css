@@ -69,7 +69,6 @@
   color: var(--text-primary);
   resize: vertical;
   outline: none;
-  transition: border-color 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 }
 
@@ -79,8 +78,7 @@
 }
 
 .complain-textarea.complain-error {
-  border-color: #e53935;
-  animation: shake 0.3s ease;
+  border-color: var(--danger-primary);
 }
 
 @keyframes shake {
@@ -99,14 +97,13 @@
 .complain-error-text {
   font-family: 'Mallanna', sans-serif;
   font-size: 13px;
-  color: #e53935;
+  color: var(--danger-primary);
 }
 
 .complain-char-count {
   font-family: 'Mallanna', sans-serif;
   font-size: 12px;
-  color: #888;
-  transition: color 0.2s ease;
+  color: var(--text-secondary);
   margin-left: auto;
 }
 
@@ -119,33 +116,31 @@
 .complain-cancel-btn {
   padding: 10px 24px;
   border-radius: 25px;
-  border: 1px solid #D1D9E6;
-  background: #ffffff;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-primary);
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .complain-cancel-btn:hover {
-  background: #f5f5f5;
+  background: var(--bg-hover);
 }
 
 .complain-submit-btn {
   padding: 10px 24px;
   border-radius: 25px;
   border: none;
-  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  background: linear-gradient(135deg, var(--danger-primary) 0%, var(--danger-primary) 100%);
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  color: #ffffff;
+  color: var(--bg-primary);
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .complain-submit-btn:hover {
-  background: linear-gradient(135deg, #c62828 0%, #b71c1c 100%);
+  background: linear-gradient(135deg, var(--danger-hover) 0%, var(--danger-hover) 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 }

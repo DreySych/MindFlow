@@ -50,8 +50,8 @@ function showError(text) {
     errorBox.style.position = 'fixed';
     errorBox.style.top = '20px';
     errorBox.style.right = '20px';
-    errorBox.style.background = '#ff4d4f';
-    errorBox.style.color = 'white';
+    errorBox.style.background = getComputedStyle(document.documentElement).getPropertyValue('--danger-primary');
+    errorBox.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
     errorBox.style.padding = '14px 18px';
     errorBox.style.borderRadius = '12px';
     errorBox.style.zIndex = '99999';

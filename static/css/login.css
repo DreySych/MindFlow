@@ -53,7 +53,7 @@
             font-family: 'Manrope', sans-serif;
             font-size: 15px;
             outline: none;
-            transition: all 0.2s ease;
+
         }
 
         .input-field::placeholder {
@@ -68,7 +68,6 @@
 
         .input-field.error {
             border-color: var(--danger-primary);
-            animation: shake 0.3s ease;
         }
 
         @keyframes shake {
@@ -89,7 +88,6 @@
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
-            transition: color 0.2s ease;
         }
 
         .auth-link:hover {
@@ -107,7 +105,6 @@
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
             box-shadow: 0 2px 8px rgba(107, 143, 207, 0.4);
         }
 
@@ -131,7 +128,6 @@
             font-weight: 600;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -151,8 +147,8 @@
         }
 
         .notification.error {
-            border-color: #EF4444;
-            color: #EF4444;
+            border-color: var(--danger-primary);
+            color: var(--danger-primary);
         }
 
         .notification-icon {
@@ -163,7 +159,6 @@
             margin-left: auto;
             cursor: pointer;
             opacity: 0.7;
-            transition: opacity 0.2s ease;
         }
 
         .notification-close:hover {
@@ -177,31 +172,29 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #D1D9E6;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 30px;
     padding: 8px 18px;
     text-decoration: none;
-    color: #1a1a2e;
+    color: var(--text-primary);
     font-family: 'Manrope', sans-serif;
     font-weight: 500;
     font-size: 14px;
-    transition: all 0.3s ease;
     z-index: 100;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .back-button:hover {
-    background: #ffffff;
+    background: var(--bg-hover);
     transform: translateX(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-color: #4A90E2;
+    border-color: var(--accent-primary);
 }
 
 .back-icon {
     width: 18px;
     height: 18px;
-    transition: transform 0.2s ease;
 }
 
 .back-button:hover .back-icon {

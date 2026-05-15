@@ -34,7 +34,6 @@
     border: 1px solid transparent;
     cursor: pointer;
     color: var(--accent-primary);
-    transition: all 1s ease;
 }
 
 .ai-copy:hover {

@@ -32,7 +32,6 @@
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s;
 }
 
 .add-friend-btn:hover {
@@ -51,21 +50,20 @@
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 20px;
     border: 1px solid transparent;
-    color: #1671FE;
+    color: var(--accent-primary);
     font-size: 16px;
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
 }
 
 .pm-btn:hover {
-    background: #e3f2fd;
-    border-color: #1671FE;
+    background: rgba(22, 113, 254, 0.1);
+    border-color: var(--accent-primary);
 }
 
 .pm-btn img {
@@ -84,8 +82,8 @@
 .vote-group,
 .action-btn.comment,
 .action-btn.report {
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 20px;
     border: 1px solid transparent;
 }
@@ -129,7 +127,7 @@
     font-size: 24px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
-    color: #1671FE;
+    color: var(--accent-primary);
     min-width: 30px;
     text-align: center;
 }
@@ -147,14 +145,14 @@
 }
 
 .action-btn.comment:hover {
-    background: #e3f2fd;
-    border-color: #1671FE;
+    background: rgba(22, 113, 254, 0.1);
+    border-color: var(--accent-primary);
 }
 
 .action-btn.comment span {
     font-size: 24px;
     font-family: 'Mallanna', sans-serif;
-    color: #1671FE;
+    color: var(--accent-primary);
 }
 
 .action-btn.comment img {
@@ -175,8 +173,8 @@
 }
 
 .action-btn.report:hover {
-    background: #ffebee;
-    border-color: #e53935;
+    background: rgba(207, 107, 107, 0.15);
+    border-color: var(--danger-primary);
 }
 
 .action-btn.report img {
@@ -190,7 +188,7 @@
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border-primary);
         padding-bottom: 8px;
     }
 
