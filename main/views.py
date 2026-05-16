@@ -131,15 +131,6 @@ def get_subscribed_authors(user):
         'user2', flat=True)
 
 
-def delete_post(request):
-    if can_act(request.user):
-        question = Question.objects.filter(id=request.GET.get('id')).first()
-        if question:
-            question.delete()
-        return redirect(request.GET.get('to', '/'))
-    return redirect('/')
-
-
 def change_rating(request, question, x):
     like_obj = Like.objects.filter(user=request.user, question=question)[0]
     if x > 0:

@@ -16,7 +16,6 @@ urlpatterns = [
     path('sidebar/', main_views.sidebar_page, name='sidebar'),
     path('like/', main_views.like, name='like'),
     path('dislike/', main_views.dislike, name='dislike'),
-    path('delete/', main_views.delete_post, name='delete_post'),
 
     path('account/signup/', users_views.signup_page, name='signup'),
     path('account/login/', users_views.login_page, name='login'),
