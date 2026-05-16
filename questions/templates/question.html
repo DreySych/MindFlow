@@ -81,6 +81,7 @@
                                     onclick="openComplainQuestionOverlay({{ question.id }})"
                                     title="Пожаловаться">
                                 <img src="{% static 'images/report.png' %}" alt="Пожаловаться">
+                                <input type="hidden" id="complain_question_id" value="">
                             </button>
                             <button type="button"
                                     class="action-btn delete"

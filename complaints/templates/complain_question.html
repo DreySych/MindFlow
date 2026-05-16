@@ -2,6 +2,7 @@
 <div class="complain-overlay" id="complainQuestionOverlay" style="display: none;">
   <div class="complain-backdrop" onclick="closeComplainQuestionOverlay()"></div>
   <div class="complain-modal">
+    <input type="hidden" id="complain_question_id" value="">
     <div id="complainQuestionForm">
       <div class="complain-header">
         <span class="complain-title">Пожаловаться на пост</span>
@@ -77,6 +78,8 @@ window.closeComplainQuestionOverlay = function() {
 };
 
 window.submitComplainQuestion = function() {
+    const questionId = document.getElementById('complain_question_id').value;
+
     var ta = document.getElementById('complainQuestionText');
     var et = document.getElementById('complainQuestionError');
     var btn = document.querySelector('#complainQuestionOverlay .complain-submit-btn');
@@ -89,7 +92,7 @@ window.submitComplainQuestion = function() {
     btn.disabled = true;
     btn.textContent = 'Отправка...';
 
-    fetch('/complaint/?question_id=' + window.currentComplainQuestionId, {
+    fetch('/complaint/?question_id=' + encodeURIComponent(questionId), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

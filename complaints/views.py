@@ -10,6 +10,10 @@ logger = logging.getLogger('project')
 
 
 def accept(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
+    if not request.user.is_staff:
+        return JsonResponse({'ok': False, 'error': 'Вы не модератор'})
     complaint = Complaint.objects.filter(
         id=request.GET.get('complaint_id')).first()
     if complaint:
@@ -28,6 +32,10 @@ def accept(request):
 
 
 def decline(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
+    if not request.user.is_staff:
+        return JsonResponse({'ok': False, 'error': 'Вы не модератор'})
     complaint = Complaint.objects.filter(
         id=request.GET.get('complaint_id')).first()
     if complaint:
