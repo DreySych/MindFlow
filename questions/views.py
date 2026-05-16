@@ -37,7 +37,10 @@ def get_question_context(question_id):
 def process_comment(request, question):
     if not can_act(request.user):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+            return JsonResponse({
+                'ok': False,
+                'error': 'Вы заблокированы и не можете выполнять это действие'
+            })
         return redirect('/')
     form = CommentForm(request.POST)
     if form.is_valid() and request.user.is_authenticated:
@@ -270,7 +273,7 @@ def generic_like_dislike(request, model_class, like_model, obj_id_field, obj_nam
         defaults={'rating': 0, 'created_at': timezone.now()}
     )
 
-    is_like = 'like' in request.path
+    is_like = '/like/' in request.path
     delta = 1 if is_like else -1
 
     if (delta == 1 and like_obj.rating == 1) or (delta == -1 and like_obj.rating == -1):
@@ -296,20 +299,43 @@ def generic_like_dislike(request, model_class, like_model, obj_id_field, obj_nam
 
 
 def like_comment(request):
-    return generic_like_dislike(request, Comment, CommentLike, 'comment', 'comment')
+    return generic_like_dislike(
+        request,
+        Comment,
+        CommentLike,
+        'comment',
+        'like'
+    )
 
 
 def dislike_comment(request):
-    return generic_like_dislike(request, Comment, CommentLike, 'comment', 'comment')
+    return generic_like_dislike(
+        request,
+        Comment,
+        CommentLike,
+        'comment',
+        'dislike'
+    )
 
 
 def like_answer(request):
-    return generic_like_dislike(request, Answer, AnswerLike, 'answer', 'answer')
+    return generic_like_dislike(
+        request,
+        Answer,
+        AnswerLike,
+        'answer',
+        'like'
+    )
 
 
 def dislike_answer(request):
-    return generic_like_dislike(request, Answer, AnswerLike, 'answer', 'answer')
-
+    return generic_like_dislike(
+        request,
+        Answer,
+        AnswerLike,
+        'answer',
+        'dislike'
+    )
 
 def make_answer_page(request, comment_id):
     if not can_act(request.user):

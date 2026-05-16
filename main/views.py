@@ -194,7 +194,10 @@ def like(request):
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+            return JsonResponse({
+                'ok': False,
+                'error': 'Вы заблокированы и не можете выполнять это действие'
+            })
         return redirect('/')
 
     question_id = request.GET.get('id')
@@ -243,7 +246,10 @@ def dislike(request):
 
     if not request.user.active:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+            return JsonResponse({
+                'ok': False,
+                'error': 'Вы заблокированы и не можете выполнять это действие'
+            })
         return redirect('/')
 
     question_id = request.GET.get('id')
