@@ -10,6 +10,8 @@ logger = logging.getLogger('project')
 
 
 def accept(request):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
@@ -31,6 +33,8 @@ def accept(request):
 
 
 def decline(request):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
@@ -108,6 +112,20 @@ def complaint_page(request):
                 complaint.comment = Comment.objects.get(id=comment_id)
             if answer_id:
                 complaint.answer = Answer.objects.get(id=answer_id)
+
+            exists = Complaint.objects.filter(
+                author=request.user,
+                question=complaint.question if question_id else None,
+                user=complaint.user if user_id else None,
+                comment=complaint.comment if comment_id else None,
+                answer=complaint.answer if answer_id else None,
+            ).exists()
+
+            if exists:
+                return JsonResponse({
+                    'ok': False,
+                    'error': 'Жалоба уже отправлена'
+                })
 
             complaint.save()
             logger.info('Complaint created by user=%s', request.user.username)

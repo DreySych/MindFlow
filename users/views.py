@@ -273,11 +273,16 @@ def profile_page_settings(request):
             image_file = request.FILES.get('image')
 
             if image_file:
-                ext = image_file.name.split('.')[-1]
-                filename = f"avatars/{uuid.uuid4()}.{ext}"
-                path = default_storage.save(
-                    filename, ContentFile(image_file.read()))
-                user.image = path
+                allowed_types = ['image/jpeg', 'image/png', 'image/webp']
+
+                if image_file.content_type in allowed_types and image_file.size <= 5 * 1024 * 1024:
+                    ext = image_file.name.split('.')[-1]
+                    filename = f"avatars/{uuid.uuid4()}.{ext}"
+                    path = default_storage.save(
+                        filename,
+                        ContentFile(image_file.read())
+                    )
+                    user.image = path
 
             user.save()
 
@@ -384,6 +389,8 @@ def profile_page_liked(request, username):
 
 
 def add_friend(request, user_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
@@ -429,6 +436,8 @@ def add_friend(request, user_id):
 
 
 def delete_friend(request, user_id):
+    if request.method != 'POST':
+        return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})

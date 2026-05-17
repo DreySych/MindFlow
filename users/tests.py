@@ -80,7 +80,7 @@ class UsersViewsTest(TestCase):
     def test_subscribe_user(self):
         # Тест подписки: пользователь1 подписывается на пользователь2
         self.client.login(username='user1', password='pass')
-        resp = self.client.get(f'/add_friend/{self.user2.id}/')
+        resp = self.client.post(f'/add_friend/{self.user2.id}/')
         self.assertEqual(resp.status_code, 302)
         self.assertTrue(Subscription.objects.filter(
             user1=self.user1, user2=self.user2).exists())
@@ -89,7 +89,7 @@ class UsersViewsTest(TestCase):
         # Тест отписки: сначала создаём подписку, затем удаляем
         Subscription.objects.create(user1=self.user1, user2=self.user2)
         self.client.login(username='user1', password='pass')
-        resp = self.client.get(f'/delete_friend/{self.user2.id}/')
+        resp = self.client.post(f'/delete_friend/{self.user2.id}/')
         self.assertEqual(resp.status_code, 302)
         self.assertFalse(Subscription.objects.filter(
             user1=self.user1, user2=self.user2).exists())
@@ -104,7 +104,7 @@ class UsersViewsTest(TestCase):
     def test_blocked_user_cannot_subscribe(self):
         # Забаненный пользователь не может подписываться на других
         self.client.login(username='blocked', password='pass')
-        resp = self.client.get(f'/add_friend/{self.user1.id}/')
+        resp = self.client.post(f'/add_friend/{self.user1.id}/')
         self.assertEqual(resp.status_code, 200)
         # Подписка не должна быть создана
         self.assertFalse(Subscription.objects.filter(

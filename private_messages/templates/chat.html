@@ -33,7 +33,13 @@
             const messages = document.getElementById("messages");
 
             const block = document.createElement("div");
-            block.innerHTML = "<b>" + data.sender + ":</b> " + data.message;
+            const name = document.createElement("b");
+            name.textContent = data.sender + ":";
+
+            const text = document.createTextNode(" " + data.message);
+
+            block.appendChild(name);
+            block.appendChild(text);
 
             messages.appendChild(block);
         };

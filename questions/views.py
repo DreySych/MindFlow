@@ -148,6 +148,13 @@ def question_page(request, question_id, template_name='question.html'):
 def save_uploaded_images(images):
     image_paths = []
     for image in images:
+        allowed_types = ['image/jpeg', 'image/png', 'image/webp']
+
+        if image.content_type not in allowed_types:
+            continue
+
+        if image.size > 5 * 1024 * 1024:
+            continue
         ext = image.name.split('.')[-1]
         filename = f"question_images/{uuid.uuid4()}.{ext}"
         path = default_storage.save(filename, ContentFile(image.read()))
@@ -160,6 +167,8 @@ def create_question_from_form(form, request):
     title = form.cleaned_data['title']
     description = form.cleaned_data['description']
     images = request.FILES.getlist('images')
+    if len(images) > 10:
+        images = images[:10]
     logger.debug('Uploaded files for question: %s', request.FILES)
     logger.info('Question images count: %s', len(images))
 

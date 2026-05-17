@@ -60,12 +60,21 @@ document.addEventListener("DOMContentLoaded", function () {
     if (query) {
         // Если есть запрос, то показываем статус и шлём запрос к API
         statusEl.textContent = "ИИ думает над ответом...";
+        function getCookie(name) {
+            let value = null;
+            document.cookie.split(';').forEach(function(c) {
+                let parts = c.trim().split('=');
+                if (parts[0] === name) value = decodeURIComponent(parts[1]);
+            });
+            return value;
+        }
 
         fetch("{% url 'ai_search_api' %}", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCookie("csrftoken"),
             },
             body: JSON.stringify({ q: query }),
         })

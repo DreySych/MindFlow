@@ -47,15 +47,19 @@
                             </div>
 
                             <div class="complaint-verdict">
-                                <a href="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
-                                   class="verdict-btn approve">
-                                    <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
-                                </a>
+                                <form method="post" action="{% url 'accept_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/">
+                                    {% csrf_token %}
+                                    <button type="submit" class="verdict-btn approve">
+                                        <img src="{% static 'images/check_mark.png' %}" alt="Одобрить">
+                                    </button>
+                                </form>
 
-                                <a href="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/"
-                                   class="verdict-btn reject">
-                                    <img src="{% static 'images/krest.png' %}" alt="Отклонить">
-                                </a>
+                                <form method="post" action="{% url 'decline_complaint' %}?complaint_id={{ i.id }}&to=/complaint/panel/users/">
+                                    {% csrf_token %}
+                                    <button type="submit" class="verdict-btn reject">
+                                        <img src="{% static 'images/krest.png' %}" alt="Отклонить">
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

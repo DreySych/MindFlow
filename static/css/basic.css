@@ -446,8 +446,6 @@ footer {
   font-family: 'Mallanna', sans-serif;
   margin: 0;
 }
-<<<<<<< HEAD
-=======
 
 /* ===== кнопка переключения темы ===== */
 .theme-toggle {
@@ -476,4 +474,3 @@ footer {
   align-items: center;
   justify-content: center;
 }
->>>>>>> origin/feature/dark-theme
