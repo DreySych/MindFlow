@@ -39,6 +39,9 @@
 <script>
 let chatSocket = null;
 let selectedUserId = null;
+let chatPage = 1;
+let chatHasMore = false;
+let chatLoading = false;
 const currentUserId = "{{ request.user.id }}";
 const isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
 const isUserActive = {{ request.user.active|yesno:"true,false" }};
@@ -100,24 +103,91 @@ function closeChatOverlay() {
 }
 
 function loadChatMessages(userId) {
-    fetch('/messages/' + userId + '/messages/')
+    chatPage = 1;
+    chatHasMore = false;
+    chatLoading = true;
+
+    fetch('/messages/' + userId + '/messages/?page=1')
         .then(function(response) {
             return response.json();
         })
         .then(function(data) {
             const messagesContainer = document.querySelector('.chat-modal-messages');
+
             messagesContainer.innerHTML = '';
 
             if (!data.ok || data.messages.length === 0) {
-                messagesContainer.innerHTML = '<p class="chat-empty-text">Сообщений пока нет</p>';
+                messagesContainer.innerHTML =
+                    '<p class="chat-empty-text">Сообщений пока нет</p>';
+
+                chatLoading = false;
                 return;
             }
 
+            chatHasMore = data.has_more;
+            chatPage = data.next_page;
+
+
             data.messages.forEach(function(message) {
-                addMessageToChat(message.text, message.sender_id, message.time);
+                addMessageToChat(
+                    message.text,
+                    message.sender_id,
+                    message.time,
+                    false
+                );
             });
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            chatLoading = false;
         });
 }
+
+
+
+function loadOldMessages() {
+    if (!selectedUserId || !chatHasMore || chatLoading) {
+        return;
+    }
+
+    chatLoading = true;
+
+    const container = document.querySelector('.chat-modal-messages');
+
+    const oldHeight = container.scrollHeight;
+
+    fetch('/messages/' + selectedUserId + '/messages/?page=' + chatPage)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+
+
+            data.messages.forEach(function(message) {
+                addMessageToChat(
+                    message.text,
+                    message.sender_id,
+                    message.time,
+                    true
+                );
+            });
+
+            chatHasMore = data.has_more;
+            chatPage = data.next_page;
+
+
+            container.scrollTop =
+                container.scrollHeight - oldHeight;
+
+            chatLoading = false;
+        });
+}
+
+document.querySelector('.chat-modal-messages').addEventListener('scroll', function() {
+    if (this.scrollTop < 50) {
+        loadOldMessages();
+    }
+});
 
 function connectChatSocket(userId) {
     if (chatSocket) {
@@ -129,31 +199,59 @@ function connectChatSocket(userId) {
 
     chatSocket.onmessage = function(event) {
         const data = JSON.parse(event.data);
-        addMessageToChat(data.message, data.sender_id, data.time);
+        addMessageToChat(
+            data.message,
+            data.sender_id,
+            data.time,
+            false
+        );
+
+        const messagesContainer =
+            document.querySelector('.chat-modal-messages');
+
+        messagesContainer.scrollTop =
+            messagesContainer.scrollHeight;
     };
 }
 
-function addMessageToChat(text, senderId, time) {
-    const messagesContainer = document.querySelector('.chat-modal-messages');
+function addMessageToChat(text, senderId, time, prepend) {
+    const messagesContainer =
+        document.querySelector('.chat-modal-messages');
 
     if (messagesContainer.querySelector('.chat-empty-text')) {
         messagesContainer.innerHTML = '';
     }
 
     let messageClass = 'chat-message-other';
+
     if (senderId == currentUserId) {
         messageClass = 'chat-message-my';
     }
 
-    messagesContainer.innerHTML += `
-        <div class="chat-message ${messageClass}">
-            <div class="chat-message-bubble">
-                <p>${escapeHtml(text)}</p>
-                <span class="chat-message-time">${time}</span>
-            </div>
-        </div>
-    `;
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    const messageBlock = document.createElement('div');
+    messageBlock.className =
+        'chat-message ' + messageClass;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-message-bubble';
+
+    const textElement = document.createElement('p');
+    textElement.textContent = text;
+
+    const timeElement = document.createElement('span');
+    timeElement.className = 'chat-message-time';
+    timeElement.textContent = time;
+
+    bubble.appendChild(textElement);
+    bubble.appendChild(timeElement);
+
+    messageBlock.appendChild(bubble);
+
+    if (prepend) {
+        messagesContainer.prepend(messageBlock);
+    } else {
+        messagesContainer.appendChild(messageBlock);
+    }
 }
 
 function escapeHtml(text) {

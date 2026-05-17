@@ -19,11 +19,17 @@
     <div class="content-wrapper">
         <main>
             <div class="feed">
-                {% for post_data in posts_context %}
-                    {% include 'question_card.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments user_rating=post_data.user_rating %}
-                {% empty %}
-                    <h3>Пока вопросов нет</h3>
-                {% endfor %}
+                <div class="feed">
+                    <div id="postsList">
+                        {% for post_data in posts_context %}
+                            {% include 'question_card.html' with question=post_data.question question_images=post_data.question_images comments=post_data.comments user_rating=post_data.user_rating %}
+                        {% empty %}
+                            <h3>Пока вопросов нет</h3>
+                        {% endfor %}
+                    </div>
+
+                    <div id="scrollTrigger"></div>
+                </div>
             </div>
         </main>
     </div>
@@ -217,6 +223,64 @@ document.addEventListener('click', function(event) {
         showError('Ошибка голосования');
     });
 });
+let currentPage = {{ next_page|default:2 }};
+let loadingPosts = false;
+let hasMorePosts = {{ has_more|yesno:"true,false" }};
+
+const scrollTrigger = document.getElementById('scrollTrigger');
+
+function loadMorePosts() {
+    if (loadingPosts || !hasMorePosts) {
+        return;
+    }
+
+    loadingPosts = true;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', currentPage);
+
+    fetch(url.toString(), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (!data.ok) {
+            loadingPosts = false;
+            return;
+        }
+
+        document.getElementById('postsList').insertAdjacentHTML('beforeend', data.html);
+
+        hasMorePosts = data.has_more;
+        currentPage = data.next_page;
+
+        if (!hasMorePosts && scrollTrigger) {
+            scrollTrigger.remove();
+        }
+
+        loadingPosts = false;
+    })
+    .catch(function() {
+        loadingPosts = false;
+        showError('Ошибка загрузки постов');
+    });
+}
+
+if (scrollTrigger) {
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                loadMorePosts();
+            }
+        });
+    });
+
+    observer.observe(scrollTrigger);
+}
 </script>
 </body>
 </html>

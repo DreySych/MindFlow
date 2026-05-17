@@ -8,6 +8,7 @@ from questions.views import get_question_context
 from users.models import User, Subscription
 from django.http import JsonResponse
 from django.utils import timezone
+from django.template.loader import render_to_string
 
 
 def can_act(user):
@@ -31,11 +32,17 @@ def perform_search(search_text):
     input_vec = model.encode([search_text])[0]
     questions = Question.objects.all()
     results = []
+
     for q in questions:
         q_vec = q.get_embedding()
-        similarity = model.similarity([q_vec], [input_vec])[
-            0][0][0][0] if q_vec is not None else -1
+
+        if q_vec is not None:
+            similarity = model.similarity([q_vec], [input_vec]).item()
+        else:
+            similarity = -1
+
         results.append((q, similarity))
+
     return [q for q, _ in sorted(results, key=lambda x: x[1], reverse=True)]
 
 
@@ -93,7 +100,16 @@ def index_page(request):
     search_text = request.GET.get('q', '').strip()
     results = perform_search(
         search_text) if search_text else get_default_questions(request)
-    posts_context = [build_post_context(p, request) for p in results]
+    page = int(request.GET.get('page', 1))
+    per_page = 10
+
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    page_posts = results[start:end]
+    has_more = len(results) > end
+
+    posts_context = [build_post_context(p, request) for p in page_posts]
     context = {
         "username": request.user.username if request.user.is_authenticated else "Профиль",
         "users": User.objects.all(),
@@ -104,6 +120,8 @@ def index_page(request):
         'subscriptions': Subscription.objects.filter(
             user1=request.user) if request.user.is_authenticated else [],
         'posts_context': posts_context,
+        'has_more': has_more,
+        'next_page': page + 1,
         'user': request.user,
         'notifications': Notification.objects.filter(
             user=request.user).order_by('-created_at')[
@@ -117,8 +135,32 @@ def index_page(request):
             'link2': "",
             "page2": ''
         })
-    context['images'] = {p.id: p.images.split(',')[0] for p in results}
+    context['images'] = {
+        p.id: p.images.split(',')[0] if p.images else ''
+        for p in results
+    }
     context['len'] = len(results)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        html = ''
+        for post_data in posts_context:
+            html += render_to_string(
+                'question_card.html',
+                {
+                    'question': post_data['question'],
+                    'question_images': post_data['question_images'],
+                    'comments': post_data['comments'],
+                    'user_rating': post_data['user_rating'],
+                    'request': request,
+                    'user': request.user,
+                }
+            )
+
+        return JsonResponse({
+            'ok': True,
+            'html': html,
+            'has_more': has_more,
+            'next_page': page + 1,
+        })
 
     return render(request, "index.html", context)
 

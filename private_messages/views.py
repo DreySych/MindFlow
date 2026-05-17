@@ -71,15 +71,33 @@ def chat_page(request, user_id):
 
 
 def chat_messages(request, user_id):
-    """Возвращает историю диалога в формате JSON."""
     if not request.user.is_authenticated:
         return JsonResponse({'ok': False})
 
     other_user = get_object_or_404(User, id=user_id)
-    messages = get_dialog_messages(request.user, other_user)
+
+    page = int(request.GET.get('page', 1))
+    per_page = 20
+
+    all_messages = get_dialog_messages(
+        request.user,
+        other_user
+    ).order_by('-created_at')
+
+    start = (page - 1) * per_page
+    end = start + per_page
+
+    messages = list(all_messages[start:end])
+
+    has_more = all_messages.count() > end
+
     mark_messages_as_read(request.user, other_user)
+
+    messages.reverse()
 
     return JsonResponse({
         'ok': True,
-        'messages': [message_to_dict(message) for message in messages]
+        'messages': [message_to_dict(m) for m in messages],
+        'has_more': has_more,
+        'next_page': page + 1,
     })
