@@ -66,7 +66,10 @@ def process_comment(request, question):
                 link=f'/question/{question.id}/'
             )
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
+        if form.is_valid():
+            return JsonResponse({'ok': True})
+        return JsonResponse({'ok': False, 'error': 'Комментарий не может быть пустым'})
+
     return redirect('question', question_id=question.id)
 
 
@@ -360,9 +363,13 @@ def dislike_answer(request):
 def make_answer_page(request, comment_id):
     if not can_act(request.user):
         return redirect('/')
+
     comment = get_object_or_404(Comment, id=comment_id)
+    text = ''
+
     if request.method == "POST":
-        text = request.POST.get('text')
+        text = request.POST.get('text', '').strip()
+
         if text:
             Answer.objects.create(
                 answer=text,
@@ -371,14 +378,19 @@ def make_answer_page(request, comment_id):
                 creation_date=timezone.now(),
                 comment=comment
             )
+
             if comment.author != request.user:
                 Notification.objects.create(
                     user=comment.author,
                     text=f'{request.user.username} ответил на ваш комментарий',
                     link=f'/question/{comment.question.id}/#comment-{comment.id}'
                 )
+
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True})
+        if text:
+            return JsonResponse({'ok': True})
+        return JsonResponse({'ok': False, 'error': 'Ответ не может быть пустым'})
+
     return redirect('/question/' + str(comment.question.id) + '/')
 
 

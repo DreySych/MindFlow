@@ -384,14 +384,34 @@ def profile_page_liked(request, username):
 
 
 def add_friend(request, user_id):
-    if not can_act(request.user):
-        return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+    if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
+        return redirect('/account/login/')
+
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+
+        return JsonResponse({
+            'ok': False,
+            'error': 'Вы заблокированы'
+        }, status=200)
 
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
+
+    if current_user == friend:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Нельзя подписаться на себя'})
+        return redirect(f'/profile/{friend.username}/')
+
     subscription_exists = Subscription.objects.filter(
-        user1=current_user, user2=friend).exists()
-    if not subscription_exists and current_user != friend:
+        user1=current_user,
+        user2=friend
+    ).exists()
+
+    if not subscription_exists:
         Subscription.objects.create(user1=current_user, user2=friend)
         Notification.objects.create(
             user=friend,
@@ -399,23 +419,47 @@ def add_friend(request, user_id):
             link=f'/profile/{current_user.username}/'
         )
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True})
+
     next_url = request.POST.get('next', request.GET.get(
-        'next', f'/profile/{friend.username}'))
+        'next', f'/profile/{friend.username}/'
+    ))
     return redirect(next_url)
 
 
 def delete_friend(request, user_id):
-    if not can_act(request.user):
-        return redirect('/')
+    if not request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'login': '/account/login/'})
+        return redirect('/account/login/')
+
+    if not request.user.active:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'ok': False, 'error': 'Вы заблокированы'})
+
+        return JsonResponse({
+            'ok': False,
+            'error': 'Вы заблокированы'
+        }, status=200)
+
     friend = get_object_or_404(User, id=user_id)
     current_user = request.user
+
     subscription = Subscription.objects.filter(
-        user1=current_user, user2=friend).first()
+        user1=current_user,
+        user2=friend
+    ).first()
+
     if subscription:
         subscription.delete()
 
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'ok': True})
+
     next_url = request.POST.get('next', request.GET.get(
-        'next', f'/profile/{friend.username}'))
+        'next', f'/profile/{friend.username}/'
+    ))
     return redirect(next_url)
 
 
