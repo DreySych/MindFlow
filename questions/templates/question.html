@@ -6,6 +6,7 @@
     {% load static %}
     {% load custom_filters %}
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/question_card.css' %}">
     <link rel="stylesheet" href="{% static 'css/post.css' %}">
@@ -147,8 +148,8 @@
             position: 'fixed',
             top: '20px',
             right: '20px',
-            background: '#ff4d4f',
-            color: 'white',
+            background: getComputedStyle(document.documentElement).getPropertyValue('--danger-primary'),
+            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
             padding: '14px 18px',
             borderRadius: '12px',
             zIndex: '99999',

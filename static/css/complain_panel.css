@@ -19,7 +19,7 @@ body {
 .admin-title {
     font-size: 28px;
     font-weight: 500;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 24px;
 }
 
@@ -28,7 +28,7 @@ body {
     gap: 12px;
     margin-bottom: 32px;
     border-bottom: 1px solid;
-    border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+    border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
     padding-bottom: 16px;
 }
 
@@ -36,20 +36,19 @@ body {
     padding: 12px 28px;
     font-family: 'Mallanna', sans-serif;
     font-size: 16px;
-    color: #888;
+    color: var(--text-secondary);
     text-decoration: none;
     border-radius: 25px;
-    transition: all 0.2s;
 }
 
 .admin-tab:hover {
-    color: #1671FE;
-    background: #f5f7fa;
+    color: var(--accent-primary);
+    background: var(--bg-hover);
 }
 
 .admin-tab.active {
-    color: #fff;
-    background: #1671FE;
+    color: var(--bg-primary);
+    background: var(--accent-primary);
 }
 
 .complaints-list {
@@ -59,8 +58,8 @@ body {
 }
 
 .complaint-card {
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     border-radius: 12px;
     padding: 20px;
 }
@@ -72,13 +71,13 @@ body {
 .complaint-post-title {
     font-size: 20px;
     font-weight: 500;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin-bottom: 8px;
 }
 
 .complaint-post-text {
     font-size: 15px;
-    color: #555;
+    color: var(--text-secondary);
     line-height: 1.5;
     margin-bottom: 12px;
 }
@@ -87,17 +86,16 @@ body {
     display: inline-block;
     font-family: 'Mallanna', sans-serif;
     font-size: 14px;
-    color: #1671FE;
+    color: var(--accent-primary);
     text-decoration: none;
     padding: 6px 16px;
-    border: 1px solid #1671FE;
+    border: 1px solid var(--accent-primary);
     border-radius: 20px;
-    transition: all 0.2s;
 }
 
 .complaint-detail-btn:hover {
-    background: #1671FE;
-    color: #fff;
+    background: var(--accent-primary);
+    color: var(--bg-primary);
 }
 
 .complaint-comment {
@@ -111,12 +109,12 @@ body {
 
 .complaint-comment-text {
     font-size: 16px;
-    color: #333;
+    color: var(--text-primary);
     line-height: 1.5;
     font-style: italic;
     /* МИНИМАЛЬНЫЕ ОТСТУПЫ */
     padding: 8px 8px !important;
-    background: #f8f8f8;
+    background: var(--bg-hover);
     border-radius: 8px;
     /* ПЕРЕНОС ТЕКСТА */
     word-break: break-all;
@@ -138,7 +136,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-top: 16px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-primary);
     gap: 0;
 }
 
@@ -152,14 +150,14 @@ body {
 
 .complaint-label {
     font-size: 14px;
-    color: #888;
+    color: var(--text-secondary);
     white-space: nowrap;
     flex-shrink: 0;
 }
 
 .complaint-value {
     font-size: 14px;
-    color: #e53935;
+    color: var(--danger-primary);
     font-weight: 500;
     flex: 1;
     word-break: break-word;
@@ -185,7 +183,6 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
     flex-shrink: 0;
 }
 
@@ -195,23 +192,23 @@ body {
 }
 
 .verdict-btn.approve {
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #4caf50 0%, #2e7d32 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--upvote-text) 0%, var(--upvote-text) 100%) border-box;
 }
 
 .verdict-btn.approve:hover {
-    background: #e8f5e9;
-    border-color: #4caf50;
+    background: rgba(76, 175, 80, 0.15);
+    border-color: var(--upvote-text);
 }
 
 .verdict-btn.reject {
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-primary) 100%) border-box;
 }
 
 .verdict-btn.reject:hover {
-    background: #ffebee;
-    border-color: #e53935;
+    background: rgba(207, 107, 107, 0.15);
+    border-color: var(--danger-primary);
 }
 
 .user-complaint-card {
@@ -245,19 +242,18 @@ body {
     flex: 1;
     font-size: 16px;
     font-family: 'Mallanna', sans-serif;
-    color: #1a1a1a;
+    color: var(--text-primary);
     text-decoration: none;
     padding: 8px 16px;
-    background: #f8f8f8;
+    background: var(--bg-hover);
     border-radius: 8px;
     display: block;
     font-weight: normal;
-    transition: color 0.2s ease;
 }
 
 .user-name-link-complaint:hover {
-    color: #1671FE !important;
-    background: #f8f8f8;
+    color: var(--accent-primary) !important;
+    background: var(--bg-hover);
     text-decoration: none;
 }
 
@@ -266,7 +262,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-top: 16px;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-primary);
     margin-top: 0;
     width: 100%;
 }
@@ -279,12 +275,12 @@ body {
 
 .user-complaint-card .complaint-label {
     font-size: 14px;
-    color: #888;
+    color: var(--text-secondary);
 }
 
 .user-complaint-card .complaint-value {
     font-size: 14px;
-    color: #e53935;
+    color: var(--danger-primary);
     font-weight: 500;
 }
 
@@ -362,10 +358,9 @@ body {
         align-self: flex-end;
     }
     .user-name-link-complaint {
-            transition: color 0.2s ease;
-        }
+    }
     .user-name-link-complaint:hover {
-        color: #1671FE !important;
-        background: #f8f8f8 !important;
+        color: var(--accent-primary) !important;
+        background: var(--bg-hover) !important;
     }
 }

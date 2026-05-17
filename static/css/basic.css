@@ -5,9 +5,9 @@ header {
   left: 0;
   width: 100%;
   height: 120px;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-bottom: 1px solid;
-  border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+  border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -35,7 +35,7 @@ header {
 .logo-text {
   font-family: 'Mallanna', sans-serif;
   font-size: 36px;
-  background: linear-gradient(to right, #0047AB 0%, #1671FE 100%);
+  background: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -61,14 +61,13 @@ header {
   background: transparent;
   cursor: pointer;
   padding: 0;
-  transition: background 0.2s ease;
   flex-shrink: 0;
   overflow: hidden;
   text-decoration: none;
 }
 
 .icon-button:hover {
-  background: #F6F6F6;
+  background: var(--bg-hover);
 }
 
 .icon-profile {
@@ -90,28 +89,27 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #ffffff;
-  border: 1px solid #C6C6C6;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 25px;
   padding: 0 16px;
   height: 44px;
   cursor: pointer;
   font-family: 'Mallanna', sans-serif;
   font-size: 16px;
-  color: #1671FE;
-  transition: background 0.2s ease, color 0.2s ease;
+  color: var(--accent-primary);
   flex-shrink: 0;
   text-decoration: none;
 }
 
 .create-button:hover {
-  background: #F6F6F6;
-  color: #1671FE;
+  background: var(--bg-hover);
+  color: var(--accent-primary);
 }
 
 .icon-plus {
   font-size: 30px;
-  color: #1671FE;
+  color: var(--accent-primary);
   line-height: 1;
   font-weight: 300;
   display: flex;
@@ -132,14 +130,13 @@ header {
 .search-wrapper {
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #C6C6C6;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 25px;
   padding: 0 14px 0 10px;
   height: 44px;
   flex: 1 1 auto;
   min-width: 0;
-  transition: flex-basis 0.3s ease;
   overflow: hidden;
 }
 
@@ -152,13 +149,13 @@ header {
   padding: 0 8px;
   height: 100%;
   background: transparent;
-  color: #000000;
+  color: var(--text-primary);
   min-width: 0;
 }
 
 .search-wrapper input::placeholder {
   font-family: 'Mallanna', sans-serif;
-  color: #666666;
+  color: var(--text-secondary);
 }
 
 .search-wrapper button {
@@ -175,7 +172,7 @@ header {
 .search-divider {
   width: 1px;
   height: 44px;
-  background: #C6C6C6;
+  background: var(--border-primary);
   margin-right: 15px;
   flex-shrink: 0;
 }
@@ -183,11 +180,14 @@ header {
 .icon-lupa {
   width: 20px;
   height: 20px;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
 }
 
 /* ===== ИИ ===== */
 .ii-button {
-  background: #1671FE;
+  background: var(--accent-primary);
   border: none;
   cursor: pointer;
   padding: 0 8.9px;
@@ -198,7 +198,6 @@ header {
   width: 44px;
   height: 44px;
   border-radius: 25px;
-  transition: width 0.3s ease, gap 0.3s ease, padding 0.3s ease;
   overflow: hidden;
   white-space: nowrap;
   flex-shrink: 0;
@@ -211,14 +210,14 @@ header {
   gap: 6px;
   padding: 0 14px;
   justify-content: flex-end;
+  background: var(--ai-button-hover);
 }
 
 .ii-text {
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  color: #ffffff;
+  color: var(--ai-text);
   opacity: 0;
-  transition: opacity 0.2s ease;
   white-space: nowrap;
   line-height: 44px;
   order: 0;
@@ -256,8 +255,8 @@ main {
   width: 10vw;
   min-width: 220px;
   height: calc(100vh - 120px);
-  background: #ffffff;
-  border-right: 1px solid #044EB9;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--accent-secondary);
   z-index: 9;
   overflow: hidden;
   box-sizing: border-box;
@@ -268,7 +267,7 @@ main {
   padding: 16px 12px;
   box-sizing: border-box;
   flex-shrink: 0;
-  background: #ffffff;
+  background: var(--bg-primary);
   z-index: 2;
 }
 
@@ -277,21 +276,21 @@ main {
   padding: 8px 12px;
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  border: 1px solid #C6C6C6;
+  border: 1px solid var(--border-primary);
   border-radius: 20px;
   outline: none;
   box-sizing: border-box;
-  color: #000;
-  transition: border-color 0.2s ease;
+  color: var(--text-primary);
+  background: var(--input-bg);
 }
 
 .sidebar-search-input:focus {
-  border-color: #1671FE;
+  border-color: var(--accent-primary);
 }
 
 .sidebar-search-input::placeholder {
   font-family: 'Mallanna', sans-serif;
-  color: #666666;
+  color: var(--text-secondary);
 }
 
 /* ===== список друзей ===== */
@@ -314,12 +313,12 @@ main {
 }
 
 .friends-list::-webkit-scrollbar-thumb {
-  background: #C6C6C6;
+  background: var(--border-primary);
   border-radius: 4px;
 }
 
 .friends-list::-webkit-scrollbar-thumb:hover {
-  background: #1671FE;
+  background: var(--accent-primary);
 }
 
 /* ===== друг ===== */
@@ -329,12 +328,11 @@ main {
   gap: 4px;
   padding: 4px 8px;
   border-radius: 12px;
-  transition: background 0.15s ease;
   flex-shrink: 0;
 }
 
 .friend-item:hover {
-  background: #F6F6F6;
+  background: var(--bg-hover-alt);
 }
 
 .friend-button {
@@ -349,7 +347,7 @@ main {
   cursor: pointer;
   font-family: 'Mallanna', sans-serif;
   font-size: 15px;
-  color: #000000;
+  color: var(--text-primary);
   text-align: left;
   border-radius: 8px;
   text-decoration: none;
@@ -386,16 +384,15 @@ main {
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition: background 0.2s ease;
   text-decoration: none;
 }
 
 .chat-button:hover {
-  background: rgba(22, 113, 254, 0.1);
+  background: var(--hover-chat);
 }
 
 .chat-button:active {
-  background: rgba(22, 113, 254, 0.2);
+  background: rgba(107, 143, 207, 0.3);
 }
 
 .chat-icon {
@@ -408,7 +405,7 @@ main {
 .sidebar-divider {
   width: 100%;
   height: 1px;
-  background: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%);
+  background: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-secondary) 17%, var(--accent-primary) 100%);
   flex-shrink: 0;
 }
 
@@ -417,9 +414,9 @@ footer {
   position: relative;
   width: 100%;
   height: 80px;
-  background: #ffffff;
+  background: var(--bg-primary);
   border-top: 1px solid transparent;
-  border-image: linear-gradient(to right, #0047AB 0%, #044EB9 17%, #1671FE 100%) 1;
+  border-image: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-secondary) 17%, var(--accent-primary) 100%) 1;
   margin-top: auto;
   z-index: 10;
   display: flex;
@@ -430,7 +427,7 @@ footer {
 .footer-text {
   font-family: 'Montserrat', sans-serif;
   font-size: 17px;
-  background: linear-gradient(to right, #0047AB 0%, #1671FE 100%);
+  background: linear-gradient(to right, var(--accent-gradient-start) 0%, var(--accent-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -445,7 +442,38 @@ footer {
 
 .friends-empty-text {
   padding: 4px 12px 12px 12px;
-  color: #888;
+  color: var(--text-secondary);
   font-family: 'Mallanna', sans-serif;
   margin: 0;
 }
+<<<<<<< HEAD
+=======
+
+/* ===== кнопка переключения темы ===== */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-hover);
+}
+
+.theme-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+>>>>>>> origin/feature/dark-theme

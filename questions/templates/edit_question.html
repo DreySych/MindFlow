@@ -5,11 +5,94 @@
     <title>Изменение поста - MindFlow</title>
     {% load static %}
     {% load custom_filters %}
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/post.css' %}">
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
     <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+    <style>
+        .post-form-title {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+            font-family: 'Mallanna', sans-serif;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-primary);
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: var(--bg-primary);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .image-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border: 2px dashed var(--border-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: var(--bg-secondary);
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        .image-upload-label:hover {
+            border-color: var(--accent-primary);
+            background-color: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 8px;
+            max-height: 400px;
+            object-fit: cover;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .submit-btn {
+            padding: 10px 24px;
+            background-color: var(--accent-primary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background-color 0.2s ease;
+        }
+        .submit-btn:hover {
+            background-color: var(--accent-secondary);
+        }
+    </style>
 </head>
 <body>
 {% include 'header.html' %}
@@ -19,27 +102,27 @@
     <main>
         <div class="feed">
             <article class="post-detail-card" style="max-width: 800px; margin: 0 auto;">
-                <h1 style="font-size: 32px; margin-bottom: 30px; color: #333; font-family: 'Mallanna', sans-serif;">Изменить пост</h1>
+                <h1 class="post-form-title">Изменить пост</h1>
 
                 <form id="createPostForm" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <div style="margin-bottom: 25px;">
-                        <label for="postTitle" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Заголовок</label>
+                    <div class="form-group">
+                        <label for="postTitle" class="form-label">Заголовок</label>
                         <input 
                             type="text" 
                             id="postTitle" 
                             name="title" 
                             maxlength="200"
                             required
-                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box;"
+                            class="form-input"
                         >
                     </div>
 
-                    <div style="margin-bottom: 25px;">
-                        <label for="postImage" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Добавить изображение</label>
+                    <div class="form-group">
+                        <label for="postImage" class="form-label">Добавить изображение</label>
                         <div style="position: relative;">
-                            <label for="postImage" style="display: flex; align-items: center; justify-content: center; padding: 30px; border: 2px dashed #e0e0e0; border-radius: 8px; cursor: pointer; background-color: #f9f9f9;">
+                            <label for="postImage" class="image-upload-label">
                                 <span>Нажмите для загрузки или перетащите изображение</span>
                             </label>
                             <input 
@@ -49,22 +132,22 @@
                                 accept="image/*"
                                 style="display: none;"
                             >
-                            <img id="imagePreview" style="margin-top: 10px; max-width: 100%; border-radius: 8px; display: none; max-height: 400px; object-fit: cover;" alt="Предпросмотр">
+                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Предпросмотр">
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 25px;">
-                        <label for="postText" style="display: block; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: #333;">Текстовая область</label>
+                    <div class="form-group">
+                        <label for="postText" class="form-label">Текстовая область</label>
                         <textarea 
                             id="postText" 
                             name="description" 
                             maxlength="5000"
-                            style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; resize: vertical; min-height: 120px;"
+                            class="form-textarea"
                         ></textarea>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end;">
-                        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">Изменить</button>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">Изменить</button>
                     </div>
                 </form>
             </article>

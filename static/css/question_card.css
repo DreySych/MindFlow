@@ -6,7 +6,7 @@
 }
 
 .question-card + .question-card {
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--border-primary);
     padding-top: 16px;
 }
 
@@ -14,18 +14,17 @@
     border-radius: 12px;
     padding: 8px;
     margin: -8px;
-    transition: background 0.2s;
 }
 
 .question-card:hover .question-card-content {
-    background: #f8f8f8;
+    background: var(--bg-hover);
 }
 
 .question-text {
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
     line-height: 1.5;
-    color: #222;
+    color: var(--text-primary);
     margin: 0 0 10px 0;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -44,7 +43,6 @@
     align-items: center;
     text-decoration: none;
     line-height: 0;
-    transition: opacity 0.2s;
 }
 
 .user-avatar {
@@ -58,22 +56,21 @@
     font-weight: 400;
     font-size: 22px;
     font-family: 'Mallanna', sans-serif;
-    color: #1a1a1a;
+    color: var(--text-primary);
     text-decoration: none;
-    transition: color 0.2s;
     display: inline-flex;
     align-items: center;
 }
 
 .user-name-link:hover {
-    color: #1671FE;
+    color: var(--accent-primary);
     text-decoration: none;
 }
 
 .user-name-link::after {
     content: "•";
     font-family: sans-serif;
-    color: #999;
+    color: var(--text-secondary);
     font-size: 20px;
     margin-left: 8px;
     margin-right: 4px;
@@ -83,7 +80,7 @@
 .time-ago {
     font-size: 17px;
     font-family: sans-serif;
-    color: #888;
+    color: var(--text-secondary);
     margin-left: 0;
     display: inline-flex;
     align-items: center;
@@ -92,7 +89,7 @@
 .question-image-placeholder {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: #e0e0e0;
+    background: var(--bg-hover);
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -125,8 +122,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
     border-radius: 20px;
     border: 1px solid transparent;
 }
@@ -144,18 +141,17 @@
     font-family: 'Mallanna', sans-serif;
     padding: 8px;
     border-radius: 20px;
-    color: #1671FE;
-    transition: background 0.2s ease;
+    color: var(--accent-primary);
 }
 
 .vote-btn.upvote:hover {
-    background: rgba(76, 175, 80, 0.15);
-    color: #4caf50;
+    background: var(--upvote-hover);
+    color: var(--upvote-text);
 }
 
 .vote-btn.downvote:hover {
-    background: rgba(244, 67, 54, 0.15);
-    color: #f44336;
+    background: var(--downvote-hover);
+    color: var(--downvote-text);
 }
 
 .vote-btn img {
@@ -168,7 +164,7 @@
     font-size: 24px;
     font-weight: 400;
     font-family: 'Mallanna', sans-serif;
-    color: #1671FE;
+    color: var(--accent-primary);
     min-width: 30px;
     text-align: center;
     line-height: 1;
@@ -211,58 +207,58 @@
 .action-btn.comment {
     width: 78px;
     gap: 8px;
-    color: #1671FE;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    color: var(--accent-primary);
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
 }
 
 .action-btn.comment:hover {
-    background: #e3f2fd;
-    border-color: #1671FE;
+    background: var(--hover-comment);
+    border-color: var(--accent-primary);
 }
 
 .action-btn.comment span {
     font-size: 24px;
     font-weight: 400;
-    color: #1671FE;
+    color: var(--accent-primary);
 }
 
 .action-btn.report {
     width: 44px;
-    color: #aaa;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    color: var(--text-secondary);
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
 }
 
 .action-btn.report:hover {
-    background: #ffebee;
-    border-color: #e53935;
-    color: #e53935;
+    background: var(--report-hover);
+    border-color: var(--danger-primary);
+    color: var(--danger-primary);
 }
 
 .action-btn.edit {
     width: 44px;
-    color: #1671FE;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #1671FE 0%, #336A93 100%) border-box;
+    color: var(--accent-primary);
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
 }
 
 .action-btn.edit:hover {
-    background: #e3f2fd;
-    border-color: #1671FE;
+    background: var(--hover-comment);
+    border-color: var(--accent-primary);
 }
 
 .action-btn.delete {
     width: 44px;
-    color: #e53935;
-    background: linear-gradient(#FFFFFF, #FFFFFF) padding-box,
-                linear-gradient(to right, #e53935 0%, #c62828 100%) border-box;
+    color: var(--danger-primary);
+    background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-hover) 100%) border-box;
 }
 
 .action-btn.delete:hover {
-    background: #ffebee;
-    border-color: #e53935;
-    color: #c62828;
+    background: var(--upvote-hover);
+    border-color: var(--danger-primary);
+    color: var(--danger-primary);
 }
 
 .action-btn img {

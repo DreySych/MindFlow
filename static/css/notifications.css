@@ -12,10 +12,10 @@
   position: absolute;
   top: 52px;
   right: 0;
-  background: #ffffff;
-  border: 1px solid #C6C6C6;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   width: 360px;
   max-height: 350px;
   overflow-y: auto;
@@ -36,29 +36,29 @@
 }
 
 .notifications-overlay::-webkit-scrollbar-thumb {
-  background: #C6C6C6;
+  background: var(--border-primary);
   border-radius: 4px;
 }
 
 .notifications-overlay::-webkit-scrollbar-thumb:hover {
-  background: #1671FE;
+  background: var(--accent-primary);
 }
 
 .notifications-header {
   display: flex;
   align-items: center;
   padding: 16px;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid var(--border-primary);
   position: sticky;
   top: 0;
-  background: #ffffff;
+  background: var(--bg-primary);
   z-index: 1;
 }
 
 .notifications-title {
   font-family: 'Mallanna', sans-serif;
   font-size: 18px;
-  color: #1a1a1a;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
@@ -73,9 +73,8 @@
   gap: 12px;
   padding: 12px 16px;
   text-decoration: none;
-  transition: background 0.15s ease;
   cursor: pointer;
-  border-bottom: 1px solid #F5F5F5;
+  border-bottom: 1px solid var(--bg-hover);
 }
 
 .notification-item:last-child {
@@ -83,7 +82,7 @@
 }
 
 .notification-item:hover {
-  background: #F6F6F6;
+  background: var(--bg-hover);
 }
 
 .notification-avatar {
@@ -102,7 +101,7 @@
 .notification-text {
   font-family: 'Mallanna', sans-serif;
   font-size: 14px;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
@@ -113,13 +112,13 @@
 
 .notification-username {
   font-weight: 500;
-  color: #000000;
+  color: var(--accent-primary);
 }
 
 .notification-time {
   font-family: 'Mallanna', sans-serif;
   font-size: 12px;
-  color: #B0B0B0;
+  color: var(--text-secondary);
   margin-top: 4px;
   display: block;
 }
