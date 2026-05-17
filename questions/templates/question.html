@@ -199,45 +199,7 @@
     });
     {% endif %}
 
-    document.addEventListener('click', function(event) {
-        const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
-        if (!button) return;
 
-        event.preventDefault();
-
-        fetch(button.href, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.ok) {
-                if (data.login) window.location.href = data.login;
-                if (data.error) showError(data.error);
-                return;
-            }
-
-            const group = button.closest('.vote-group') || button.closest('.comment-vote-group');
-            if (!group) return;
-
-            const count = group.querySelector('.vote-count') || group.querySelector('.comment-vote-count');
-            const upvoteBtn = group.querySelector('.upvote');
-            const downvoteBtn = group.querySelector('.downvote');
-
-            if (count) count.textContent = data.rating;
-
-            if (data.user_rating === 1) {
-                upvoteBtn?.classList.add('active');
-                downvoteBtn?.classList.remove('active');
-            } else if (data.user_rating === -1) {
-                downvoteBtn?.classList.add('active');
-                upvoteBtn?.classList.remove('active');
-            } else {
-                upvoteBtn?.classList.remove('active');
-                downvoteBtn?.classList.remove('active');
-            }
-        })
-        .catch(err => console.error('Vote error:', err));
-    });
 
     const csrfToken = '{{ csrf_token }}';
     const currentQuestionId = "{{ question.id }}";
@@ -380,7 +342,7 @@
             }
         }
         document.addEventListener('click', function(event) {
-            const button = event.target.closest('.question-vote-btn, .ajax-comment-vote, .vote-btn');
+            const button = event.target.closest('.question-vote-btn, .ajax-comment-vote');
             if (!button) return;
 
             event.preventDefault();

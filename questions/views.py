@@ -2,11 +2,18 @@ import uuid
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect, get_object_or_404
-from sentence_transformers import SentenceTransformer
 from notifications.models import Notification
 from main.model_loader import get_model
 from questions.forms import CommentForm, QuestionForm
-from questions.models import Answer, AnswerLike, Comment, CommentLike, Like, Question
+from questions.models import (
+    Answer,
+    AnswerLike,
+    Comment,
+    CommentLike,
+    Like,
+    Question,
+)
+from sentence_transformers import SentenceTransformer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from django.http import JsonResponse
@@ -79,10 +86,22 @@ def build_question_context(question, request):
 
     for comment in context['comments']:
         if request.user.is_authenticated:
-            comment_like = CommentLike.objects.filter(author=request.user, comment=comment).first()
+            comment_like = CommentLike.objects.filter(
+                author=request.user,
+                comment=comment
+            ).first()
             comment.user_rating = comment_like.rating if comment_like else 0
+
+            for answer in comment.answer_set.all():
+                answer_like = AnswerLike.objects.filter(
+                    author=request.user,
+                    answer=answer
+                ).first()
+                answer.user_rating = answer_like.rating if answer_like else 0
         else:
             comment.user_rating = 0
+            for answer in comment.answer_set.all():
+                answer.user_rating = 0
 
     if request.user.is_authenticated:
         context['subscriptions'] = Subscription.objects.filter(user1=request.user)
@@ -336,6 +355,7 @@ def dislike_answer(request):
         'answer',
         'dislike'
     )
+
 
 def make_answer_page(request, comment_id):
     if not can_act(request.user):

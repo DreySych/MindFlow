@@ -131,62 +131,7 @@ def get_subscribed_authors(user):
         'user2', flat=True)
 
 
-def change_rating(request, question, x):
-    like_obj = Like.objects.filter(user=request.user, question=question)[0]
-    if x > 0:
-        if like_obj.rating == 0:
-            like_obj.rating += 1
-            like_obj.save()
-            question.rating += 1
-            question.save()
-        elif like_obj.rating == -1:
-            like_obj.rating += 2
-            like_obj.save()
-            question.rating += 2
-            question.save()
-        elif like_obj.rating == 1:
-            like_obj.rating = 0
-            like_obj.save()
-            question.rating -= 1
-            question.save()
-    elif x < 0:
-        if like_obj.rating == 1:
-            like_obj.rating -= 2
-            like_obj.save()
-            question.rating -= 2
-            question.save()
-        elif like_obj.rating == 0:
-            like_obj.rating -= 1
-            like_obj.save()
-            question.rating -= 1
-            question.save()
-        elif like_obj.rating == -1:
-            like_obj.rating = 0
-            like_obj.save()
-            question.rating += 1
-            question.save()
-
-
-def _vote(request, delta):
-    question_id = request.GET.get('id')
-    if not question_id:
-        return redirect('index')
-    question = get_object_or_404(Question, id=question_id)
-    like_obj, created = Like.objects.get_or_create(
-        user=request.user, question=question,
-        defaults={'rating': 0}
-    )
-    if created:
-        like_obj.rating = delta
-        question.rating += delta
-    else:
-        change_rating(request, question, delta)
-    like_obj.save()
-    question.save()
-    return redirect('/#question-' + str(question_id))
-
-
-def like(request):
+def vote_question(request, vote):
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
@@ -209,24 +154,24 @@ def like(request):
         defaults={'rating': 0}
     )
 
-    if like_obj.rating == 1:
+    old_rating = like_obj.rating
+
+    if old_rating == vote:
         like_obj.rating = 0
-        question.rating -= 1
-    elif like_obj.rating == 0:
-        like_obj.rating = 1
-        question.rating += 1
-    elif like_obj.rating == -1:
-        like_obj.rating = 1
-        question.rating += 2
+    else:
+        like_obj.rating = vote
+
+    question.rating += like_obj.rating - old_rating
 
     like_obj.save()
-    if question.author != request.user and like_obj.rating == 1:
+    question.save()
+
+    if question.author != request.user and old_rating != 1 and like_obj.rating == 1:
         Notification.objects.create(
             user=question.author,
             text=f'{request.user.username} оценил ваш пост',
             link=f'/question/{question.id}/'
         )
-    question.save()
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({
@@ -236,52 +181,14 @@ def like(request):
         })
 
     return redirect(request.GET.get('to', '/'))
+
+
+def like(request):
+    return vote_question(request, 1)
 
 
 def dislike(request):
-    if not request.user.is_authenticated:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({'ok': False, 'login': '/account/login/'})
-        return redirect('/account/login/')
-
-    if not request.user.active:
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({
-                'ok': False,
-                'error': 'Вы заблокированы и не можете выполнять это действие'
-            })
-        return redirect('/')
-
-    question_id = request.GET.get('id')
-    question = get_object_or_404(Question, id=question_id)
-
-    like_obj, created = Like.objects.get_or_create(
-        user=request.user,
-        question=question,
-        defaults={'rating': 0}
-    )
-
-    if like_obj.rating == -1:
-        like_obj.rating = 0
-        question.rating += 1
-    elif like_obj.rating == 0:
-        like_obj.rating = -1
-        question.rating -= 1
-    elif like_obj.rating == 1:
-        like_obj.rating = -1
-        question.rating -= 2
-
-    like_obj.save()
-    question.save()
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-            'ok': True,
-            'rating': question.rating,
-            'user_rating': like_obj.rating,
-        })
-
-    return redirect(request.GET.get('to', '/'))
+    return vote_question(request, -1)
 
 
 def sidebar_page(request):

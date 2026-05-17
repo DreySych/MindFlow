@@ -263,50 +263,5 @@ document.querySelectorAll('.answerForm').forEach(function(form) {
     });
 });
 
-// Голосование за комментарии и ответы
-document.addEventListener('click', function(event) {
-    var button = event.target.closest('.ajax-comment-vote');
-    if (!button) return;
 
-    event.preventDefault();
-
-    fetch(button.href, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-        if (!data.ok) {
-            if (data.login) {
-                showError('Требуется авторизация');
-            } else if (data.error) {
-                showError(data.error);
-            }
-            return;
-        }
-
-        var group = button.closest('.comment-vote-group');
-        if (!group) return;
-
-        var count = group.querySelector('.comment-vote-count');
-        var upvoteBtn = group.querySelector('.upvote');
-        var downvoteBtn = group.querySelector('.downvote');
-
-        if (count) count.textContent = data.rating;
-
-        if (data.user_rating === 1) {
-            if (upvoteBtn) upvoteBtn.classList.add('active');
-            if (downvoteBtn) downvoteBtn.classList.remove('active');
-        } else if (data.user_rating === -1) {
-            if (downvoteBtn) downvoteBtn.classList.add('active');
-            if (upvoteBtn) upvoteBtn.classList.remove('active');
-        } else {
-            if (upvoteBtn) upvoteBtn.classList.remove('active');
-            if (downvoteBtn) downvoteBtn.classList.remove('active');
-        }
-    })
-    .catch(function(err) {
-        console.error('Vote error:', err);
-        showError('Ошибка голосования');
-    });
-});
 </script>
