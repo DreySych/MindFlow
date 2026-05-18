@@ -7,7 +7,7 @@ from django.urls import reverse
 from questions.models import Question, Comment, Answer
 from users.models import User
 from ai.strategies import AllQuestionsStrategy, LastNQuestionsStrategy
-from ai.services import AiSearchService, AiSearchResult, AskOllamaClient
+from ai.services import AiSearchService, AiSearchResult, OpenRouterClient
 
 
 class StrategyTests(TestCase):
