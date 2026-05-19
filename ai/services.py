@@ -1,14 +1,14 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import requests
 import json
 import os
 from .strategies import LastNQuestionsStrategy
-from typing import Optional
+from typing import Optional, List
 
-# OpenRouter конфигурация
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "REDACTED_OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_MODEL = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+
 
 SYSTEM_PROMPT = """
 Ты — ассистент для работы с постами и комментариями на русском языке.
@@ -48,15 +48,17 @@ SYSTEM_PROMPT = """
 
 Каждое предложение должно быть составлено из информации, явной в релевантных записях.
 
+Не повторяй один и тот же фрагмент текста несколько раз, даже если он встречается в разных записях.
+
 Не использовать цитирование в виде метаданных; допускается вставка дословных фраз из записей в теле текста.
 """
 
 
 @dataclass
 class AiSearchResult:
-    query: str
     answer: Optional[str] = None
     error: Optional[str] = None
+    question_ids: List[int] = field(default_factory=list)
 
 
 def build_context(questions):
@@ -85,8 +87,6 @@ def make_user_prompt(user_query, context):
 
 
 class OpenRouterClient:
-    """ Упрощённый интерфейс для работы с OpenRouter API. """
-
     def __init__(self, api_key=OPENROUTER_API_KEY, model=OPENROUTER_MODEL):
         self.api_key = api_key
         self.model = model
@@ -95,55 +95,89 @@ class OpenRouterClient:
             "Content-Type": "application/json",
         }
 
-    def ask(self, system_prompt, user_prompt, model=None):
-        """ Отправляет запрос к LLM и возвращает текстовый ответ. """
+    def ask(self, system_prompt, user_prompt, model=None) -> str:
         model = model or self.model
 
-        response = requests.post(
-            url=OPENROUTER_API_URL,
-            headers=self.headers,
-            data=json.dumps({
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
-                "reasoning": {"enabled": True}
-            })
-        )
+        try:
+            response = requests.post(
+                url=OPENROUTER_API_URL,
+                headers=self.headers,
+                data=json.dumps({
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                    "reasoning": {"enabled": True}
+                }),
+                timeout=15,
+            )
+            response.raise_for_status()
+            data = response.json()
+            print("OpenRouter raw response:", data)
 
-        response.raise_for_status()
-        response = response.json()
-        return response['choices'][0]['message']['content'].strip()
+            choices = data.get("choices")
+            if not choices:
+                raise Exception(f"Некорректный ответ AI‑сервиса: {data}")
+
+            message = choices[0].get("message") if isinstance(choices, list) else None
+            if not message:
+                raise Exception(f"Некорректная структура choices: {choices}")
+
+            content = message.get("content")
+            if not content:
+                raise Exception(f"В ответе нет content: {message}")
+
+            return content.strip()
+
+        except requests.exceptions.Timeout:
+            raise Exception("AI‑сервис не ответил вовремя (timeout)")
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Ошибка запроса к AI‑сервису: {e}")
 
 
 class AiSearchService:
-    """ Хранит ссылку на текущую стратегию и использует её для выбора вопросов. """
-
-    def __init__(self, strategy):
+    """Хранит ссылку на текущую стратегию и использует её для выбора вопросов."""
+    def __init__(self, strategy=None):
         self.strategy = strategy or LastNQuestionsStrategy(30)
         self.llm_client = OpenRouterClient()
 
     def set_strategy(self, strategy):
-        """ Позволяет переключать стратегию. """
         self.strategy = strategy
 
-    def search(self, user_query):
-        if not user_query.strip():
-            return AiSearchResult(query=user_query, error="Пустой запрос")
+    def search(self, user_query: str) -> AiSearchResult:
+        user_query = (user_query or "").strip()
+        if not user_query:
+            return AiSearchResult(
+                error="Пустой запрос",
+                question_ids=[],
+            )
 
         try:
-            questions = self.strategy.get_questions(user_query)
+            questions = list(self.strategy.get_questions(user_query))
+            question_ids = [q.id for q in questions]
             context = build_context(questions)
+            if context is None:
+                context = ""
 
             if not context.strip():
                 return AiSearchResult(
-                    query=user_query,
                     error="Подходящих постов не найдено.",
+                    question_ids=[],
                 )
 
             user_prompt = make_user_prompt(user_query, context)
             answer = self.llm_client.ask(SYSTEM_PROMPT, user_prompt)
-            return AiSearchResult(query=user_query, answer=answer)
+
+            return AiSearchResult(
+                answer=answer,
+                error=None,
+                question_ids=question_ids,
+            )
+
         except Exception as e:
-            return AiSearchResult(query=user_query, error=f"Ошибка при обращении к ИИ: {e}")
+            print("AI search exception:", repr(e))
+            return AiSearchResult(
+                error=f"Ошибка при обращении к ИИ: {e}",
+                question_ids=[],
+            )

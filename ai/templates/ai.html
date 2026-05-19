@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/theme.css' %}">
     <link rel="stylesheet" href="{% static 'css/post.css' %}">
     <link rel="stylesheet" href="{% static 'css/comments.css' %}">
-    <link rel="stylesheet" href="{% static 'css/complain_question.css' %}">
+    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/ai.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
@@ -34,7 +34,6 @@
           </div>
 
           <div class="ai-response-body" id="aiResponseBody">
-              
             {% if query %}
               <p class="ai-text" id="aiStatus">Ответ от ИИ</p>
             {% else %}
@@ -45,28 +44,275 @@
           </div>
         </div>
       </article>
+        <div class="ai-posts-wrapper"
+                 id="aiPostsWrapper"
+                 style="max-width: 800px; margin: 0px auto 0; display: none;">
+            <h3 class="ai-posts-title">Могут заинтересовать</h3>
+            <div id="aiPostsList"></div>
+        </div>
     </div>
   </main>
 </div>
 
+{% include 'footer.html' %}
+{% include 'complain_question.html' %}
+{% include 'confirm_delete.html' %}
+<script>
+function showError(text) {
+    var errorBox = document.getElementById('globalErrorBox');
+
+    if (errorBox) {
+        errorBox.remove();
+    }
+
+    errorBox = document.createElement('div');
+    errorBox.id = 'globalErrorBox';
+    errorBox.textContent = text;
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.right = '20px';
+    errorBox.style.background = '#ff4d4f';
+    errorBox.style.color = 'white';
+    errorBox.style.padding = '14px 18px';
+    errorBox.style.borderRadius = '12px';
+    errorBox.style.zIndex = '99999';
+    errorBox.style.fontSize = '14px';
+    errorBox.style.fontFamily = 'Mallanna, sans-serif';
+    errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+
+    document.body.appendChild(errorBox);
+
+    setTimeout(function() {
+        if (errorBox) {
+            errorBox.remove();
+        }
+    }, 3000);
+}
+
+function getCookie(name) {
+    var value = null;
+
+    document.cookie.split(';').forEach(function(c) {
+        var pair = c.trim().split('=');
+
+        if (pair[0] === name) {
+            value = decodeURIComponent(pair[1]);
+        }
+    });
+
+    return value;
+}
+
+function checkEditPermission(event) {
+    {% if not user.is_authenticated %}
+        event.preventDefault();
+        showError('Требуется авторизация');
+        return false;
+    {% elif not user.active %}
+        event.preventDefault();
+        showError('Вы заблокированы');
+        return false;
+    {% endif %}
+
+    return true;
+}
+
+function deleteQuestion(questionId) {
+    var csrftoken = getCookie('csrftoken');
+
+    fetch('/question/' + questionId + '/delete/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (data.ok) {
+            var questionElement = document.getElementById('question-' + questionId);
+
+            if (questionElement) {
+                questionElement.remove();
+            } else {
+                window.location.reload();
+            }
+        } else if (data.error) {
+            showError(data.error);
+        }
+    })
+    .catch(function() {
+        showError('Ошибка при удалении');
+    });
+}
+
+function confirmDeleteQuestion(questionId) {
+    {% if not user.is_authenticated %}
+        showError('Требуется авторизация');
+        return;
+    {% elif not user.active %}
+        showError('Вы заблокированы');
+        return;
+    {% endif %}
+
+    if (typeof openConfirmDeleteOverlay !== 'undefined') {
+        openConfirmDeleteOverlay('пост', function() {
+            deleteQuestion(questionId);
+        });
+    } else {
+        if (confirm('Вы уверены, что хотите удалить этот пост?')) {
+            deleteQuestion(questionId);
+        }
+    }
+}
+
+function openComplainQuestionOverlay(questionId) {
+    var overlay = document.getElementById('complainQuestionOverlay');
+
+    if (overlay) {
+        overlay.style.display = 'flex';
+
+        var input = document.getElementById('complain_question_id');
+
+        if (input) {
+            input.value = questionId;
+        }
+    }
+}
+
+document.addEventListener('click', function(event) {
+    var button = event.target.closest('.question-vote-btn');
+
+    if (!button) {
+        return;
+    }
+
+    event.preventDefault();
+
+    {% if user.is_authenticated and not user.active %}
+        showError('Вы заблокированы');
+        return;
+    {% elif not user.is_authenticated %}
+        showError('Требуется авторизация');
+        return;
+    {% endif %}
+
+    fetch(button.href, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (!data.ok) {
+            if (data.login) {
+                window.location.href = data.login;
+                return;
+            }
+
+            if (data.error) {
+                showError(data.error);
+            }
+
+            return;
+        }
+
+        var voteGroup = button.closest('.vote-group');
+        var count = voteGroup.querySelector('.vote-count');
+        var upvoteBtn = voteGroup.querySelector('.upvote');
+        var downvoteBtn = voteGroup.querySelector('.downvote');
+
+        if (count) {
+            count.textContent = data.rating;
+        }
+
+        if (upvoteBtn) {
+            upvoteBtn.classList.toggle('active', data.user_rating === 1);
+        }
+
+        if (downvoteBtn) {
+            downvoteBtn.classList.toggle('active', data.user_rating === -1);
+        }
+    })
+    .catch(function() {
+        showError('Ошибка голосования');
+    });
+});
+let currentPage = {{ next_page|default:2 }};
+let loadingPosts = false;
+let hasMorePosts = {{ has_more|yesno:"true,false" }};
+
+const scrollTrigger = document.getElementById('scrollTrigger');
+
+function loadMorePosts() {
+    if (loadingPosts || !hasMorePosts) {
+        return;
+    }
+
+    loadingPosts = true;
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', currentPage);
+
+    fetch(url.toString(), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (!data.ok) {
+            loadingPosts = false;
+            return;
+        }
+
+        document.getElementById('postsList').insertAdjacentHTML('beforeend', data.html);
+
+        hasMorePosts = data.has_more;
+        currentPage = data.next_page;
+
+        if (!hasMorePosts && scrollTrigger) {
+            scrollTrigger.remove();
+        }
+
+        loadingPosts = false;
+    })
+    .catch(function() {
+        loadingPosts = false;
+        showError('Ошибка загрузки постов');
+    });
+}
+
+if (scrollTrigger) {
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                loadMorePosts();
+            }
+        });
+    });
+
+    observer.observe(scrollTrigger);
+}
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const responseBody = document.getElementById("aiResponseBody");
     const statusEl = document.getElementById("aiStatus");
+    const postsList = document.getElementById("aiPostsList");
+    const postsWrapper = document.getElementById("aiPostsWrapper");
 
-    // Берём запрос из контекста
     const query = "{{ query|escapejs }}";
-    console.log("query:", query);
+
     if (query) {
-        // Если есть запрос, то показываем статус и шлём запрос к API
-        statusEl.textContent = "ИИ думает над ответом...";
-        function getCookie(name) {
-            let value = null;
-            document.cookie.split(';').forEach(function(c) {
-                let parts = c.trim().split('=');
-                if (parts[0] === name) value = decodeURIComponent(parts[1]);
-            });
-            return value;
+        if (statusEl) {
+            statusEl.textContent = "ИИ думает над ответом...";
         }
 
         fetch("{% url 'ai_search_api' %}", {
@@ -74,23 +320,27 @@ document.addEventListener("DOMContentLoaded", function () {
             headers: {
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCookie("csrftoken"),
             },
             body: JSON.stringify({ q: query }),
         })
         .then(response => response.json())
         .then(data => {
             console.log("response:", data);
-            if (data.error) {
-                if (statusEl) statusEl.textContent = data.error;
-                return;
-            }
 
             if (statusEl) statusEl.remove();
+
             const p = document.createElement("p");
             p.className = "ai-text";
-            p.textContent = data.answer;
+            p.textContent = data.answer || data.error || "";
             responseBody.appendChild(p);
+
+            if (postsList && data.html) {
+                postsList.innerHTML = data.html;
+
+                if (postsWrapper) {
+                    postsWrapper.style.display = "block";
+                }
+            }
         })
         .catch(err => {
             console.error("fetch error:", err);
@@ -98,14 +348,9 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Функционал кнопки копирования
+    // Копирование
     const copyBtn = document.querySelector(".ai-copy");
-    let copyImg;
-    if (copyBtn) {
-        copyImg = copyBtn.querySelector("img");
-    } else {
-        copyImg = null;
-    }
+    const copyImg = copyBtn ? copyBtn.querySelector("img") : null;
 
     if (copyBtn && copyImg && responseBody) {
         const originalSrc = copyImg.getAttribute("src");

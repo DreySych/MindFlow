@@ -30,13 +30,11 @@ class Question(models.Model):
     @property
     def image_list(self):
         if not self.images:
-            return [[]]
-        images = []
-        for i in self.images.split(','):
-            images.append("media/" + i)
+            images = []
+        else:
+            images = [i for i in self.images.split(',') if i]
 
         logger.debug('Question image list: %s', images)
-
         return images
 
 
