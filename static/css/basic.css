@@ -64,6 +64,7 @@ header {
   flex-shrink: 0;
   overflow: hidden;
   text-decoration: none;
+  transition: background 0.15s ease;
 }
 
 .icon-button:hover {
@@ -100,6 +101,7 @@ header {
   color: var(--accent-primary);
   flex-shrink: 0;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .create-button:hover {
@@ -203,6 +205,7 @@ header {
   flex-shrink: 0;
   text-decoration: none;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .ii-button:hover {
@@ -282,6 +285,7 @@ main {
   box-sizing: border-box;
   color: var(--text-primary);
   background: var(--input-bg);
+  transition: border-color 0.2s ease;
 }
 
 .sidebar-search-input:focus {
@@ -329,6 +333,7 @@ main {
   padding: 4px 8px;
   border-radius: 12px;
   flex-shrink: 0;
+  transition: background 0.15s ease;
 }
 
 .friend-item:hover {
@@ -385,6 +390,7 @@ main {
   padding: 0;
   flex-shrink: 0;
   text-decoration: none;
+  transition: background 0.15s ease;
 }
 
 .chat-button:hover {
@@ -463,6 +469,7 @@ footer {
   overflow: hidden;
   text-decoration: none;
   font-size: 20px;
+  transition: background 0.15s ease;
 }
 
 .theme-toggle:hover {

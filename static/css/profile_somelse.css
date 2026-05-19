@@ -32,6 +32,7 @@
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
+    transition: background 0.2s;
 }
 
 .add-friend-btn:hover {
@@ -59,6 +60,7 @@
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
 }
 
 .pm-btn:hover {
