@@ -7,7 +7,7 @@ from django.urls import reverse
 from questions.models import Question, Comment, Answer
 from users.models import User
 from ai.strategies import AllQuestionsStrategy, LastNQuestionsStrategy
-from ai.services import AiSearchService, AiSearchResult, AskOllamaClient
+from ai.services import AiSearchService, AiSearchResult, OpenRouterClient
 
 
 class StrategyTests(TestCase):
@@ -73,7 +73,7 @@ class StrategyTests(TestCase):
         self.assertEqual(qs[2].id, self.q1.id)
 
 
-class FakeOllamaClient(AskOllamaClient):
+class FakeOllamaClient:
     """ Фейковый клиент Ollama для тестов: не делает реальных HTTP‑запросов. """
 
     def __init__(self):
