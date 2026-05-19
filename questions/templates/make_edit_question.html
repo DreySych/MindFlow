@@ -205,47 +205,102 @@
 }
 
 	document.getElementById('define_tag').addEventListener('click', async function() {
-		const btn = document.getElementById('define_tag');
-		const selectElement = document.getElementById('id_tag');
+    const btn = document.getElementById('define_tag');
+    const selectElement = document.getElementById('id_tag');
 
-		const title = document.getElementById('postTitle').value;
-		const description = document.getElementById('postText').value;
-		let tags = await get_available_tags();
-		console.log("tags:", tags);
+    const title = document.getElementById('postTitle').value.trim();
+    const description = document.getElementById('postText').value.trim();
 
-		let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-			method: "POST",
-			headers: {
-				"Authorization": `Bearer REDACTED_OPENROUTER_API_KEY`,
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				"model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-				"messages": [
-					{
-						"role": "user",
-						"content": `
-						Проанализируй заголовок и описание поста и определи его тему из списка.
-                        Если пост не имеет смысла, захватывает слишком много тем или нет подходящих тем ответь "other".
-                        Выбирай темы строго из списка, не придумывай свои.
-                        Ответь только 1-2 словами через дефис.
-                        Заголовок: ${title}.
-                        Описание: ${description}.
-                        Доступные темы: ${tags}.
-						`
-					}
-				],
-			  "reasoning": {"enabled": true}
-			})
-		});
+    const tags = await get_available_tags();
 
-		const result = await response.json();
-		response = result.choices[0].message;
+    if (!tags || tags.length === 0) {
+        selectElement.value = 'Другое';
+        return;
+    }
 
-		console.log(response['content']);
+    btn.disabled = true;
+    btn.textContent = 'Подбираю...';
 
-		selectElement.value = response['content'];
-	});
+    let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer REDACTED_OPENROUTER_API_KEY`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": `
+Проанализируй заголовок и описание поста и выбери один тег строго из списка.
+
+Заголовок: ${title}
+Описание: ${description}
+
+Список тегов:
+${tags.join(", ")}
+
+Ответь только одним тегом из списка. Без кавычек, точки и объяснений.
+Если подходящего тега нет, ответь: Другое
+`
+                }
+            ]
+        })
+    });
+
+    if (!response.ok) {
+    const lowerText = (title + ' ' + description).toLowerCase();
+
+    if (lowerText.includes('python')) {
+        selectElement.value = 'Python';
+    }
+    else if (lowerText.includes('дизайн')) {
+        selectElement.value = 'Дизайн';
+    }
+    else if (lowerText.includes('html')
+        || lowerText.includes('css')
+        || lowerText.includes('javascript')) {
+        selectElement.value = 'Frontend';
+    }
+    else if (lowerText.includes('django')
+        || lowerText.includes('backend')
+        || lowerText.includes('сервер')) {
+        selectElement.value = 'Backend';
+    }
+    else if (lowerText.includes('фильм')
+        || lowerText.includes('кино')) {
+        selectElement.value = 'Фильмы';
+    }
+    else if (lowerText.includes('игра')
+        || lowerText.includes('game')) {
+        selectElement.value = 'Игры';
+    }
+    else if (lowerText.includes('спорт')
+        || lowerText.includes('тренировка')) {
+        selectElement.value = 'Спорт';
+    }
+    else {
+        selectElement.value = 'Другое';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Предложить тег';
+    return;
+}
+
+    const result = await response.json();
+    const answer = (result.choices?.[0]?.message?.content || '').trim();
+
+    if ([...selectElement.options].some(option => option.value === answer)) {
+        selectElement.value = answer;
+    } else {
+        selectElement.value = 'Другое';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Предложить тег';
+});
 
 
 	const postImage = document.getElementById('postImage');

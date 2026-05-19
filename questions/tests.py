@@ -4,7 +4,6 @@ from django.utils import timezone
 from users.models import User
 from questions.models import Question, Comment, Answer
 
-
 class QuestionsViewsTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -39,7 +38,13 @@ class QuestionsViewsTest(TestCase):
         mock_model.return_value.encode.return_value = [[0.1, 0.2, 0.3]]
         self.login('author')
         response = self.client.post(
-            '/question/make/', {'title': 'New Post', 'description': 'New desc'})
+            '/question/make/',
+            {
+                'title': 'New Post',
+                'description': 'New desc',
+                'tag': 'Программирование'
+            }
+        )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Question.objects.filter(title='New Post').exists())
 
@@ -47,8 +52,14 @@ class QuestionsViewsTest(TestCase):
     def test_create_post_without_image(self, mock_model):
         mock_model.return_value.encode.return_value = [[0.1, 0.2, 0.3]]
         self.login('author')
-        self.client.post('/question/make/',
-                         {'title': 'No image post', 'description': 'Text'})
+        self.client.post(
+            '/question/make/',
+            {
+                'title': 'No image post',
+                'description': 'Text',
+                'tag': 'Программирование'
+            }
+        )
         post = Question.objects.get(title='No image post')
         self.assertEqual(post.images, '')
 
@@ -56,7 +67,13 @@ class QuestionsViewsTest(TestCase):
     def test_create_post_title_only(self, mock_model):
         mock_model.return_value.encode.return_value = [[0.1, 0.2, 0.3]]
         self.login('author')
-        self.client.post('/question/make/', {'title': 'Just Title'})
+        self.client.post(
+            '/question/make/',
+            {
+                'title': 'Just Title',
+                'tag': 'Программирование'
+            }
+        )
         post = Question.objects.get(title='Just Title')
         self.assertEqual(post.description, '')
 
@@ -79,8 +96,14 @@ class QuestionsViewsTest(TestCase):
 
     def test_edit_post_post_author(self):
         self.login('author')
-        response = self.client.post(f'/question/edit/?id={self.question.id}',
-                                    {'title': 'Updated Title', 'description': 'Updated desc'})
+        response = self.client.post(
+            f'/question/edit/?id={self.question.id}',
+            {
+                'title': 'Updated Title',
+                'description': 'Updated desc',
+                'tag': 'Программирование'
+            }
+        )
         self.question.refresh_from_db()
         self.assertEqual(self.question.title, 'Updated Title')
         self.assertEqual(response.status_code, 302)

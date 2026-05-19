@@ -207,9 +207,12 @@ def update_question_from_form(question, form, request):
 
 
 def get_available_tags(request):
-    file = open('questions/available_tags.txt', mode='r')
-    available_tags = file.read().split('\n')
-    file.close()
+    with open('questions/available_tags.txt', mode='r', encoding='utf-8') as file:
+        available_tags = [
+            tag.strip()
+            for tag in file.read().splitlines()
+            if tag.strip()
+        ]
 
     return JsonResponse(available_tags, safe=False)
 
@@ -255,6 +258,7 @@ def question_edit_page(request):
         form = QuestionForm(initial={
             'title': question.title,
             'description': question.description,
+            'tag': question.tag,
         })
 
     context = {

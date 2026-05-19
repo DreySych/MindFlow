@@ -31,12 +31,15 @@
 
   <div class="sidebar-divider"></div>
 
+  {% if tag_form %}
   <form method="post">
     {% csrf_token %}
-    {{tag_form}}
+    {{ tag_form }}
     <button type="submit">Отправить</button>
   </form>
-  Тег: <a href="/">Очистить фильтр</a>
+
+  <a href="/">Очистить фильтр</a>
+{% endif %}
 
 </div>
 

@@ -11,7 +11,6 @@ logger = logging.getLogger('project')
 
 # Create your models here.
 
-
 class Question(models.Model):
     title = models.TextField()
     description = models.TextField()
@@ -20,7 +19,7 @@ class Question(models.Model):
     images = models.TextField()
     rating = models.IntegerField()
     embedding = models.TextField(blank=True)
-    tag = models.TextField(default='other')
+    tag = models.TextField(default='Другое')
 
     def set_embedding(self, vector):
         self.embedding = ",".join(map(str, vector))

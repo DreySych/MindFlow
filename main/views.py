@@ -50,14 +50,16 @@ def perform_search(search_text):
 
 def get_default_questions(request, tag=None):
     if not can_act(request.user):
-        return Question.objects.filter(tag=tag).order_by('-rating', '-creation_date')
+        if tag and tag != 'Другое':
+            return Question.objects.filter(tag=tag).order_by('-rating', '-creation_date')
+        return Question.objects.all().order_by('-rating', '-creation_date')
 
     friends_ids = Subscription.objects.filter(
         user1=request.user).values_list('user2_id', flat=True)
     if tag:
         fresh_friends = Question.objects.filter(
             author_id__in=friends_ids, tag=tag).order_by('-creation_date')[:5]
-    elif not tag or tag == 'other':
+    elif not tag or tag == 'Другое':
         fresh_friends = Question.objects.filter(
             author_id__in=friends_ids).order_by('-creation_date')[:5]
     fresh_ids = [p.id for p in fresh_friends]
@@ -70,7 +72,7 @@ def get_default_questions(request, tag=None):
             id__in=fresh_ids).order_by(
                 '-rating',
             '-creation_date')
-    elif not tag or tag == 'other':
+    elif not tag or tag == 'Другое':
         popular_all = Question.objects.exclude(
             id__in=fresh_ids).order_by('-rating', '-creation_date')
         popular_friends = Question.objects.filter(
@@ -118,7 +120,7 @@ def index_page(request):
     if tag:
         results = perform_search(
             search_text) if search_text else get_default_questions(request, tag=tag)
-    elif not tag or tag == 'other':
+    elif not tag or tag == 'Другое':
         results = perform_search(
             search_text) if search_text else get_default_questions(request)
     page = int(request.GET.get('page', 1))

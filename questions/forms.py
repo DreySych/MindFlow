@@ -24,12 +24,12 @@ class QuestionForm(forms.Form):
     available_tags = file.read().split('\n')
     file.close()
 
-    CHOICES = [(i, i) for i in available_tags]
+    CHOICES = [('', 'Выберите тег')] + [(i, i) for i in available_tags if i]
 
     title = forms.CharField()
     description = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
-    tag = forms.ChoiceField(choices=CHOICES)
+    tag = forms.ChoiceField(choices=CHOICES, required=True)
 
 
 class CommentForm(forms.Form):
