@@ -7,7 +7,10 @@ import random
 
 
 class MyUserManager(BaseUserManager):
+    """Менеджер пользователей для кастомной модели User."""
+
     def create_user(self, email, password=None, **extra_fields):
+        """Создаёт обычного пользователя с нормализованным email и хешированным паролем."""
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -15,6 +18,7 @@ class MyUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        """Создаёт суперпользователя с правами staff и superuser."""
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -26,8 +30,9 @@ class MyUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-# Create your models here.
 class User(AbstractBaseUser, PermissionsMixin):
+    """Кастомная модель пользователя с полями username, email, рейтингом и статусом."""
+
     username = models.TextField(unique=True)
     password = models.CharField(max_length=128)
     email = models.TextField()
@@ -48,6 +53,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Subscription(models.Model):
+    """Модель подписки пользователя user1 на user2."""
+
     user1 = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='user1')
     user2 = models.ForeignKey(
@@ -55,6 +62,8 @@ class Subscription(models.Model):
 
 
 class RecoveryCode(models.Model):
+    """Модель кода восстановления пароля с временной валидностью (10 минут)."""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -68,10 +77,12 @@ class RecoveryCode(models.Model):
 
     @staticmethod
     def generate_code():
+        """Генерирует случайный 6-значный цифровой код."""
         return ''.join([str(random.randint(0, 9)) for _ in range(6)])
 
     @staticmethod
     def create_for_user(user):
+        """Создаёт новый код восстановления для пользователя, инвалидируя старые."""
         RecoveryCode.objects.filter(
             user=user, is_used=False).update(is_used=True)
 
@@ -80,6 +91,7 @@ class RecoveryCode(models.Model):
         return recovery
 
     def is_valid(self):
+        """Проверяет, не использован ли код и не истёк ли его срок действия (10 минут)."""
         if self.is_used:
             return False
 
