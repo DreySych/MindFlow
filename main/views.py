@@ -43,7 +43,8 @@ def perform_search(search_text):
 
         results.append((q, similarity))
 
-    return [q for q, _ in sorted(results, key=lambda x: x[1], reverse=True)]
+    sorted_results = sorted(results, key=lambda x: (-x[1], -x[0].creation_date.timestamp()))
+    return [q for q, _ in sorted_results]
 
 
 def get_default_questions(request):
