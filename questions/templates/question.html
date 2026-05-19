@@ -48,6 +48,8 @@
 
                     <p class="post-text">{{ question.description }}</p>
 
+                    <a href="/?tag={{question.tag}}">{{question.tag}}</a>
+
                     <div class="actions">
                         <div class="vote-group">
                             <a href="{% url 'like' %}?id={{ question.id }}&to={{ request.path }}%23question-{{ question.id }}"

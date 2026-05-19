@@ -1,201 +1,267 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Создание поста</title>
-    {% load static %}
-    {% load custom_filters %}
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-    <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-    <link rel="stylesheet" href="{% static 'css/post.css' %}">
-    <link rel="stylesheet" href="{% static 'css/comments.css' %}">
-    <link rel="stylesheet" href="{% static 'css/complain.css' %}">
-    <link rel="stylesheet" href="{% static 'css/basic.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
-    <style>
-        .post-form-title {
-            font-size: 32px;
-            margin-bottom: 30px;
-            color: var(--text-primary);
-            font-family: 'Mallanna', sans-serif;
-        }
-        .form-group {
-            margin-bottom: 25px;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-primary);
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-family: inherit;
-            transition: border-color 0.2s ease;
-        }
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            background: var(--bg-primary);
-        }
-        .form-textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-        .image-upload-area {
-            position: relative;
-        }
-        .image-upload-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 30px;
-            border: 2px dashed var(--border-primary);
-            border-radius: 8px;
-            cursor: pointer;
-            background-color: var(--bg-secondary);
-            transition: all 0.2s ease;
-            color: var(--text-secondary);
-        }
-        .image-upload-label:hover {
-            border-color: var(--accent-primary);
-            background-color: var(--bg-hover);
-            color: var(--text-primary);
-        }
-        .image-preview {
-            margin-top: 10px;
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            max-height: 400px;
-            object-fit: cover;
-        }
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-        }
-        .submit-btn {
-            padding: 10px 24px;
-            background-color: var(--accent-primary);
-            color: var(--text-primary);
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background-color 0.2s ease;
-        }
-        .submit-btn:hover {
-            background-color: var(--accent-secondary);
-        }
-    </style>
+	<meta charset="UTF-8">
+	<title>Создание поста</title>
+	{% load static %}
+	{% load custom_filters %}
+	<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+	<link rel="stylesheet" href="{% static 'css/theme.css' %}">
+	<link rel="stylesheet" href="{% static 'css/post.css' %}">
+	<link rel="stylesheet" href="{% static 'css/comments.css' %}">
+	<link rel="stylesheet" href="{% static 'css/complain.css' %}">
+	<link rel="stylesheet" href="{% static 'css/basic.css' %}">
+	<link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+	<style>
+		.post-form-title {
+			font-size: 32px;
+			margin-bottom: 30px;
+			color: var(--text-primary);
+			font-family: 'Mallanna', sans-serif;
+		}
+		.form-group {
+			margin-bottom: 25px;
+		}
+		.form-label {
+			display: block;
+			margin-bottom: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--text-primary);
+		}
+		.form-input, .form-textarea {
+			width: 100%;
+			padding: 12px;
+			border: 2px solid var(--border-primary);
+			border-radius: 8px;
+			font-size: 16px;
+			box-sizing: border-box;
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+			font-family: inherit;
+			transition: border-color 0.2s ease;
+		}
+		.form-input:focus, .form-textarea:focus {
+			outline: none;
+			border-color: var(--accent-primary);
+			background: var(--bg-primary);
+		}
+		.form-textarea {
+			resize: vertical;
+			min-height: 120px;
+		}
+		.image-upload-area {
+			position: relative;
+		}
+		.image-upload-label {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 30px;
+			border: 2px dashed var(--border-primary);
+			border-radius: 8px;
+			cursor: pointer;
+			background-color: var(--bg-secondary);
+			transition: all 0.2s ease;
+			color: var(--text-secondary);
+		}
+		.image-upload-label:hover {
+			border-color: var(--accent-primary);
+			background-color: var(--bg-hover);
+			color: var(--text-primary);
+		}
+		.image-preview {
+			margin-top: 10px;
+			width: 100%;
+			height: auto;
+			border-radius: 8px;
+			max-height: 400px;
+			object-fit: cover;
+		}
+		.form-actions {
+			display: flex;
+			justify-content: flex-end;
+		}
+		.submit-btn {
+			padding: 10px 24px;
+			background-color: var(--accent-primary);
+			color: var(--text-primary);
+			border: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: background-color 0.2s ease;
+		}
+		.submit-btn:hover {
+			background-color: var(--accent-secondary);
+		}
+	</style>
 </head>
 <body>
 {% include 'header.html' %}
 {% include 'body.html' %}
 
 <div class="content-wrapper">
-    <main>
-        <div class="feed">
-            <article class="post-detail-card">
-                <h1 class="post-form-title">{% if is_edit %}
-                                    Редактировать пост
-                                {% else %}
-                                    Создать пост
-                                {% endif %}
-                </h1>
+	<main>
+		<div class="feed">
+			<article class="post-detail-card">
+				<h1 class="post-form-title">{% if is_edit %}
+					Редактировать пост
+					{% else %}
+					Создать пост
+					{% endif %}
+				</h1>
 
-                <form id="createPostForm" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    
-                    <div class="form-group">
-                        <label for="postTitle" class="form-label">
-                            Заголовок
-                        </label>
+				<form id="createPostForm" method="POST" enctype="multipart/form-data">
+					{% csrf_token %}
 
-                        <input
-                            type="text"
-                            id="postTitle"
-                            name="title"
-                            maxlength="200"
-                            required
-                            value="{{ form.title.value|default:'' }}"
-                            class="form-input"
-                        >
-                    </div>
+					<div class="form-group">
+						<label for="postTitle" class="form-label">
+							Заголовок
+						</label>
 
-                    <div class="form-group">
-                        <label for="postImage" class="form-label">Добавить изображение</label>
-                        <div class="image-upload-area">
-                            <label for="postImage" class="image-upload-label">
-                                <span>Нажмите для загрузки или перетащите изображение</span>
-                            </label>
-                            <input 
-                                type="file"
-                                id="postImage"
-                                name="images"
-                                accept="image/*"
-                                multiple
-                                style="display: none;"
-                            >
-                            <img id="imagePreview"
-                             src="{% if is_edit and question_images %}/media/{{ question_images.0 }}{% endif %}"
-                             class="image-preview"
-                             style="display: {% if is_edit and question_images %}block{% else %}none{% endif %};"
-                             alt="Предпросмотр">
-                        </div>
-                    </div>
+						<input
+								type="text"
+								id="postTitle"
+								name="title"
+								maxlength="200"
+								required
+								value="{{ form.title.value|default:'' }}"
+								class="form-input"
+						>
+					</div>
 
-                    <div class="form-group">
-                        <label for="postText" class="form-label">Текстовая область</label>
-                        <textarea 
-                            id="postText" 
-                            name="description" 
-                            maxlength="5000"
-                            class="form-textarea"
-                        >{{ form.description.value|default:'' }}</textarea>
-                    </div>
+					<div class="form-group">
+						<label for="postImage" class="form-label">Добавить изображение</label>
+						<div class="image-upload-area">
+							<label for="postImage" class="image-upload-label">
+								<span>Нажмите для загрузки или перетащите изображение</span>
+							</label>
+							<input
+									type="file"
+									id="postImage"
+									name="images"
+									accept="image/*"
+									multiple
+									style="display: none;"
+							>
+							<img id="imagePreview"
+								 src="{% if is_edit and question_images %}/media/{{ question_images.0 }}{% endif %}"
+								 class="image-preview"
+								 style="display: {% if is_edit and question_images %}block{% else %}none{% endif %};"
+								 alt="Предпросмотр">
+						</div>
+					</div>
 
-                    <div class="form-actions">
-                        <button type="submit" class="submit-btn">{% if is_edit %}
-                                                            Сохранить
-                                                        {% else %}
-                                                            Опубликовать
-                                                        {% endif %}
-                        </button>
-                    </div>
-                </form>
-            </article>
-        </div>
-    </main>
+					<div class="form-group">
+						<label for="postText" class="form-label">Текстовая область</label>
+						<textarea
+								id="postText"
+								name="description"
+								maxlength="5000"
+								class="form-textarea"
+						>{{ form.description.value|default:'' }}</textarea>
+					</div>
+
+					<div>
+						{{ form.tag }}
+						<button type="button" id="define_tag">Предложить тег</button>
+					</div>
+
+					<div class="form-actions">
+						<button type="submit" class="submit-btn">{% if is_edit %}
+							Сохранить
+							{% else %}
+							Опубликовать
+							{% endif %}
+						</button>
+					</div>
+				</form>
+			</article>
+		</div>
+	</main>
 </div>
 
 {% include 'footer.html' %}
 
 <script>
-const postImage = document.getElementById('postImage');
-const imagePreview = document.getElementById('imagePreview');
+	async function get_available_tags() {
+    try {
+        const response = await fetch('/get_tags/');
 
-postImage.addEventListener('change', function() {
-    const file = this.files[0];
+        if (!response.ok) {
+            throw new Error('Ошибка');
+        }
 
-    if (!file) {
-        imagePreview.style.display = 'none';
-        return;
+        const data = await response.json();
+        console.log(data);
+
+        return data;
+    } catch (error) {
+        console.error('Что-то пошло не так:', error);
     }
+}
 
-    imagePreview.src = URL.createObjectURL(file);
-    imagePreview.style.display = 'block';
-});
+	document.getElementById('define_tag').addEventListener('click', async function() {
+		const btn = document.getElementById('define_tag');
+		const selectElement = document.getElementById('id_tag');
+
+		const title = document.getElementById('postTitle').value;
+		const description = document.getElementById('postText').value;
+		let tags = await get_available_tags();
+		console.log("tags:", tags);
+
+		let response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+			method: "POST",
+			headers: {
+				"Authorization": `Bearer REDACTED_OPENROUTER_API_KEY`,
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				"model": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+				"messages": [
+					{
+						"role": "user",
+						"content": `
+						Проанализируй заголовок и описание поста и определи его тему из списка.
+                        Если пост не имеет смысла, захватывает слишком много тем или нет подходящих тем ответь "other".
+                        Выбирай темы строго из списка, не придумывай свои.
+                        Ответь только 1-2 словами через дефис.
+                        Заголовок: ${title}.
+                        Описание: ${description}.
+                        Доступные темы: ${tags}.
+						`
+					}
+				],
+			  "reasoning": {"enabled": true}
+			})
+		});
+
+		const result = await response.json();
+		response = result.choices[0].message;
+
+		console.log(response['content']);
+
+		selectElement.value = response['content'];
+	});
+
+
+	const postImage = document.getElementById('postImage');
+	const imagePreview = document.getElementById('imagePreview');
+
+	postImage.addEventListener('change', function() {
+		const file = this.files[0];
+
+		if (!file) {
+			imagePreview.style.display = 'none';
+			return;
+		}
+
+		imagePreview.src = URL.createObjectURL(file);
+		imagePreview.style.display = 'block';
+	});
 </script>
 </body>
 </html>

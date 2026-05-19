@@ -166,6 +166,7 @@ def create_question_from_form(form, request):
     model = get_model()
     title = form.cleaned_data['title']
     description = form.cleaned_data['description']
+    tag = form.cleaned_data['tag']
     images = request.FILES.getlist('images')
     if len(images) > 10:
         images = images[:10]
@@ -180,6 +181,7 @@ def create_question_from_form(form, request):
     question = Question(
         title=title,
         description=description,
+        tag=tag,
         rating=0,
         creation_date=timezone.now(),
         images=images_str,
@@ -194,6 +196,7 @@ def create_question_from_form(form, request):
 def update_question_from_form(question, form, request):
     question.title = form.cleaned_data['title']
     question.description = form.cleaned_data['description']
+    question.tag = form.cleaned_data['tag']
 
     images = request.FILES.getlist('images')
     if images:
@@ -201,6 +204,14 @@ def update_question_from_form(question, form, request):
     question.save()
     logger.info('Question edited: id=%s, author=%s', question.id, request.user.username)
     return question
+
+
+def get_available_tags(request):
+    file = open('questions/available_tags.txt', mode='r')
+    available_tags = file.read().split('\n')
+    file.close()
+
+    return JsonResponse(available_tags, safe=False)
 
 
 def question_make_page(request):

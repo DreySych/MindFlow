@@ -20,6 +20,7 @@ class Question(models.Model):
     images = models.TextField()
     rating = models.IntegerField()
     embedding = models.TextField(blank=True)
+    tag = models.TextField(default='other')
 
     def set_embedding(self, vector):
         self.embedding = ",".join(map(str, vector))
