@@ -25,10 +25,12 @@ logger = logging.getLogger('project')
 
 
 def can_act(user):
+    """Проверяет, авторизован ли пользователь и не заблокирован."""
     return user.is_authenticated and user.active
 
 
 def get_question_context(question_id):
+    """Возвращает словарь с вопросом, комментариями и изображениями по ID."""
     question = Question.objects.filter(pk=question_id).first()
     if question is None:
         return None
@@ -42,6 +44,7 @@ def get_question_context(question_id):
 
 
 def process_comment(request, question):
+    """Обрабатывает POST-запрос с комментарием и создаёт уведомление автору вопроса."""
     if not can_act(request.user):
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({
@@ -74,6 +77,7 @@ def process_comment(request, question):
 
 
 def build_question_context(question, request):
+    """Формирует полный контекст для вопроса с рейтингами лайков и подписками."""
     comments = Comment.objects.filter(question=question).prefetch_related('answer_set')
     question_images = list(question.images.split(",")) if question.images else []
     context = {
@@ -114,10 +118,12 @@ def build_question_context(question, request):
 
 
 def question_themes_page(request):
+    """Отображает страницу с темами вопросов."""
     return render(request, template_name="questions.html")
 
 
 def question_page(request, question_id, template_name='question.html'):
+    """Страница конкретного вопроса: GET – показ, POST – добавление комментария."""
     context = get_question_context(question_id)
     if context is None:
         return redirect('/')
@@ -146,6 +152,7 @@ def question_page(request, question_id, template_name='question.html'):
 
 
 def save_uploaded_images(images):
+    """Сохраняет загруженные изображения в хранилище и возвращает строку с путями через запятую."""
     image_paths = []
     for image in images:
         allowed_types = ['image/jpeg', 'image/png', 'image/webp']
@@ -163,6 +170,7 @@ def save_uploaded_images(images):
 
 
 def create_question_from_form(form, request):
+    """Создаёт новый вопрос из формы, генерирует эмбеддинги и сохраняет изображения."""
     model = get_model()
     title = form.cleaned_data['title']
     description = form.cleaned_data['description']
@@ -194,6 +202,7 @@ def create_question_from_form(form, request):
 
 
 def update_question_from_form(question, form, request):
+    """Обновляет существующий вопрос данными из формы."""
     question.title = form.cleaned_data['title']
     question.description = form.cleaned_data['description']
     question.tag = form.cleaned_data['tag']
@@ -218,6 +227,7 @@ def get_available_tags(request):
 
 
 def question_make_page(request):
+    """Страница создания нового вопроса (только для авторизованных)."""
     if not request.user.is_authenticated:
         return redirect('/account/login')
     if not request.user.active:
@@ -240,6 +250,7 @@ def question_make_page(request):
 
 
 def question_edit_page(request):
+    """Страница редактирования вопроса (только автор вопроса)."""
     if not can_act(request.user):
         return redirect('/')
 
@@ -275,10 +286,12 @@ def question_edit_page(request):
 
 
 def themes_page(request):
+    """Отображает страницу с темами."""
     return render(request, template_name="themes.html")
 
 
 def make_comment_page(request, question_id):
+    """Страница создания комментария к вопросу."""
     if not can_act(request.user):
         return redirect('/account/login')
     if request.method == "POST":
@@ -301,6 +314,7 @@ def make_comment_page(request, question_id):
 
 
 def generic_like_dislike(request, model_class, like_model, obj_id_field, obj_name):
+    """Универсальная функция для лайков/дизлайков комментариев и ответов."""
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
@@ -345,6 +359,7 @@ def generic_like_dislike(request, model_class, like_model, obj_id_field, obj_nam
 
 
 def like_comment(request):
+    """Лайк комментария."""
     return generic_like_dislike(
         request,
         Comment,
@@ -355,6 +370,7 @@ def like_comment(request):
 
 
 def dislike_comment(request):
+    """Дизлайк комментария."""
     return generic_like_dislike(
         request,
         Comment,
@@ -365,6 +381,7 @@ def dislike_comment(request):
 
 
 def like_answer(request):
+    """Лайк ответа на комментарий."""
     return generic_like_dislike(
         request,
         Answer,
@@ -375,6 +392,7 @@ def like_answer(request):
 
 
 def dislike_answer(request):
+    """Дизлайк ответа на комментарий."""
     return generic_like_dislike(
         request,
         Answer,
@@ -385,6 +403,7 @@ def dislike_answer(request):
 
 
 def make_answer_page(request, comment_id):
+    """Страница создания ответа на комментарий (обрабатывает POST и уведомления)."""
     if not can_act(request.user):
         return redirect('/')
 
@@ -419,10 +438,12 @@ def make_answer_page(request, comment_id):
 
 
 def question_card(request):
+    """Рендерит карточку вопроса (шаблон questions.html)."""
     return render(request, template_name="questions.html")
 
 
 def delete_question(request, question_id):
+    """Удаляет вопрос (POST) с проверкой прав и очисткой изображений."""
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'})
     if not can_act(request.user):

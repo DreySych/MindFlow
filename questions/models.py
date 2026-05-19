@@ -12,6 +12,8 @@ logger = logging.getLogger('project')
 # Create your models here.
 
 class Question(models.Model):
+    """Модель вопроса с заголовком, описанием, автором, рейтингом и эмбеддингом."""
+
     title = models.TextField()
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,13 +24,16 @@ class Question(models.Model):
     tag = models.TextField(default='Другое')
 
     def set_embedding(self, vector):
+        """Сохраняет вектор эмбеддинга в виде строки через запятую."""
         self.embedding = ",".join(map(str, vector))
 
     def get_embedding(self):
+        """Возвращает эмбеддинг как список чисел или None."""
         return list(map(float, self.embedding.split(','))) if self.embedding else None
 
     @property
     def image_list(self):
+        """Возвращает список путей к изображениям вопроса."""
         if not self.images:
             return [[]]
         images = []
@@ -41,6 +46,8 @@ class Question(models.Model):
 
 
 class Comment(models.Model):
+    """Модель комментария к вопросу."""
+
     text = models.TextField()
     rating = models.IntegerField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -52,6 +59,8 @@ class Comment(models.Model):
 
 
 class Answer(models.Model):
+    """Модель ответа на комментарий."""
+
     answer = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField()
@@ -63,6 +72,8 @@ class Answer(models.Model):
 
 
 class Like(models.Model):
+    """Универсальная модель лайка (для вопроса, ответа или комментария)."""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True)
@@ -71,6 +82,8 @@ class Like(models.Model):
 
 
 class QuestionLike(models.Model):
+    """Модель лайка/дизлайка вопроса."""
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey('Question', on_delete=models.CASCADE)
     rating = models.SmallIntegerField(default=1)
@@ -81,6 +94,8 @@ class QuestionLike(models.Model):
 
 
 class AnswerLike(models.Model):
+    """Модель лайка/дизлайка ответа."""
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     answer = models.ForeignKey('Answer', on_delete=models.CASCADE)
     rating = models.SmallIntegerField(default=1)
@@ -91,6 +106,8 @@ class AnswerLike(models.Model):
 
 
 class CommentLike(models.Model):
+    """Модель лайка/дизлайка комментария."""
+
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.ForeignKey('Comment', on_delete=models.CASCADE)
     rating = models.SmallIntegerField(default=1)
@@ -102,6 +119,7 @@ class CommentLike(models.Model):
 
 @receiver(post_save, sender=Question)
 def announce_new_data(sender, instance, **kwargs):
+    """Сигнал: при создании вопроса отправляет веб-сокет о новом посте."""
     channel_layer = get_channel_layer()
 
     context = {
@@ -122,6 +140,7 @@ def announce_new_data(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Comment)
 def announce_new_comment(sender, instance, created, **kwargs):
+    """Сигнал: при создании комментария обновляет через веб-сокет список комментариев."""
     if created:
         channel_layer = get_channel_layer()
 
@@ -146,6 +165,7 @@ def announce_new_comment(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Answer)
 def announce_new_answer(sender, instance, created, **kwargs):
+    """Сигнал: при создании ответа обновляет через веб-сокет список комментариев."""
     if created:
         channel_layer = get_channel_layer()
 

@@ -32,17 +32,19 @@ import traceback
 logger = logging.getLogger('project')
 
 
-# Create your views here.
 def can_act(user):
+    """Проверяет, авторизован ли пользователь и не заблокирован."""
     return user.is_authenticated and user.active
 
 
 def logout_page(request):
+    """Выполняет выход пользователя из системы."""
     logout(request)
     return redirect('/')
 
 
 def signup_page(request):
+    """Обрабатывает регистрацию нового пользователя (форма SignUpForm)."""
     context = {}
 
     if request.method == 'POST':
@@ -77,6 +79,7 @@ def signup_page(request):
 
 
 def login_page(request):
+    """Обрабатывает вход пользователя (форма LoginForm)."""
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -119,6 +122,7 @@ def login_page(request):
 
 
 def password_restore_page(request):
+    """Страница запроса кода восстановления пароля по email."""
     if request.method == 'POST':
         form = PasswordRestoreEmailForm(request.POST)
         if form.is_valid():
@@ -158,6 +162,7 @@ def password_restore_page(request):
 
 
 def password_restore_code_page(request):
+    """Страница ввода кода восстановления, полученного по email."""
     if 'restore_email' not in request.session:
         messages.error(request, 'Сначала введите почту')
         return redirect('password_restore')
@@ -192,6 +197,7 @@ def password_restore_code_page(request):
 
 
 def password_restore_new_page(request):
+    """Страница установки нового пароля после подтверждения кода."""
     if not request.session.get('restore_code_verified'):
         messages.error(request, 'Сначала подтвердите код')
         return redirect('password_restore_code')
@@ -222,6 +228,7 @@ def password_restore_new_page(request):
 
 
 def profile_page_general(request, username):
+    """Общая страница профиля пользователя с его вопросами."""
     if request.user.is_authenticated:
         user = request.user
         target_user = get_object_or_404(User, username=username)
@@ -256,6 +263,7 @@ def profile_page_general(request, username):
 
 
 def profile_page_settings(request):
+    """Страница редактирования профиля и аватара."""
     if not can_act(request.user):
         return redirect('/')
 
@@ -306,13 +314,13 @@ def profile_page_settings(request):
 
 
 def profile_page_comments(request, username):
+    """Страница профиля с комментариями пользователя."""
     if request.user.is_authenticated:
         target_user = get_object_or_404(User, username=username)
         posts = Question.objects.filter(
             author=target_user).order_by('-creation_date')
         comments = Comment.objects.filter(author=target_user)
 
-        # Создаем список с данными о комментариях и рейтингах пользователя
         comments_data = []
         for comment in comments:
             user_rating = 0
@@ -345,6 +353,7 @@ def profile_page_comments(request, username):
 
 
 def profile_page_liked(request, username):
+    """Страница профиля с понравившимися вопросами, комментариями и ответами."""
     if request.user.is_authenticated:
         target_user = get_object_or_404(User, username=username)
 
@@ -389,6 +398,7 @@ def profile_page_liked(request, username):
 
 
 def add_friend(request, user_id):
+    """Подписка на пользователя (POST)."""
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated:
@@ -436,6 +446,7 @@ def add_friend(request, user_id):
 
 
 def delete_friend(request, user_id):
+    """Отписка от пользователя (POST)."""
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated:
@@ -473,12 +484,14 @@ def delete_friend(request, user_id):
 
 
 def is_friend(current_user, other_user):
+    """Проверяет, подписан ли current_user на other_user."""
     if not current_user.is_authenticated or current_user == other_user:
         return False
     return Subscription.objects.filter(user1=current_user, user2=other_user).exists()
 
 
 def my_profile_redirect(request):
+    """Редирект на страницу профиля текущего пользователя."""
     if request.user.is_authenticated:
         return redirect(
             'profile_general',

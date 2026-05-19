@@ -10,6 +10,7 @@ logger = logging.getLogger('project')
 
 
 def accept(request):
+    """Принимает жалобу и удаляет объект (вопрос/пользователя/комментарий/ответ)."""
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated or not request.user.is_staff:
@@ -33,6 +34,7 @@ def accept(request):
 
 
 def decline(request):
+    """Отклоняет жалобу (удаляет её без наказания)."""
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'Только POST'}, status=405)
     if not request.user.is_authenticated or not request.user.is_staff:
@@ -46,6 +48,7 @@ def decline(request):
 
 
 def complaint_page(request):
+    """Создаёт новую жалобу (POST) с проверками прав и дубликатов."""
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return JsonResponse({'ok': False, 'error': 'Требуется авторизация'})
@@ -156,6 +159,7 @@ def complaint_page(request):
 
 
 def complaint_user_panel_page(request):
+    """Панель модератора: все жалобы на пользователей."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
@@ -169,6 +173,7 @@ def complaint_user_panel_page(request):
 
 
 def complaint_question_panel_page(request):
+    """Панель модератора: все жалобы на вопросы."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 
@@ -183,6 +188,7 @@ def complaint_question_panel_page(request):
 
 
 def complaint_comment_panel_page(request):
+    """Панель модератора: жалобы на комментарии и ответы (с обрезкой пробелов)."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('/')
 

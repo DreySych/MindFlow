@@ -5,6 +5,8 @@ from users.models import User
 
 
 class Complaint(models.Model):
+    """Модель жалобы на вопрос, пользователя, комментарий или ответ."""
+
     description = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(

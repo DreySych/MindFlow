@@ -13,10 +13,12 @@ from .forms import *
 
 
 def can_act(user):
+    """Проверяет, авторизован ли пользователь и не заблокирован."""
     return user.is_authenticated and user.active
 
 
 def build_post_context(post, request):
+    """Формирует контекст для карточки вопроса (комментарии, рейтинг, форма)."""
     ctx = get_question_context(post.pk)
     ctx['comment_form'] = CommentForm()
     if request.user.is_authenticated:
@@ -29,6 +31,7 @@ def build_post_context(post, request):
 
 
 def perform_search(search_text):
+    """Ищет вопросы по тексту через эмбеддинги и сортирует по релевантности и дате."""
     model = get_model()
     input_vec = model.encode([search_text])[0]
     questions = Question.objects.all()
@@ -49,6 +52,7 @@ def perform_search(search_text):
 
 
 def get_default_questions(request, tag=None):
+    """Возвращает ленту вопросов для главной: свежие от друзей, затем популярные."""
     if not can_act(request.user):
         if tag and tag != 'Другое':
             return Question.objects.filter(tag=tag).order_by('-rating', '-creation_date')
@@ -100,6 +104,7 @@ def get_default_questions(request, tag=None):
 
 
 def index_page(request):
+    """Главная страница: лента вопросов, поиск, пагинация, AJAX-подгрузка."""
     if request.method == "POST" and 'question_id' in request.POST:
         question = get_object_or_404(
             Question, pk=request.POST.get('question_id'))
@@ -165,7 +170,7 @@ def index_page(request):
             'link1': "account/logout/",
             "page1": 'Выход',
             'link2': "",
-            "page2": ''
+            'page2': ''
         })
     context['images'] = {
         p.id: p.images.split(',')[0] if p.images else ''
@@ -198,6 +203,7 @@ def index_page(request):
 
 
 def get_subscribed_authors(user):
+    """Возвращает список ID авторов, на которых подписан пользователь."""
     if not user.is_authenticated:
         return []
     return Subscription.objects.filter(
@@ -206,6 +212,7 @@ def get_subscribed_authors(user):
 
 
 def vote_question(request, vote):
+    """Голосует за вопрос (лайк/дизлайк), обновляет рейтинг и создаёт уведомление."""
     if not request.user.is_authenticated:
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'ok': False, 'login': '/account/login/'})
@@ -258,14 +265,17 @@ def vote_question(request, vote):
 
 
 def like(request):
+    """Обработчик лайка вопроса (вызывает vote_question с голосом 1)."""
     return vote_question(request, 1)
 
 
 def dislike(request):
+    """Обработчик дизлайка вопроса (вызывает vote_question с голосом -1)."""
     return vote_question(request, -1)
 
 
 def sidebar_page(request):
+    """Рендерит боковую панель (сайдбар) со списком подписок."""
     context = {}
 
     if request.user.is_authenticated:
