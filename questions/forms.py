@@ -20,10 +20,16 @@ class MultipleFileField(forms.FileField):
 
 
 class QuestionForm(forms.Form):
+    file = open('questions/available_tags.txt', mode='r', encoding='utf-8')
+    available_tags = file.read().split('\n')
+    file.close()
+
+    CHOICES = [(i, i) for i in available_tags]
+
     title = forms.CharField()
     description = forms.CharField(required=False)
-    # tags = forms.CharField(required=False)
     images = MultipleFileField(required=False, label='Изображения')
+    tag = forms.ChoiceField(choices=CHOICES)
 
 
 class CommentForm(forms.Form):

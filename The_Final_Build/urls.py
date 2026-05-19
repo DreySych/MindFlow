@@ -42,6 +42,7 @@ urlpatterns = [
          question_views.question_themes_page, name='questions'),
     path('question/make/', question_views.question_make_page, name='make_question'),
     path('question/edit/', question_views.question_edit_page, name='edit_question'),
+    path('get_tags/', question_views.get_available_tags, name='get_tags'),
 
 
     path('comment/make/<int:question_id>',

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, reverse
 
 from notifications.models import Notification
 from main.model_loader import get_model
@@ -9,6 +9,7 @@ from users.models import User, Subscription
 from django.http import JsonResponse
 from django.utils import timezone
 from django.template.loader import render_to_string
+from .forms import *
 
 
 def can_act(user):
@@ -47,23 +48,36 @@ def perform_search(search_text):
     return [q for q, _ in sorted_results]
 
 
-def get_default_questions(request):
+def get_default_questions(request, tag=None):
     if not can_act(request.user):
-        return Question.objects.all().order_by('-rating', '-creation_date')
+        return Question.objects.filter(tag=tag).order_by('-rating', '-creation_date')
 
     friends_ids = Subscription.objects.filter(
         user1=request.user).values_list('user2_id', flat=True)
-    fresh_friends = Question.objects.filter(
-        author_id__in=friends_ids).order_by('-creation_date')[:5]
+    if tag:
+        fresh_friends = Question.objects.filter(
+            author_id__in=friends_ids, tag=tag).order_by('-creation_date')[:5]
+    elif not tag or tag == 'other':
+        fresh_friends = Question.objects.filter(
+            author_id__in=friends_ids).order_by('-creation_date')[:5]
     fresh_ids = [p.id for p in fresh_friends]
 
-    popular_all = Question.objects.exclude(
-        id__in=fresh_ids).order_by('-rating', '-creation_date')
-    popular_friends = Question.objects.filter(
-        author_id__in=friends_ids).exclude(
-        id__in=fresh_ids).order_by(
+    if tag:
+        popular_all = Question.objects.exclude(
+            id__in=fresh_ids).filter(tag=tag).order_by('-rating', '-creation_date')
+        popular_friends = Question.objects.filter(
+            author_id__in=friends_ids, tag=tag).exclude(
+            id__in=fresh_ids).order_by(
+                '-rating',
+            '-creation_date')
+    elif not tag or tag == 'other':
+        popular_all = Question.objects.exclude(
+            id__in=fresh_ids).order_by('-rating', '-creation_date')
+        popular_friends = Question.objects.filter(
+            author_id__in=friends_ids).exclude(
+            id__in=fresh_ids).order_by(
             '-rating',
-        '-creation_date')
+            '-creation_date')
 
     result = list(fresh_friends)
     all_list = list(popular_all)
@@ -98,9 +112,15 @@ def index_page(request):
             )
         return redirect('index')
 
+    tag = request.GET.get('tag')
+
     search_text = request.GET.get('q', '').strip()
-    results = perform_search(
-        search_text) if search_text else get_default_questions(request)
+    if tag:
+        results = perform_search(
+            search_text) if search_text else get_default_questions(request, tag=tag)
+    elif not tag or tag == 'other':
+        results = perform_search(
+            search_text) if search_text else get_default_questions(request)
     page = int(request.GET.get('page', 1))
     per_page = 10
 
@@ -111,6 +131,8 @@ def index_page(request):
     has_more = len(results) > end
 
     posts_context = [build_post_context(p, request) for p in page_posts]
+
+    tag_form = TagFilterForm()
     context = {
         "username": request.user.username if request.user.is_authenticated else "Профиль",
         "users": User.objects.all(),
@@ -127,7 +149,14 @@ def index_page(request):
         'notifications': Notification.objects.filter(
             user=request.user).order_by('-created_at')[
                 :20] if request.user.is_authenticated else [],
+        'tag_form': tag_form,
     }
+
+    if request.method == 'POST':
+        form = TagFilterForm(request.POST)
+        if form.is_valid():
+            tag = form.cleaned_data['tag']
+            return redirect(reverse('index')+f'?tag={tag}')
 
     if request.user.is_authenticated:
         context.update({
