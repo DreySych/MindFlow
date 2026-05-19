@@ -7,6 +7,7 @@ MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 
 def get_model():
+    """Загружает модель SentenceTransformer для эмбеддингов текста."""
     global _model
     if _model is None:
         if os.path.exists(LOCAL_MODEL_PATH):
