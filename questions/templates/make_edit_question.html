@@ -250,6 +250,7 @@ ${tags.join(", ")}
     });
 
     if (!response.ok) {
+	console.error('AI tag suggestion failed:', response.status);
     const lowerText = (title + ' ' + description).toLowerCase();
 
     if (lowerText.includes('python')) {

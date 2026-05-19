@@ -4,7 +4,7 @@ import json
 import os
 from .strategies import LastNQuestionsStrategy
 from typing import Optional
-
+from ai.clients import OpenRouterClient
 
 # OpenRouter конфигурация
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"

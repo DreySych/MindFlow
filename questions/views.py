@@ -222,7 +222,7 @@ def get_available_tags(request):
             for tag in file.read().splitlines()
             if tag.strip()
         ]
-
+    logger.info('Available tags requested')
     return JsonResponse(available_tags, safe=False)
 
 
@@ -237,6 +237,11 @@ def question_make_page(request):
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
+            logger.info(
+                'User %s creating question with tag %s',
+                request.user.username,
+                form.cleaned_data['tag']
+            )
             question = create_question_from_form(form, request)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
     else:
@@ -263,6 +268,11 @@ def question_edit_page(request):
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
+            logger.info(
+                'User %s editing question %s',
+                request.user.username,
+                question.id
+            )
             update_question_from_form(question, form, request)
             return redirect(f'/profile/{request.user.username}/#question-{question.id}')
     else:
@@ -412,7 +422,11 @@ def make_answer_page(request, comment_id):
 
     if request.method == "POST":
         text = request.POST.get('text', '').strip()
-
+        logger.info(
+            'User %s answered comment %s',
+            request.user.username,
+            comment.id
+        )
         if text:
             Answer.objects.create(
                 answer=text,
@@ -455,5 +469,10 @@ def delete_question(request, question_id):
         for path in question.images.split(','):
             if path and default_storage.exists(path):
                 default_storage.delete(path)
+    logger.warning(
+        'Question deleted: id=%s by user=%s',
+        question.id,
+        request.user.username
+    )
     question.delete()
     return JsonResponse({'ok': True})

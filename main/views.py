@@ -10,7 +10,9 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.template.loader import render_to_string
 from .forms import *
+import logging
 
+logger = logging.getLogger('project')
 
 def can_act(user):
     """Проверяет, авторизован ли пользователь и не заблокирован."""
@@ -48,6 +50,11 @@ def perform_search(search_text):
         results.append((q, similarity))
 
     sorted_results = sorted(results, key=lambda x: (-x[1], -x[0].creation_date.timestamp()))
+    logger.info(
+        'Search performed: query="%s", results=%s',
+        search_text,
+        len(sorted_results)
+    )
     return [q for q, _ in sorted_results]
 
 

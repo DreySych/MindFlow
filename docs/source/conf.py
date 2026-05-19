@@ -1,102 +1,70 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+"""Sphinx configuration for MindFlow documentation."""
+
+from __future__ import annotations
 
 import os
 import sys
-import django
+from pathlib import Path
 
-# Добавляем путь к проекту
-sys.path.insert(0, os.path.abspath('../..'))
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-# Настройка Django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'The_Final_Build.settings'
-django.setup()
+# Sphinx may be built in CI without a local .env file. These defaults are used
+# only for importing Django modules while generating documentation.
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "The_Final_Build.settings")
+os.environ.setdefault("SECRET_KEY", "docs-build-secret-key")
+os.environ.setdefault("DEBUG", "False")
+os.environ.setdefault("EMAIL_HOST_USER", "")
+os.environ.setdefault("EMAIL_HOST_PASSWORD", "")
+os.environ.setdefault("OPENROUTER_API_KEY", "")
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+try:
+    import django
+    django.setup()
+except Exception as exc:  # pragma: no cover - documentation fallback only
+    print(f"Django setup was skipped during docs build: {exc}")
 
-project = 'The Final Build'
-copyright = '2026, Drey Sych'
-author = 'Drey Sych'
-release = '1.0.0'
-version = '1.0'
+project = "MindFlow"
+author = "MindFlow Team"
+copyright = "2026, MindFlow Team"
+release = "1.0"
+version = "1.0"
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
+language = "ru"
 
 extensions = [
-    'sphinx.ext.autodoc',          # Автоматическая документация из docstrings
-    'sphinx.ext.viewcode',         # Ссылки на исходный код
-    'sphinx.ext.napoleon',         # Поддержка Google/NumPy стиля docstrings
-    'sphinx.ext.intersphinx',      # Ссылки на другие проекты
-    'sphinx.ext.todo',             # Поддержка TODO
-    'sphinx.ext.coverage',         # Проверка покрытия документацией
-    'sphinx.ext.ifconfig',         # Условная документация
-    'sphinx_rtd_theme',            # Read the Docs тема
-    'sphinxcontrib.httpdomain',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = []
+autodoc_member_order = "bysource"
+autodoc_typehints = "description"
+autodoc_mock_imports = [
+    "requests",
+    "sentence_transformers",
+    "torch",
+    "transformers",
+    "channels",
+    "daphne",
+]
 
-language = 'ru'
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
-
-html_theme_options = {
-    'navigation_depth': 4,
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'includehidden': True,
-    'titles_only': False,
-}
-
-# -- Extension configuration -------------------------------------------------
-
-# Napoleon settings
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
-napoleon_include_special_with_doc = True
-napoleon_use_admonition_for_examples = True
-napoleon_use_admonition_for_notes = True
-napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
+napoleon_include_special_with_doc = False
 napoleon_use_param = True
 napoleon_use_rtype = True
-napoleon_preprocess_types = False
-napoleon_type_aliases = None
-napoleon_attr_annotations = True
 
-# Intersphinx mapping
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'django': ('https://docs.djangoproject.com/en/stable/',
-               'https://docs.djangoproject.com/en/stable/_objects/'),
-}
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-# TODO settings
+html_theme = "alabaster"
+html_static_path = ["_static"]
+html_title = "MindFlow documentation"
+html_short_title = "MindFlow"
+
 todo_include_todos = True
-
-# Подавить предупреждения о дублирующихся описаниях объектов
-suppress_warnings = [
-    'autodoc',
-    'autodoc.import_object',
-    'ref.duplicate',
-]
-
-# Настройки autodoc для предотвращения дублей
-autodoc_default_options = {
-    'members': True,
-    'member-order': 'bysource',
-    'undoc-members': True,
-    'exclude-members': '__weakref__',
-    'noindex': True,
-}

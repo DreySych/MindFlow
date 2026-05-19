@@ -1,352 +1,262 @@
-API Документация
-================
-
-Документация REST API для программного взаимодействия с платформой.
-
-.. note::
-   Большинство API требуют аутентификации через Django сессии.
-
-AI Search API
--------------
-
-Интеллектуальный поиск по вопросам с использованием LLM.
-
-Поиск
-~~~~~
-
-.. http:post:: /ai/api/
-
-   Выполняет AI-поиск по базе вопросов.
-
-   **Запрос:**
-
-   .. sourcecode:: json
-
-      {
-        "q": "как работает Django ORM"
-      }
-
-   **Параметры запроса:**
-
-   :q: (string) Поисковый запрос пользователя (обязательный)
-
-   **Ответ при успехе (200 OK):**
-
-   .. sourcecode:: json
-
-      {
-        "answer": "Django ORM — это Object-Relational Mapping система..."
-      }
-
-   **Ответ при ошибке (400 Bad Request):**
-
-   .. sourcecode:: json
-
-      {
-        "error": "Пустой запрос"
-      }
-
-   **Возможные ошибки:**
-
-   * ``"Пустой запрос"`` — запрос пустой или содержит только пробелы
-   * ``"Подходящих постов не найдено"`` — нет релевантных вопросов
-   * ``"Ошибка при обращении к ИИ: ..."`` — проблема с Ollama
-
-   **Пример использования:**
-
-   .. code-block:: javascript
-
-      // JavaScript Fetch API
-      fetch('/ai/api/', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-              q: 'расскажи про Python'
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.answer) {
-              console.log(data.answer);
-          } else {
-              console.error(data.error);
-          }
-      });
-
-   .. code-block:: python
-
-      # Python requests
-      import requests
-
-      response = requests.post(
-          'http://localhost:8000/ai/api/',
-          json={'q': 'расскажи про Python'}
-      )
-
-      data = response.json()
-      if 'answer' in data:
-          print(data['answer'])
-      else:
-          print(f"Ошибка: {data['error']}")
-
-   .. note::
-      CSRF защита отключена для этого endpoint (``@csrf_exempt``).
-      В production рекомендуется добавить токен-аутентификацию.
-
-Страница AI-поиска
-~~~~~~~~~~~~~~~~~~
-
-.. http:get:: /ai/
-
-   Отображает страницу AI-поиска с формой.
-
-   **Query параметры:**
-
-   :q: (string, optional) Предзаполненный поисковый запрос
-
-   **Пример:**
-
-   .. code-block:: http
-
-      GET /ai/?q=Django+ORM HTTP/1.1
-
-Complaints API
---------------
-
-API для создания и обработки жалоб на контент.
-
-Создание жалобы
-~~~~~~~~~~~~~~~
-
-.. http:post:: /complaint/
-
-   Создаёт жалобу на контент или пользователя.
-
-   **Query параметры (один обязателен):**
-
-   :question_id: (int) ID вопроса для жалобы
-   :user_id: (int) ID пользователя для жалобы
-   :comment_id: (int) ID комментария для жалобы
-   :answer_id: (int) ID ответа для жалобы
-
-   **POST параметры:**
-
-   :description: (string) Текст жалобы (обязательный, макс. 500 символов)
-
-   **Требования:**
-
-   * Пользователь должен быть авторизован
-   * Пользователь не должен быть заблокирован (``active=True``)
-   * Нельзя жаловаться на свой контент
-
-   **Ответ при успехе:**
-
-   .. sourcecode:: json
-
-      {
-        "ok": true
-      }
-
-   **Ответ при ошибке:**
-
-   .. sourcecode:: json
-
-      {
-        "ok": false,
-        "error": "Описание ошибки"
-      }
-
-   **Возможные ошибки:**
-
-   * ``"Требуется авторизация"``
-   * ``"Вы заблокированы и не можете отправлять жалобы"``
-   * ``"Введите текст жалобы"``
-   * ``"Максимум 500 символов"``
-   * ``"Нельзя жаловаться на свой пост"``
-   * ``"Не указан объект жалобы"``
-   * ``"Пост не найден"``
-
-   **Пример:**
-
-   .. code-block:: javascript
-
-      // Жалоба на вопрос
-      const formData = new FormData();
-      formData.append('description', 'Спам и реклама');
-
-      fetch('/complaint/?question_id=42', {
-          method: 'POST',
-          body: formData
-      })
-      .then(r => r.json())
-      .then(data => {
-          if (data.ok) {
-              alert('Жалоба отправлена');
-          } else {
-              alert(data.error);
-          }
-      });
-
-   .. warning::
-      При создании жалобы всем администраторам отправляется уведомление.
-
-Принять жалобу
-~~~~~~~~~~~~~~
-
-.. http:get:: /accept/
-
-   Принимает жалобу и применяет санкции к объекту.
-
-   **Доступ:** только администраторы (``is_staff=True``)
-
-   **Query параметры:**
-
-   :complaint_id: (int) ID жалобы для обработки
-   :to: (string, optional) URL для редиректа после обработки
-
-   **Действия:**
-
-   * **Question:** удаляет вопрос
-   * **User:** блокирует пользователя (``active=False``)
-   * **Comment:** удаляет комментарий
-   * **Answer:** удаляет ответ
-
-   После санкции жалоба удаляется.
-
-Отклонить жалобу
-~~~~~~~~~~~~~~~~
-
-.. http:get:: /decline/
-
-   Отклоняет жалобу без применения санкций.
-
-   **Доступ:** только администраторы
-
-   **Query параметры:**
-
-   :complaint_id: (int) ID жалобы
-   :to: (string, optional) URL для редиректа
-
-   Жалоба просто удаляется из базы.
-
-Likes API
----------
-
-API для лайков и дизлайков вопросов.
-
-Лайк
-~~~~
-
-.. http:get:: /like/
-
-   Добавляет лайк вопросу.
-
-   **Query параметры:**
-
-   :question_id: (int) ID вопроса
-   :to: (string, optional) URL для редиректа
-
-   **Правила:**
-
-   * Нельзя лайкнуть свой вопрос
-   * Если был дизлайк, он удаляется
-   * Повторный лайк удаляет предыдущий
-
-Дизлайк
-~~~~~~~
-
-.. http:get:: /dislike/
-
-   Добавляет дизлайк вопросу.
-
-   **Query параметры:**
-
-   :question_id: (int) ID вопроса
-   :to: (string, optional) URL для редиректа
-
-   **Правила:**
-
-   * Нельзя дизлайкнуть свой вопрос
-   * Если был лайк, он удаляется
-   * Повторный дизлайк удаляет предыдущий
-
-Notifications API
------------------
-
-Просмотр уведомлений
-~~~~~~~~~~~~~~~~~~~~
-
-.. http:get:: /notifications/
-
-   Отображает страницу с уведомлениями пользователя.
-
-   **Требования:** авторизация
-
-   **Действие:** помечает все непрочитанные уведомления как прочитанные
-
-Subscriptions API
------------------
-
-Подписка
-~~~~~~~~
-
-.. http:get:: /subscribe/
-
-   Подписывается на пользователя.
-
-   **Query параметры:**
-
-   :user_id: (int) ID пользователя для подписки
-   :to: (string, optional) URL для редиректа
-
-   **Правила:**
-
-   * Нельзя подписаться на себя
-   * Повторная подписка отменяет предыдущую
-
-   **Эффект:** создаёт уведомление у пользователя, на которого подписались
-
-Ограничения и лучшие практики
-------------------------------
-
-Rate Limiting
-~~~~~~~~~~~~~
-
-В текущей версии rate limiting не реализован. В production рекомендуется:
-
-* Использовать ``django-ratelimit``
-* Ограничить AI-поиск: 10 запросов/мин на пользователя
-* Ограничить создание жалоб: 5 жалоб/час
-
-Аутентификация
-~~~~~~~~~~~~~~
-
-Текущая версия использует Django session auth. Для API-клиентов рекомендуется:
-
-* Использовать Django REST Framework с Token Authentication
-* Или OAuth2 через ``django-oauth-toolkit``
-
-Обработка ошибок
-~~~~~~~~~~~~~~~~
-
-Всегда проверяйте коды ответов:
-
-.. code-block:: javascript
-
-   fetch('/api/endpoint')
-       .then(response => {
-           if (!response.ok) {
-               throw new Error(`HTTP ${response.status}`);
-           }
-           return response.json();
-       })
-       .catch(error => console.error('Ошибка:', error));
-
-См. также
----------
-
-* :doc:`modules/ai` — документация модуля AI-поиска
-* :doc:`modules/complains` — система жалоб
-* :doc:`quickstart` — быстрый старт для пользователей
+API и маршруты
+==============
+
+Этот раздел описывает основные HTTP-маршруты проекта. Большая часть действий использует Django session authentication.
+
+Главная страница и поиск
+------------------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/``
+     - Главная страница с лентой постов.
+   * - GET
+     - ``/?q=<query>``
+     - Semantic search по постам.
+   * - GET
+     - ``/?tag=<tag>``
+     - Фильтрация постов по тегу.
+   * - GET
+     - ``/?page=<number>``
+     - AJAX-подгрузка следующей страницы постов.
+   * - GET
+     - ``/sidebar/``
+     - Рендер боковой панели.
+
+Посты
+-----
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/question/<id>/``
+     - Страница поста.
+   * - POST
+     - ``/question/<id>/``
+     - Создание комментария к посту.
+   * - GET
+     - ``/question/make/``
+     - Форма создания поста.
+   * - POST
+     - ``/question/make/``
+     - Создание поста.
+   * - GET
+     - ``/question/edit/?id=<id>``
+     - Форма редактирования поста.
+   * - POST
+     - ``/question/edit/?id=<id>``
+     - Сохранение изменений поста.
+   * - POST
+     - ``/question/<id>/delete/``
+     - Удаление поста с проверкой прав.
+   * - GET
+     - ``/get_tags/``
+     - JSON-список доступных тегов.
+
+Голосование
+-----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/like/?id=<question_id>``
+     - Лайк поста.
+   * - GET
+     - ``/dislike/?id=<question_id>``
+     - Дизлайк поста.
+   * - GET
+     - ``/comment/like/?id=<comment_id>``
+     - Лайк комментария.
+   * - GET
+     - ``/comment/dislike/?id=<comment_id>``
+     - Дизлайк комментария.
+   * - GET
+     - ``/answer/like/?id=<answer_id>``
+     - Лайк ответа.
+   * - GET
+     - ``/answer/dislike/?id=<answer_id>``
+     - Дизлайк ответа.
+
+Ответы
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - POST
+     - ``/comment/<comment_id>/answer/``
+     - Создание ответа на комментарий.
+
+Пользователи
+------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET/POST
+     - ``/account/signup/``
+     - Регистрация.
+   * - GET/POST
+     - ``/account/login/``
+     - Вход.
+   * - GET
+     - ``/account/logout/``
+     - Выход.
+   * - GET
+     - ``/profile/``
+     - Редирект на профиль текущего пользователя.
+   * - GET
+     - ``/profile/<username>/``
+     - Профиль пользователя.
+   * - GET/POST
+     - ``/profile/settings``
+     - Настройки профиля.
+   * - GET
+     - ``/profile/<username>/comments/``
+     - Комментарии пользователя.
+   * - GET
+     - ``/profile/<username>/liked/``
+     - Понравившиеся материалы.
+   * - POST
+     - ``/add_friend/<user_id>/``
+     - Подписка на пользователя.
+   * - POST
+     - ``/delete_friend/<user_id>/``
+     - Отписка от пользователя.
+
+Жалобы
+------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - POST
+     - ``/complaint/``
+     - Создание жалобы.
+   * - GET
+     - ``/complaint/panel/users/``
+     - Панель жалоб на пользователей.
+   * - GET
+     - ``/complaint/panel/questions/``
+     - Панель жалоб на посты.
+   * - GET
+     - ``/complaint/panel/comments/``
+     - Панель жалоб на комментарии и ответы.
+   * - POST
+     - ``/accept/?complaint_id=<id>``
+     - Принятие жалобы модератором.
+   * - POST
+     - ``/decline/?complaint_id=<id>``
+     - Отклонение жалобы модератором.
+
+AI-поиск
+--------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/ai/``
+     - Страница AI-поиска.
+   * - POST
+     - ``/ai/api/``
+     - JSON API для AI-поиска.
+
+Пример запроса к AI API:
+
+.. code-block:: json
+
+   {
+     "q": "как работает Django ORM"
+   }
+
+Пример успешного ответа:
+
+.. code-block:: json
+
+   {
+     "answer": "..."
+   }
+
+Пример ошибки:
+
+.. code-block:: json
+
+   {
+     "error": "Пустой запрос"
+   }
+
+Уведомления
+-----------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/notifications/list/``
+     - Список уведомлений текущего пользователя.
+   * - GET
+     - ``/notifications/count/``
+     - Количество непрочитанных уведомлений.
+   * - GET
+     - ``/notifications/read/<id>/``
+     - Отметка уведомления как прочитанного.
+
+Личные сообщения
+----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Метод
+     - URL
+     - Назначение
+   * - GET
+     - ``/messages/<user_id>/``
+     - Страница диалога.
+   * - GET
+     - ``/messages/<user_id>/messages/?page=<number>``
+     - JSON-подгрузка истории сообщений.
+
+WebSocket-маршрут чата:
+
+.. code-block:: text
+
+   /ws/chat/<user_id>/
