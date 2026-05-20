@@ -4,6 +4,32 @@
     box-sizing: border-box;
 }
 
+/* Светлая тема (по умолчанию) */
+body.light-theme {
+    --bg-primary: #ffffff;
+    --bg-secondary: #F0F4F8;
+    --text-primary: #1a1a2e;
+    --text-secondary: #6B7280;
+    --border-primary: #D1D9E6;
+    --accent-primary: #4A90E2;
+    --accent-secondary: #357ABD;
+    --danger-primary: #EF4444;
+    --success-color: #10B981;
+}
+
+/* Тёмная тема */
+body:not(.light-theme) {
+    --bg-primary: #1a1b1e;
+    --bg-secondary: #222326;
+    --text-primary: #e8e4dd;
+    --text-secondary: #8a857d;
+    --border-primary: #3a3b3e;
+    --accent-primary: #8db4ff;
+    --accent-secondary: #6b8fcf;
+    --danger-primary: #cf6b6b;
+    --success-color: #7bbf8a;
+}
+
 body {
     font-family: 'Manrope', sans-serif;
     background: var(--bg-primary);
@@ -11,7 +37,7 @@ body {
     color: var(--text-primary);
     display: flex;
     flex-direction: column;
-    position: relative;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .auth-wrapper {
@@ -29,7 +55,8 @@ body {
     width: 100%;
     max-width: 480px;
     border: 2px solid var(--border-primary);
-    box-shadow: 0 4px 20px rgba(107, 143, 207, 0.2);
+    box-shadow: 0 4px 20px rgba(74,144,226,0.1);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .auth-title {
@@ -38,6 +65,7 @@ body {
     color: var(--text-primary);
     margin-bottom: 30px;
     text-align: center;
+    transition: color 0.3s ease;
 }
 
 .input-group {
@@ -64,7 +92,7 @@ body {
 .input-field:focus {
     border-color: var(--accent-primary);
     background: var(--bg-primary);
-    box-shadow: 0 2px 8px rgba(107, 143, 207, 0.3);
+    box-shadow: 0 2px 8px rgba(74,144,226,0.2);
 }
 
 .input-field.error {
@@ -81,7 +109,6 @@ body {
 select.input-field {
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239CA3AF' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 20px center;
 }
@@ -92,7 +119,7 @@ select.input-field option {
 }
 
 input[type="date"].input-field {
-    color-scheme: light dark;
+    color-scheme: light;
 }
 
 .auth-links {
@@ -123,13 +150,12 @@ input[type="date"].input-field {
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(107, 143, 207, 0.4);
+    box-shadow: 0 2px 8px rgba(74,144,226,0.3);
 }
 
 .auth-button:hover {
-    background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-light) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(107, 143, 207, 0.5);
+    box-shadow: 0 4px 12px rgba(74,144,226,0.4);
 }
 
 .notification {
@@ -161,8 +187,8 @@ input[type="date"].input-field {
 }
 
 .notification.success {
-    border-color: var(--upvote-text);
-    color: var(--upvote-text);
+    border-color: var(--success-color);
+    color: var(--success-color);
 }
 
 .notification.error {
@@ -201,13 +227,13 @@ input[type="date"].input-field {
     font-family: 'Manrope', sans-serif;
     font-weight: 500;
     font-size: 14px;
+    transition: all 0.3s ease;
     z-index: 100;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.2s ease;
 }
 
 .back-button:hover {
-    background: var(--bg-hover);
+    background: var(--bg-secondary);
     transform: translateX(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-color: var(--accent-primary);
@@ -250,48 +276,19 @@ footer {
     position: relative;
     bottom: 0;
     width: 100%;
-}
-
-footer {
-    width: 100%;
-    height: 80px;
     background: var(--bg-primary);
     border-top: 1px solid var(--border-primary);
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    margin-top: auto;
 }
 
 .footer-text {
     font-family: 'Montserrat', sans-serif;
     font-size: 17px;
-    background: linear-gradient(to right, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+    background: linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
-
-/* Адаптация для мобильных устройств */
-@media (max-width: 768px) {
-    .auth-container {
-        padding: 30px 20px;
-    }
-
-    .auth-title {
-        font-size: 28px;
-    }
-
-    .back-button {
-        top: 20px;
-        left: 20px;
-        padding: 6px 14px;
-        font-size: 12px;
-    }
-
-    .back-icon {
-        width: 14px;
-        height: 14px;
-    }
 }

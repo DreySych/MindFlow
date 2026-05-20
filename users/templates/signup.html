@@ -18,6 +18,27 @@
         <img src="{% static 'images/back.png' %}" alt="Назад" class="back-icon">
         <span>Назад</span>
     </a>
+    <button onclick="toggleTheme()" style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--border-primary);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        cursor: pointer;
+        font-size: 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    ">
+        🌓
+    </button>
 
     <div class="auth-wrapper">
         <div class="auth-container">
@@ -70,9 +91,31 @@
         <span class="notification-close" onclick="hideNotification()">✕</span>
     </div>
 
-    {% include 'footer.html' %}
 
     <script>
+        function toggleTheme() {
+            if (document.body.classList.contains('light-theme')) {
+                document.body.classList.remove('light-theme');
+                localStorage.setItem('mindflow-theme', 'dark');
+            } else {
+                document.body.classList.add('light-theme');
+                localStorage.setItem('mindflow-theme', 'light');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('mindflow-theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+            } else if (savedTheme === 'dark') {
+                document.body.classList.remove('light-theme');
+            } else {
+                document.body.classList.add('light-theme');
+            }
+        }
+
+        loadTheme();
+
         const notification = document.getElementById('notification');
         const registerForm = document.getElementById('registerForm');
 

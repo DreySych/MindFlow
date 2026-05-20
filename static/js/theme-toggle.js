@@ -21,7 +21,7 @@ function updateThemeRadios() {
   const isDarkMode = !document.body.classList.contains('light-theme');
   const lightRadio = document.getElementById('themeLight');
   const darkRadio = document.getElementById('themeDark');
-  
+
   if (lightRadio && darkRadio) {
     lightRadio.checked = !isDarkMode;
     darkRadio.checked = isDarkMode;
@@ -50,7 +50,7 @@ function closeThemeDialog() {
 document.addEventListener('click', function(event) {
   const dialog = document.getElementById('themeDialog');
   const dialogContent = document.querySelector('.theme-dialog-content');
-  
+
   if (dialog && dialog.style.display === 'flex' && !dialogContent.contains(event.target)) {
     closeThemeDialog();
   }

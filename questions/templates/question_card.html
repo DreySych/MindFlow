@@ -60,7 +60,11 @@
             </a>
 
             <div style="flex:1;"></div>
-
+            {% if question.tag %}
+                <a href="/?tag={{ question.tag }}" class="tag-badge-card">
+                    {{ question.tag }}
+                </a>
+            {% endif %}
             {% if request.user == question.author %}
                 <a href="{% url 'edit_question' %}?id={{ question.id }}"
                    class="action-btn edit gradient-border"

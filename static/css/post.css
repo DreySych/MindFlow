@@ -275,11 +275,11 @@ body {
     width: 44px;
     color: var(--danger-primary);
     background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
-                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-hover) 100%) border-box;
+                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-primary) 100%) border-box;
 }
 
 .post-detail-card .action-btn.delete:hover {
-    background: var(--upvote-hover);
+    background: var(--danger-hover);
     border-color: var(--danger-primary);
 }
 
@@ -289,89 +289,4 @@ body {
     opacity: 1;
 }
 
-/* Адаптация для экранов от 1200px и меньше */
-@media (max-width: 1200px) {
-    .content-wrapper {
-        margin-left: 240px;
-    }
-}
-
-/* Адаптация для планшетов */
-@media (max-width: 992px) {
-    .content-wrapper {
-        margin-left: 220px;
-    }
-}
-
-/* Адаптация для мобильных устройств */
-@media (max-width: 768px) {
-    .content-wrapper {
-        margin-left: 0;
-        padding-top: 140px;
-    }
-
-    .feed {
-        padding: 0 16px;
-    }
-
-    .post-detail-card {
-        padding: 16px;
-    }
-
-    .post-detail-card .question-text {
-        font-size: 20px;
-    }
-
-    .post-detail-card .post-text {
-        font-size: 16px;
-    }
-
-    .post-detail-card .user-name-link {
-        font-size: 18px;
-    }
-
-    .post-detail-card .user-name-link::after {
-        font-size: 16px;
-    }
-
-    .post-detail-card .time-ago {
-        font-size: 16px;
-    }
-
-    .post-detail-card .vote-btn {
-        font-size: 18px;
-        padding: 6px;
-    }
-
-    .post-detail-card .vote-btn img {
-        width: 18px;
-        height: 18px;
-    }
-
-    .post-detail-card .vote-count {
-        font-size: 18px;
-    }
-
-    .post-detail-card .action-btn {
-        height: 40px;
-    }
-
-    .post-detail-card .action-btn.comment {
-        width: 70px;
-    }
-
-    .post-detail-card .action-btn.comment span {
-        font-size: 18px;
-    }
-
-    .post-detail-card .action-btn.report,
-    .post-detail-card .action-btn.edit,
-    .post-detail-card .action-btn.delete {
-        width: 40px;
-    }
-
-    .post-detail-card .action-btn img {
-        width: 18px;
-        height: 18px;
-    }
 }
