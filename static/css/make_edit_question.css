@@ -1,0 +1,297 @@
+/* make_edit_question.css */
+
+.post-form-title {
+	font-size: 32px;
+	margin-bottom: 30px;
+	color: var(--text-primary);
+	font-family: 'Mallanna', sans-serif;
+}
+.form-group {
+	margin-bottom: 25px;
+}
+.form-label {
+	display: block;
+	margin-bottom: 10px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--text-primary);
+}
+.form-input, .form-textarea {
+	width: 100%;
+	padding: 12px;
+	border: 2px solid var(--border-primary);
+	border-radius: 8px;
+	font-size: 16px;
+	box-sizing: border-box;
+	background: var(--bg-secondary);
+	color: var(--text-primary);
+	font-family: inherit;
+	transition: border-color 0.2s ease;
+}
+.form-input:focus, .form-textarea:focus {
+	outline: none;
+	border-color: var(--accent-primary);
+	background: var(--bg-primary);
+}
+.form-textarea {
+	resize: vertical;
+	min-height: 120px;
+}
+.image-upload-area {
+	position: relative;
+}
+.image-upload-label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 30px;
+	border: 2px dashed var(--border-primary);
+	border-radius: 8px;
+	cursor: pointer;
+	background-color: var(--bg-secondary);
+	transition: all 0.2s ease;
+	color: var(--text-secondary);
+}
+.image-upload-label.drag-over {
+	border-color: var(--accent-primary);
+	background-color: var(--bg-hover);
+	color: var(--accent-primary);
+}
+.image-upload-label:hover {
+	border-color: var(--accent-primary);
+	background-color: var(--bg-hover);
+	color: var(--text-primary);
+}
+.image-preview {
+	margin-top: 10px;
+	width: 100%;
+	height: auto;
+	border-radius: 8px;
+	max-height: 400px;
+	object-fit: cover;
+}
+.form-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+.submit-btn {
+	padding: 10px 24px;
+	background-color: var(--accent-primary);
+	color: var(--bg-primary);
+	border: none;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background-color 0.2s ease;
+}
+.submit-btn:hover {
+	background-color: var(--accent-secondary);
+}
+
+/* Стили для выбора тега */
+.tag-section {
+	margin-bottom: 25px;
+}
+.tag-buttons {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+.select-tag-btn {
+	padding: 8px 20px;
+	border-radius: 25px;
+	font-size: 14px;
+	font-family: 'Mallanna', sans-serif;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	border: 1px solid var(--accent-primary);
+	background: transparent;
+	color: var(--accent-primary);
+}
+.select-tag-btn.selected {
+	background: var(--accent-primary);
+	color: var(--bg-primary);
+	border-color: var(--accent-primary);
+}
+.suggest-tag-btn {
+	padding: 8px 20px;
+	background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
+				linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
+	border: 1px solid transparent;
+	border-radius: 25px;
+	color: var(--accent-primary);
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 14px;
+	transition: all 0.2s ease;
+}
+.suggest-tag-btn:hover {
+	background: var(--bg-hover);
+	border-color: var(--accent-primary);
+}
+
+/* Стили для оверлея */
+.tag-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(4px);
+	display: none;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.tag-overlay.active {
+	display: flex;
+}
+.tag-modal {
+	background: var(--bg-primary);
+	border-radius: 16px;
+	width: 90%;
+	max-width: 500px;
+	max-height: 80vh;
+	overflow: hidden;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+.tag-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	border-bottom: 1px solid var(--border-primary);
+}
+.tag-modal-title {
+	font-size: 20px;
+	font-family: 'Mallanna', sans-serif;
+	color: var(--text-primary);
+	margin: 0;
+}
+.tag-modal-close {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	font-size: 24px;
+	color: var(--text-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+}
+.tag-modal-close:hover {
+	background: var(--bg-hover);
+	color: var(--text-primary);
+}
+.tag-modal-body {
+	padding: 20px 24px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+.tag-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+.tag-option {
+	display: inline-flex;
+	align-items: center;
+	padding: 8px 20px;
+	border-radius: 25px;
+	font-size: 14px;
+	font-family: 'Mallanna', sans-serif;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	background: var(--bg-secondary);
+	color: var(--text-secondary);
+	border: 1px solid var(--border-primary);
+}
+.tag-option:hover {
+	background: var(--bg-hover);
+	border-color: var(--accent-primary);
+	color: var(--accent-primary);
+}
+.tag-option.selected {
+	background: var(--accent-primary);
+	color: var(--bg-primary);
+	border-color: var(--accent-primary);
+}
+.tag-modal-footer {
+	padding: 16px 24px;
+	border-top: 1px solid var(--border-primary);
+	display: flex;
+	justify-content: flex-end;
+}
+.tag-confirm-btn {
+	padding: 10px 24px;
+	background-color: var(--accent-primary);
+	color: var(--bg-primary);
+	border: none;
+	border-radius: 25px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background-color 0.2s ease;
+}
+.tag-confirm-btn:hover {
+	background-color: var(--accent-secondary);
+}
+
+/* Адаптация для планшетов */
+@media (max-width: 1024px) {
+	.content-wrapper {
+		margin-left: 220px;
+	}
+}
+.tag-warning {
+        color: var(--danger-primary);
+        font-size: 12px;
+        margin-top: 8px;
+        font-family: 'Mallanna', sans-serif;
+    }
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+	.content-wrapper {
+		margin-left: 0;
+		padding: 16px;
+		padding-top: 140px;
+	}
+	.post-form-title {
+		font-size: 24px;
+	}
+	.form-input, .form-textarea {
+		font-size: 14px;
+		padding: 10px;
+	}
+	.image-upload-label {
+		padding: 20px;
+		font-size: 14px;
+	}
+	.submit-btn {
+		padding: 8px 20px;
+		font-size: 14px;
+	}
+	.tag-modal {
+		width: 95%;
+	}
+	.tag-option {
+		padding: 6px 16px;
+		font-size: 13px;
+	}
+	.tag-buttons {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.select-tag-btn, .suggest-tag-btn {
+		text-align: center;
+	}
+
+}

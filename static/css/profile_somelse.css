@@ -32,7 +32,7 @@
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
 }
 
 .add-friend-btn:hover {
@@ -60,11 +60,11 @@
     font-family: 'Mallanna', sans-serif;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .pm-btn:hover {
-    background: rgba(22, 113, 254, 0.1);
+    background: var(--hover-comment);
     border-color: var(--accent-primary);
 }
 
@@ -109,6 +109,7 @@
     cursor: pointer;
     padding: 8px;
     border-radius: 50%;
+    transition: background 0.2s ease;
 }
 
 .vote-btn.upvote:hover {
@@ -144,10 +145,11 @@
     cursor: pointer;
     text-decoration: none;
     padding: 0 16px;
+    transition: all 0.2s ease;
 }
 
 .action-btn.comment:hover {
-    background: rgba(22, 113, 254, 0.1);
+    background: var(--hover-comment);
     border-color: var(--accent-primary);
 }
 
@@ -172,10 +174,11 @@
     cursor: pointer;
     text-decoration: none;
     padding: 0 16px;
+    transition: all 0.2s ease;
 }
 
 .action-btn.report:hover {
-    background: rgba(207, 107, 107, 0.15);
+    background: var(--report-hover);
     border-color: var(--danger-primary);
 }
 
@@ -185,6 +188,15 @@
     object-fit: fill;
 }
 
+/* Адаптация для планшетов */
+@media (max-width: 1024px) {
+    .profile-nav-actions {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+}
+
+/* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
     .profile-nav-actions {
         flex-direction: column;

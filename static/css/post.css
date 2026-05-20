@@ -21,6 +21,12 @@ body {
     background: var(--bg-primary);
     padding: 24px;
     margin-bottom: 24px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.post-detail-card:hover {
+    background: var(--bg-hover);
 }
 
 .post-detail-card .user-info {
@@ -89,12 +95,15 @@ body {
     color: var(--text-primary);
     margin: 0 0 16px 0;
     font-weight: 500;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .post-detail-card .question-image-placeholder {
     width: 100%;
     aspect-ratio: 16 / 9;
-    background: var(--bg-hover);
+    background: var(--bg-secondary);
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -132,7 +141,6 @@ body {
     border-image: linear-gradient(to right, var(--accent-secondary) 0%, var(--accent-light) 17%, var(--accent-primary) 100%) 1;
 }
 
-/* === Стили кнопок, приведённые к question_card.css === */
 .post-detail-card .vote-group {
     background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
                 linear-gradient(to right, var(--accent-primary) 0%, var(--accent-secondary) 100%) border-box;
@@ -160,6 +168,7 @@ body {
     padding: 8px;
     border-radius: 20px;
     color: var(--accent-primary);
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .post-detail-card .vote-btn.upvote:hover {
@@ -204,7 +213,6 @@ body {
     filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
 }
 
-/* Общие стили для action кнопок (comment/report/edit/delete) */
 .post-detail-card .action-btn {
     height: 44px;
     padding: 0;
@@ -216,6 +224,7 @@ body {
     cursor: pointer;
     font-family: 'Mallanna', sans-serif;
     text-decoration: none;
+    transition: all 0.2s ease;
 }
 
 .post-detail-card .action-btn.comment {
@@ -227,7 +236,7 @@ body {
 }
 
 .post-detail-card .action-btn.comment:hover {
-    background: rgba(22, 113, 254, 0.1);
+    background: var(--hover-comment);
     border-color: var(--accent-primary);
 }
 
@@ -245,7 +254,7 @@ body {
 }
 
 .post-detail-card .action-btn.report:hover {
-    background: rgba(207, 107, 107, 0.15);
+    background: var(--report-hover);
     border-color: var(--danger-primary);
     color: var(--danger-primary);
 }
@@ -258,7 +267,7 @@ body {
 }
 
 .post-detail-card .action-btn.edit:hover {
-    background: rgba(22, 113, 254, 0.1);
+    background: var(--hover-comment);
     border-color: var(--accent-primary);
 }
 
@@ -266,11 +275,11 @@ body {
     width: 44px;
     color: var(--danger-primary);
     background: linear-gradient(var(--bg-primary), var(--bg-primary)) padding-box,
-                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-primary) 100%) border-box;
+                linear-gradient(to right, var(--danger-primary) 0%, var(--danger-hover) 100%) border-box;
 }
 
 .post-detail-card .action-btn.delete:hover {
-    background: rgba(207, 107, 107, 0.15);
+    background: var(--upvote-hover);
     border-color: var(--danger-primary);
 }
 
@@ -280,7 +289,21 @@ body {
     opacity: 1;
 }
 
-/* Медиа-запросы для мобильных устройств */
+/* Адаптация для экранов от 1200px и меньше */
+@media (max-width: 1200px) {
+    .content-wrapper {
+        margin-left: 240px;
+    }
+}
+
+/* Адаптация для планшетов */
+@media (max-width: 992px) {
+    .content-wrapper {
+        margin-left: 220px;
+    }
+}
+
+/* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
     .content-wrapper {
         margin-left: 0;

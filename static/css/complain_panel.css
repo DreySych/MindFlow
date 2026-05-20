@@ -39,7 +39,6 @@ body {
     color: var(--text-secondary);
     text-decoration: none;
     border-radius: 25px;
-    transition: all 0.2s;
 }
 
 .admin-tab:hover {
@@ -92,7 +91,6 @@ body {
     padding: 6px 16px;
     border: 1px solid var(--accent-primary);
     border-radius: 20px;
-    transition: all 0.2s;
 }
 
 .complaint-detail-btn:hover {

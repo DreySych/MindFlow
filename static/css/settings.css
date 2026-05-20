@@ -42,7 +42,6 @@
     padding: 20px 28px;
     border-bottom: 1px solid var(--border-primary);
     cursor: pointer;
-    transition: background 0.15s ease;
 }
 
 .settings-item:last-child {

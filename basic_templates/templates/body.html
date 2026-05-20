@@ -32,13 +32,23 @@
   <div class="sidebar-divider"></div>
 
   {% if tag_form %}
-  <form method="post">
-    {% csrf_token %}
-    {{ tag_form }}
-    <button type="submit">Отправить</button>
-  </form>
-
-  <a href="/">Очистить фильтр</a>
+  <div class="sidebar-filter">
+    <div class="sidebar-filter-title">Фильтр по тегам</div>
+    <form method="get" class="sidebar-filter-form" id="tagFilterForm" action="/">
+      <div class="sidebar-filter-select-wrapper">
+        <select name="tag" class="sidebar-filter-select" id="tagSelect">
+          <option value="">Без фильтра</option>
+          {% for tag in tag_form.tag.field.choices %}
+            {% if tag.0 %}
+              <option value="{{ tag.0 }}" {% if request.GET.tag == tag.0 %}selected{% endif %}>{{ tag.1 }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="sidebar-filter-btn">Применить</button>
+    </form>
+    <a href="/" class="sidebar-filter-clear">Очистить фильтр</a>
+  </div>
 {% endif %}
 
 </div>

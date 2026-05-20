@@ -58,7 +58,11 @@
     white-space: nowrap;
     transition: all 0.2s ease;
 }
-.profile-action-btn:hover { background: var(--bg-hover); border-color: var(--accent-primary); }
+
+.profile-action-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-primary);
+}
 
 .friend-btn {
     display: flex;
@@ -76,7 +80,6 @@
     background: var(--accent-primary);
     color: var(--bg-primary);
     border: none;
-    transition: background 0.2s;
 }
 
 .add-friend-btn:hover {
@@ -86,6 +89,21 @@
 
 .add-friend-btn img {
     filter: brightness(0) invert(1);
+}
+
+.delete-friend-btn {
+    background: transparent;
+    color: #1671fe;
+    border: 1px solid #1671fe;
+}
+
+.delete-friend-btn:hover {
+    background: rgba(22, 113, 254, 0.1);
+    border-color: #1671fe;
+}
+
+.delete-friend-btn img {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
 }
 
 .pm-btn {
@@ -116,7 +134,7 @@
 }
 
 .report-btn:hover {
-    background: rgba(207, 107, 107, 0.15);
+    background: var(--report-hover);
     border-color: var(--danger-primary);
 }
 
@@ -151,7 +169,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 }
 .nav-btn:hover { color: var(--accent-primary); }
 .nav-btn.active { color: var(--accent-primary); }
@@ -192,7 +210,6 @@
     line-height: 1;
 }
 
-/* Уникальные стили для профиля, которых нет в question_card.css */
 .self-user-avatar { display: inline-flex; align-items: center; text-decoration: none; line-height: 0; cursor: default; }
 .self-user-name {
     font-weight: 400;
@@ -222,6 +239,7 @@
     margin-left: 4px;
     display: inline-flex;
     align-items: center;
+    transition: color 0.2s ease;
 }
 .comment-post-link:hover { color: var(--accent-primary); }
 .comment-text {
@@ -254,11 +272,11 @@
     text-decoration: none;
     white-space: nowrap;
     overflow: hidden;
+    transition: all 0.2s ease;
 }
-.action-btn.edit:hover { background: rgba(22, 113, 254, 0.1); border-color: var(--accent-primary); }
+.action-btn.edit:hover { background: var(--hover-comment); border-color: var(--accent-primary); }
 .action-btn.edit img { width: 18px; height: 18px; opacity: 1; }
 
-/* Комментарии */
 .comment-vote-btn.upvote.active {
     background: rgba(76, 175, 80, 0.25) !important;
     border-radius: 50%;
@@ -277,6 +295,27 @@
     filter: brightness(0) saturate(100%) invert(27%) sepia(95%) saturate(3291%) hue-rotate(339deg) brightness(93%) contrast(97%);
 }
 
+/* Адаптация для экранов от 1200px и меньше */
+@media (max-width: 1200px) {
+    .content-wrapper {
+        margin-left: 240px;
+    }
+    .profile-header-wrapper {
+        padding: 20px 20px 10px 260px;
+    }
+}
+
+/* Адаптация для планшетов */
+@media (max-width: 992px) {
+    .content-wrapper {
+        margin-left: 220px;
+    }
+    .profile-header-wrapper {
+        padding: 20px 20px 10px 240px;
+    }
+}
+
+/* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
     .profile-header-wrapper {
         padding: 16px 20px 8px 20px;
@@ -304,6 +343,5 @@
     .profile-action-btn img { width: 16px; height: 16px; }
     .report-btn { width: 40px; height: 40px; }
     .report-btn img { width: 18px; height: 18px; }
+    .delete-friend-btn { font-size: 14px; padding: 6px 12px; }
 }
-
-

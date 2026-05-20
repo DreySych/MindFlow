@@ -64,7 +64,7 @@ header {
   flex-shrink: 0;
   overflow: hidden;
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: background 0.2s ease;
 }
 
 .icon-button:hover {
@@ -101,7 +101,7 @@ header {
   color: var(--accent-primary);
   flex-shrink: 0;
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .create-button:hover {
@@ -127,6 +127,7 @@ header {
   gap: 8px;
   flex: 0 1 auto;
   width: 544px;
+  position: relative;
 }
 
 .search-wrapper {
@@ -140,6 +141,7 @@ header {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
+  transition: flex-basis 0.3s ease;
 }
 
 .search-wrapper input {
@@ -205,7 +207,7 @@ header {
   flex-shrink: 0;
   text-decoration: none;
   box-sizing: border-box;
-  transition: all 0.3s ease;
+  transition: width 0.3s ease, gap 0.3s ease, padding 0.3s ease, background 0.2s ease;
 }
 
 .ii-button:hover {
@@ -224,6 +226,7 @@ header {
   white-space: nowrap;
   line-height: 44px;
   order: 0;
+  transition: opacity 0.2s ease;
 }
 
 .ii-button:hover .ii-text {
@@ -356,6 +359,7 @@ main {
   text-align: left;
   border-radius: 8px;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .friend-avatar {
@@ -390,7 +394,7 @@ main {
   padding: 0;
   flex-shrink: 0;
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: background 0.2s ease;
 }
 
 .chat-button:hover {
@@ -469,7 +473,7 @@ footer {
   overflow: hidden;
   text-decoration: none;
   font-size: 20px;
-  transition: background 0.15s ease;
+  transition: background 0.2s ease;
 }
 
 .theme-toggle:hover {
@@ -480,4 +484,92 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.sidebar-filter {
+  padding: 16px 12px;
+  border-top: none;
+}
+
+.sidebar-filter-title {
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.sidebar-filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-filter-select-wrapper {
+  width: 100%;
+}
+
+.sidebar-filter-select-wrapper select {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 14px;
+  border: 1px solid var(--border-primary);
+  border-radius: 20px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.sidebar-filter-select-wrapper select:hover {
+  border-color: var(--accent-primary);
+}
+
+.sidebar-filter-select-wrapper select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(22, 113, 254, 0.2);
+}
+
+.sidebar-filter-btn {
+  padding: 8px 16px;
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 20px;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.sidebar-filter-btn:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-1px);
+}
+
+.sidebar-filter-clear {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  padding: 6px 12px;
+  font-family: 'Mallanna', sans-serif;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  background: var(--bg-hover);
+}
+
+.sidebar-filter-clear:hover {
+  background: var(--report-hover);
+  color: var(--danger-primary);
 }

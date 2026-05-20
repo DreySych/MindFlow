@@ -61,7 +61,7 @@
     justify-content: center;
     cursor: pointer;
     padding: 0;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
 }
 
 .submit-comment-btn:hover {
@@ -145,6 +145,7 @@
     font-weight: 400;
     color: var(--text-primary);
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .comment-author-link:hover {
@@ -199,7 +200,7 @@
     font-family: 'Mallanna', sans-serif;
     font-size: 14px;
     color: var(--accent-primary);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 }
 
 .comment-action-btn.reply-toggle img {
@@ -227,6 +228,7 @@
     background: transparent;
     border-radius: 16px;
     border: 1px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .comment-vote-group:hover {
@@ -243,6 +245,7 @@
     cursor: pointer;
     padding: 6px;
     border-radius: 50%;
+    transition: background 0.2s ease;
 }
 
 .comment-vote-btn.upvote:hover {
@@ -258,7 +261,6 @@
     height: 16px;
 }
 
-/* Активные состояния для кнопок голосования комментариев */
 .comment-vote-btn.upvote.active {
     background: rgba(76, 175, 80, 0.25) !important;
     border-radius: 50%;
@@ -298,10 +300,11 @@
     border-radius: 16px;
     border: 1px solid transparent;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .comment-report-btn:hover {
-    background: rgba(207, 107, 107, 0.15);
+    background: var(--report-hover);
     border-color: var(--danger-primary);
 }
 
@@ -378,5 +381,4 @@
         margin-left: 12px;
         padding-left: 8px;
     }
-
 }

@@ -50,8 +50,8 @@
 /* ===== СВЕТЛАЯ ТЕМА ===== */
 body.light-theme {
   --bg-primary: #ffffff;
-  --bg-secondary: #f5f5f5;
-  --bg-hover: #f6f6f6;
+  --bg-secondary: #f2f2f2;
+  --bg-hover: #f8f8f8;
   --bg-hover-alt: #f0f0f0;
 
   --text-primary: #000000;
@@ -65,14 +65,14 @@ body.light-theme {
   --border-primary: #C6C6C6;
   --border-avatar: #C6C6C6;
 
-  --upvote-hover: rgba(107, 179, 128, 0.15);
-  --upvote-text: #7bbf8a;
-  --downvote-hover: rgba(207, 107, 107, 0.15);
-  --downvote-text: #e0817a;
+  --upvote-hover: rgba(76, 175, 80, 0.15);
+  --upvote-text: #4caf50;
+  --downvote-hover: rgba(244, 67, 54, 0.15);
+  --downvote-text: #f44336;
   --report-hover: #FFF0F0;
-  --report-text: #e0817a;
-  --danger-primary: #cf6b6b;
-  --danger-hover: #f0a09b;
+  --report-text: #e53935;
+  --danger-primary: #e53935;
+  --danger-hover: #c62828;
 
   --icon-filter: brightness(1) sepia(0) saturate(1);
   --selection-bg: rgba(22, 113, 254, 0.2);
@@ -80,7 +80,7 @@ body.light-theme {
 
   --hover-comment: #f8f8f8;
   --input-bg: #ffffff;
-  --ai-button-hover: #1671FE;
+  --ai-button-hover: #0D5DD6;
   --ai-text: #ffffff;
 
   --gradient-start: #0047AB;
@@ -92,6 +92,7 @@ body.light-theme {
 body {
   color: var(--text-primary);
   background: var(--bg-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 html, body {
@@ -117,4 +118,8 @@ body::-webkit-scrollbar-thumb {
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover {
   background: var(--accent-primary);
+}
+
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
