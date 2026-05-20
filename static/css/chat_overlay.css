@@ -31,6 +31,7 @@
   margin-right: 20px;
   transform: translateY(100%);
   pointer-events: all;
+  transition: transform 0.3s ease;
 }
 
 .chat-overlay.active .chat-modal {
@@ -78,6 +79,7 @@
   background: transparent;
   cursor: pointer;
   padding: 0;
+  transition: background 0.15s ease;
 }
 
 .chat-modal-close:hover {

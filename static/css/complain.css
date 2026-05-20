@@ -70,6 +70,7 @@
   resize: vertical;
   outline: none;
   box-sizing: border-box;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .complain-textarea:focus {
@@ -105,6 +106,7 @@
   font-size: 12px;
   color: var(--text-secondary);
   margin-left: auto;
+  transition: color 0.2s ease;
 }
 
 .complain-footer {
@@ -122,6 +124,7 @@
   font-size: 14px;
   color: var(--text-secondary);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .complain-cancel-btn:hover {
@@ -137,6 +140,7 @@
   font-size: 14px;
   color: var(--bg-primary);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .complain-submit-btn:hover {

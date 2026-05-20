@@ -75,6 +75,7 @@
   text-decoration: none;
   cursor: pointer;
   border-bottom: 1px solid var(--bg-hover);
+  transition: background 0.15s ease;
 }
 
 .notification-item:last-child {

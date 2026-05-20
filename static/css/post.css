@@ -34,6 +34,7 @@ body {
     display: inline-block;
     text-decoration: none;
     line-height: 0;
+    transition: opacity 0.2s;
 }
 
 .post-detail-card .user-avatar-link:hover {
@@ -55,6 +56,7 @@ body {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    transition: color 0.2s;
 }
 
 .post-detail-card .user-name-link:hover {

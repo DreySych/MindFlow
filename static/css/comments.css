@@ -16,6 +16,7 @@
     border-radius: 20px;
     padding: 8px 16px;
     border: 1px solid transparent;
+    transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .comment-input-wrapper:focus-within {
@@ -60,6 +61,7 @@
     justify-content: center;
     cursor: pointer;
     padding: 0;
+    transition: background 0.2s;
 }
 
 .submit-comment-btn:hover {
@@ -197,6 +199,7 @@
     font-family: 'Mallanna', sans-serif;
     font-size: 14px;
     color: var(--accent-primary);
+    transition: all 0.2s;
 }
 
 .comment-action-btn.reply-toggle img {
