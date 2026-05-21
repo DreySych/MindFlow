@@ -165,9 +165,15 @@
 						>{{ form.description.value|default:'' }}</textarea>
 					</div>
 
-					<div>
-						{{ form.tag }}
-						<button type="button" id="define_tag">Предложить тег</button>
+
+					<div class="tag-section">
+						<label class="form-label">Тег</label>
+						<div class="tag-buttons">
+							<button type="button" id="openTagOverlayBtn" class="suggest-tag-btn">Выбрать тег</button>
+							<button type="button" id="define_tag" class="suggest-tag-btn">Предложить тег</button>
+						</div>
+						<div id="tagWarning" class="tag-warning" style="display: none;">Выберите тег для поста</div>
+						<input type="hidden" id="selectedTag" name="tag" value="{{ question.tag|default:'' }}">
 					</div>
 
 					<div class="form-actions">
@@ -203,20 +209,62 @@
         console.error('Что-то пошло не так:', error);
     }
 }
+	const selectBtn = document.getElementById('openTagOverlayBtn');
+	const hiddenInput = document.getElementById('selectedTag');
+	const tagWarning = document.getElementById('tagWarning');
+	selectBtn.addEventListener('click', async function() {
+    const tags = await get_available_tags();
 
+    let oldOverlay = document.getElementById('tagOverlay');
+
+    if (oldOverlay) {
+        oldOverlay.remove();
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'tagOverlay';
+
+    overlay.style.position = 'fixed';
+    overlay.style.top = '50%';
+    overlay.style.left = '50%';
+    overlay.style.transform = 'translate(-50%, -50%)';
+    overlay.style.background = 'white';
+    overlay.style.padding = '20px';
+    overlay.style.borderRadius = '12px';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.flexDirection = 'column';
+    overlay.style.gap = '10px';
+
+    tags.forEach(function(tag) {
+        const tagButton = document.createElement('button');
+
+        tagButton.type = 'button';
+        tagButton.textContent = tag;
+
+        tagButton.addEventListener('click', function() {
+            selectBtn.innerHTML = tag;
+            selectBtn.classList.add('selected');
+            hiddenInput.value = tag;
+
+            if (tagWarning) {
+                tagWarning.style.display = 'none';
+            }
+
+            overlay.remove();
+        });
+
+        overlay.appendChild(tagButton);
+    });
+
+    document.body.appendChild(overlay);
+});
 	document.getElementById('define_tag').addEventListener('click', async function() {
     const btn = document.getElementById('define_tag');
-    const selectElement = document.getElementById('id_tag');
 
     const title = document.getElementById('postTitle').value.trim();
     const description = document.getElementById('postText').value.trim();
 
-    const tags = await get_available_tags();
-
-    if (!tags || tags.length === 0) {
-        selectElement.value = 'Другое';
-        return;
-    }
 
     btn.disabled = true;
     btn.textContent = 'Подбираю...';
@@ -239,16 +287,24 @@ try {
     });
 
     let data = await response.json();
-
-    if (data.tag && [...selectElement.options].some(option => option.value === data.tag)) {
-        selectElement.value = data.tag;
+	const tag = data.tag || 'Другое';
+    if (tag && tag !== '') {
+        selectBtn.innerHTML = `${tag}`;
+        selectBtn.classList.add('selected');
+        hiddenInput.value = tag;
+        if (tagWarning) tagWarning.style.display = 'none';
     } else {
-        selectElement.value = 'Другое';
+        selectBtn.innerHTML = `Выбрать тег`;
+        selectBtn.classList.remove('selected');
+        hiddenInput.value = '';
+        if (tagWarning) tagWarning.style.display = 'none';
     }
 
 } catch (error) {
     console.error('AI tag error:', error);
-    selectElement.value = 'Другое';
+    hiddenInput.value = 'Другое';
+	selectBtn.innerHTML = 'Другое';
+	selectBtn.classList.add('selected');
 }
 
 btn.disabled = false;
