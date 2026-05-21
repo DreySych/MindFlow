@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-
+from questions.views import suggest_tag
 from ai import views as ai_views
 from complaints import views as complaint_views
 from main import views as main_views
@@ -95,6 +95,7 @@ urlpatterns = [
          name='notifications_count'),
     path('notifications/read/<int:notification_id>/',
          notifications_views.read_notification, name='read_notification'),
+    path('suggest_tag/', suggest_tag, name='suggest_tag'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

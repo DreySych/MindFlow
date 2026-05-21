@@ -11,8 +11,93 @@
 	<link rel="stylesheet" href="{% static 'css/comments.css' %}">
 	<link rel="stylesheet" href="{% static 'css/complain.css' %}">
 	<link rel="stylesheet" href="{% static 'css/basic.css' %}">
-	<link rel="stylesheet" href="{% static 'css/make_edit_question.css' %}">
 	<link href="https://fonts.googleapis.com/css2?family=Mallanna&display=swap" rel="stylesheet">
+	<style>
+		.post-form-title {
+			font-size: 32px;
+			margin-bottom: 30px;
+			color: var(--text-primary);
+			font-family: 'Mallanna', sans-serif;
+		}
+		.form-group {
+			margin-bottom: 25px;
+		}
+		.form-label {
+			display: block;
+			margin-bottom: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			color: var(--text-primary);
+		}
+		.form-input, .form-textarea {
+			width: 100%;
+			padding: 12px;
+			border: 2px solid var(--border-primary);
+			border-radius: 8px;
+			font-size: 16px;
+			box-sizing: border-box;
+			background: var(--bg-secondary);
+			color: var(--text-primary);
+			font-family: inherit;
+			transition: border-color 0.2s ease;
+		}
+		.form-input:focus, .form-textarea:focus {
+			outline: none;
+			border-color: var(--accent-primary);
+			background: var(--bg-primary);
+		}
+		.form-textarea {
+			resize: vertical;
+			min-height: 120px;
+		}
+		.image-upload-area {
+			position: relative;
+		}
+		.image-upload-label {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 30px;
+			border: 2px dashed var(--border-primary);
+			border-radius: 8px;
+			cursor: pointer;
+			background-color: var(--bg-secondary);
+			transition: all 0.2s ease;
+			color: var(--text-secondary);
+		}
+		.image-upload-label:hover {
+			border-color: var(--accent-primary);
+			background-color: var(--bg-hover);
+			color: var(--text-primary);
+		}
+		.image-preview {
+			margin-top: 10px;
+			width: 100%;
+			height: auto;
+			border-radius: 8px;
+			max-height: 400px;
+			object-fit: cover;
+		}
+		.form-actions {
+			display: flex;
+			justify-content: flex-end;
+		}
+		.submit-btn {
+			padding: 10px 24px;
+			background-color: var(--accent-primary);
+			color: var(--text-primary);
+			border: none;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 600;
+			cursor: pointer;
+			font-family: inherit;
+			transition: background-color 0.2s ease;
+		}
+		.submit-btn:hover {
+			background-color: var(--accent-secondary);
+		}
+	</style>
 </head>
 <body>
 {% include 'header.html' %}
@@ -51,8 +136,8 @@
 					<div class="form-group">
 						<label for="postImage" class="form-label">Добавить изображение</label>
 						<div class="image-upload-area">
-							<label id="dropZone" class="image-upload-label">
-								<span>📸 Нажмите для загрузки или перетащите изображение сюда</span>
+							<label for="postImage" class="image-upload-label">
+								<span>Нажмите для загрузки или перетащите изображение</span>
 							</label>
 							<input
 									type="file"
@@ -80,18 +165,13 @@
 						>{{ form.description.value|default:'' }}</textarea>
 					</div>
 
-					<div class="tag-section">
-						<label class="form-label">Тег</label>
-						<div class="tag-buttons">
-							<button type="button" id="openTagOverlayBtn" class="suggest-tag-btn">📂 Выбрать тег</button>
-							<button type="button" id="suggestTagBtn" class="suggest-tag-btn">🤖 Предложить тег</button>
-						</div>
-						<div id="tagWarning" class="tag-warning" style="display: none;">Выберите тег для поста</div>
-						<input type="hidden" id="selectedTag" name="tag" value="{{ question.tag|default:'' }}">
+					<div>
+						{{ form.tag }}
+						<button type="button" id="define_tag">Предложить тег</button>
 					</div>
 
 					<div class="form-actions">
-						<button type="button" id="submitBtn" class="submit-btn">{% if is_edit %}
+						<button type="submit" class="submit-btn">{% if is_edit %}
 							Сохранить
 							{% else %}
 							Опубликовать
@@ -104,83 +184,10 @@
 	</main>
 </div>
 
-{% include 'tag_overlay.html' %}
 {% include 'footer.html' %}
 
 <script>
-const postImageInput = document.getElementById('postImage');
-const imagePreview = document.getElementById('imagePreview');
-const dropZone = document.getElementById('dropZone');
-const submitBtn = document.getElementById('submitBtn');
-const createPostForm = document.getElementById('createPostForm');
-let availableTags = [];
-let tempSelectedTag = null;
-
-// Сохранённый тег из Django
-const savedTagValue = "{{ question.tag|default:'' }}";
-
-function previewImage(file) {
-    if (!file) return false;
-
-    if (!file.type.startsWith('image/')) {
-        alert('Пожалуйста, выберите изображение');
-        return false;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-        alert('Размер файла не должен превышать 5 МБ');
-        return false;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        imagePreview.src = e.target.result;
-        imagePreview.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-    return true;
-}
-
-postImageInput.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        previewImage(file);
-    }
-});
-
-if (dropZone) {
-    dropZone.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
-
-    dropZone.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-    });
-
-    dropZone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-            if (previewImage(file)) {
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                postImageInput.files = dataTransfer.files;
-            }
-        }
-    });
-
-    dropZone.addEventListener('click', function(e) {
-        e.stopPropagation();
-        postImageInput.click();
-    });
-}
-
-async function get_available_tags() {
+	async function get_available_tags() {
     try {
         const response = await fetch('/get_tags/');
 
@@ -189,118 +196,80 @@ async function get_available_tags() {
         }
 
         const data = await response.json();
+        console.log(data);
+
         return data;
     } catch (error) {
         console.error('Что-то пошло не так:', error);
-        return ['Python', 'Дизайн', 'Frontend', 'Backend', 'Фильмы', 'Игры', 'Спорт', 'Другое'];
     }
 }
 
-function renderTagOptions(tags, selectedTag) {
-    const tagList = document.getElementById('tagList');
-    if (!tagList) return;
+	document.getElementById('define_tag').addEventListener('click', async function() {
+    const btn = document.getElementById('define_tag');
+    const selectElement = document.getElementById('id_tag');
 
-    tagList.innerHTML = '';
+    const title = document.getElementById('postTitle').value.trim();
+    const description = document.getElementById('postText').value.trim();
 
-    tags.forEach(tag => {
-        const option = document.createElement('div');
-        option.className = 'tag-option';
-        if (selectedTag === tag) {
-            option.classList.add('selected');
-        }
-        option.textContent = tag;
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.tag-option').forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            tempSelectedTag = tag;
-        });
-        tagList.appendChild(option);
+    const tags = await get_available_tags();
+
+    if (!tags || tags.length === 0) {
+        selectElement.value = 'Другое';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Подбираю...';
+
+    btn.disabled = true;
+btn.textContent = 'Подбираю...';
+
+try {
+    let response = await fetch('/suggest_tag/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description
+        })
     });
-}
 
-function updateSelectedDisplay(tag) {
-    const selectBtn = document.getElementById('openTagOverlayBtn');
-    const hiddenInput = document.getElementById('selectedTag');
-    const tagWarning = document.getElementById('tagWarning');
+    let data = await response.json();
 
-    if (tag && tag !== '') {
-        selectBtn.innerHTML = `🏷️ ${tag}`;
-        selectBtn.classList.add('selected');
-        hiddenInput.value = tag;
-        if (tagWarning) tagWarning.style.display = 'none';
+    if (data.tag && [...selectElement.options].some(option => option.value === data.tag)) {
+        selectElement.value = data.tag;
     } else {
-        selectBtn.innerHTML = `📂 Выбрать тег`;
-        selectBtn.classList.remove('selected');
-        hiddenInput.value = '';
-        if (tagWarning) tagWarning.style.display = 'none';
+        selectElement.value = 'Другое';
     }
+
+} catch (error) {
+    console.error('AI tag error:', error);
+    selectElement.value = 'Другое';
 }
 
-// Оверлей
-const tagOverlay = document.getElementById('tagOverlay');
-const openTagOverlayBtn = document.getElementById('openTagOverlayBtn');
-const closeTagOverlayBtn = document.getElementById('closeTagOverlayBtn');
-const confirmTagBtn = document.getElementById('confirmTagBtn');
-
-function openTagOverlay() {
-    const currentTag = document.getElementById('selectedTag').value;
-    tempSelectedTag = currentTag || null;
-    renderTagOptions(availableTags, tempSelectedTag);
-    tagOverlay.classList.add('active');
-}
-
-function closeTagOverlay() {
-    tagOverlay.classList.remove('active');
-    tempSelectedTag = null;
-}
-
-function confirmTag() {
-    if (tempSelectedTag) {
-        updateSelectedDisplay(tempSelectedTag);
-    }
-    closeTagOverlay();
-}
-
-openTagOverlayBtn.addEventListener('click', openTagOverlay);
-if (closeTagOverlayBtn) closeTagOverlayBtn.addEventListener('click', closeTagOverlay);
-if (confirmTagBtn) confirmTagBtn.addEventListener('click', confirmTag);
-
-if (tagOverlay) {
-    tagOverlay.addEventListener('click', function(e) {
-        if (e.target === tagOverlay) {
-            closeTagOverlay();
-        }
-    });
-}
-
-// Обработка отправки формы
-submitBtn.addEventListener('click', function(e) {
-    const selectedTag = document.getElementById('selectedTag').value;
-    const tagWarning = document.getElementById('tagWarning');
-
-    if (!selectedTag || selectedTag === '') {
-        e.preventDefault();
-        if (tagWarning) tagWarning.style.display = 'block';
-        setTimeout(function() {
-            if (tagWarning) tagWarning.style.display = 'none';
-        }, 3000);
-    } else {
-        createPostForm.submit();
-    }
+btn.disabled = false;
+btn.textContent = 'Предложить тег';
 });
 
-async function loadTags() {
-    availableTags = await get_available_tags();
 
-    // Если есть сохранённый тег из Django, отображаем его
-    if (savedTagValue && savedTagValue !== '') {
-        updateSelectedDisplay(savedTagValue);
-    } else {
-        updateSelectedDisplay('');
-    }
-}
+	const postImage = document.getElementById('postImage');
+	const imagePreview = document.getElementById('imagePreview');
 
-loadTags();
+	postImage.addEventListener('change', function() {
+		const file = this.files[0];
+
+		if (!file) {
+			imagePreview.style.display = 'none';
+			return;
+		}
+
+		imagePreview.src = URL.createObjectURL(file);
+		imagePreview.style.display = 'block';
+	});
 </script>
 </body>
 </html>
