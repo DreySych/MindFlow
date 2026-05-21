@@ -83,8 +83,8 @@
 					<div class="tag-section">
 						<label class="form-label">Тег</label>
 						<div class="tag-buttons">
-							<button type="button" id="openTagOverlayBtn" class="suggest-tag-btn">📂 Выбрать тег</button>
-							<button type="button" id="suggestTagBtn" class="suggest-tag-btn">🤖 Предложить тег</button>
+							<button type="button" id="openTagOverlayBtn" class="suggest-tag-btn">Выбрать тег</button>
+							<button type="button" id="suggestTagBtn" class="suggest-tag-btn">Предложить тег</button>
 						</div>
 						<div id="tagWarning" class="tag-warning" style="display: none;">Выберите тег для поста</div>
 						<input type="hidden" id="selectedTag" name="tag" value="{{ question.tag|default:'' }}">
@@ -224,12 +224,12 @@ function updateSelectedDisplay(tag) {
     const tagWarning = document.getElementById('tagWarning');
 
     if (tag && tag !== '') {
-        selectBtn.innerHTML = `🏷️ ${tag}`;
+        selectBtn.innerHTML = `${tag}`;
         selectBtn.classList.add('selected');
         hiddenInput.value = tag;
         if (tagWarning) tagWarning.style.display = 'none';
     } else {
-        selectBtn.innerHTML = `📂 Выбрать тег`;
+        selectBtn.innerHTML = `Выбрать тег`;
         selectBtn.classList.remove('selected');
         hiddenInput.value = '';
         if (tagWarning) tagWarning.style.display = 'none';

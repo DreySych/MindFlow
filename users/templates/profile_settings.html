@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Настройки</title>
+    <title>Настройки профиля</title>
     {% load static %}
     {% load custom_filters %}
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
@@ -18,9 +18,8 @@
     <h1 class="settings-title">Настройки профиля</h1>
 
     <form method="POST" enctype="multipart/form-data">
-
-
         {% csrf_token %}
+
         <div class="settings-card">
             <div class="avatar-section">
                 <div class="avatar-left">
@@ -69,8 +68,21 @@
                     <label class="form-label">Пол</label>
                     <div class="form-hint">Укажите ваш пол</div>
                 </div>
-                <div class="form-input-wrapper">
-                    {{ form.sex }}
+                <div class="form-input-wrapper gender-select-wrapper">
+                    <div class="gender-options-modern">
+                        {% for value, label in form.sex.field.choices %}
+                        <div class="gender-option-modern">
+                            <input type="radio"
+                                   name="sex"
+                                   value="{{ value }}"
+                                   id="sex_{{ value }}"
+                                   {% if form.sex.value == value %}checked{% endif %}>
+                            <label for="sex_{{ value }}">
+                                {{ label }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 
