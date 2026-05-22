@@ -1,0 +1,7 @@
+Django==5.2.7
+channels==4.3.2
+daphne==4.2.1
+django-environ==0.13.0
+
+flake8==7.3.0
+pylint==4.0.5
