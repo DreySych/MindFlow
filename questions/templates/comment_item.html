@@ -1,4 +1,11 @@
 {% load static %}
+<script>
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    }
+</script>
 {% load custom_filters %}
 <div class="comment-thread" id="comment-{{ comment.id }}">
 

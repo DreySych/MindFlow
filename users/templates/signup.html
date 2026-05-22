@@ -2,6 +2,13 @@
 <html lang="ru">
 <head>
     {% load static %}
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light-theme');
+        }
+    </script>
     {% load custom_filters %}
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">

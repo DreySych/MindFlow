@@ -1,4 +1,11 @@
 {% load static %}
+<script>
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    }
+</script>
 {% load custom_filters %}
 <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 <footer>

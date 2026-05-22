@@ -1,4 +1,11 @@
 {% load static %}
+<script>
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    }
+</script>
 {% load custom_filters %}
 
 <!DOCTYPE html>
@@ -8,7 +15,7 @@
     <meta charset="UTF-8">
     <title>MindFlow</title>
 
-    <link rel="stylesheet" href="/static/css/basic.css?v=1">
+    <link rel="stylesheet" href="/static_src/css/basic.css?v=1">
 </head>
 
 <body>

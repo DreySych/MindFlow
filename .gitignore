@@ -33,4 +33,6 @@ Thumbs.db
 
 my_local_model/
 
+.coverage
 
+docs/build/

@@ -4,6 +4,13 @@
 	<meta charset="UTF-8">
 	<title>Создание поста</title>
 	{% load static %}
+	<script>
+		const savedTheme = localStorage.getItem('theme');
+
+		if (savedTheme === 'light') {
+			document.documentElement.classList.add('light-theme');
+		}
+	</script>
 	{% load custom_filters %}
 	<link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 	<link rel="stylesheet" href="{% static 'css/theme.css' %}">

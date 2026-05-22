@@ -1,4 +1,11 @@
 {% load static %}
+<script>
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    }
+</script>
 {% load custom_filters %}
 <link rel="stylesheet" href="{% static 'css/question_card.css' %}">
 <article class="question-card" id="question-{{ question.id }}">

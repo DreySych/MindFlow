@@ -1,4 +1,11 @@
 {% load static %}
+<script>
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    }
+</script>
 <div class="complain-overlay" id="complainUserOverlay">
   <div class="complain-backdrop" onclick="closeComplainUserOverlay()"></div>
   <div class="complain-modal">

@@ -1,7 +1,26 @@
 ## Доставка проекта на VPS через PowerShell
 
 ```powershell
-scp -r "D:\Desktop\PYCHARM\the-final-build\*" site2@188.127.251.228:/home/site2/app/
+scp -r `
+  .\The_Final_Build `
+  .\ai `
+  .\basic_templates `
+  .\complaints `
+  .\docs `
+  .\main `
+  .\notifications `
+  .\private_messages `
+  .\questions `
+  .\static_src `
+  .\users `
+  .\manage.py `
+  .\requirements.txt `
+  .\.gitlab-ci.yml `
+  .\.flake8 `
+  .\.pylintrc `
+  .\.env.example `
+  .\DEPLOY.md `
+  site2@188.127.251.228:/home/site2/app/
 ```
 
 ## Первичный запуск проекта на сервере
