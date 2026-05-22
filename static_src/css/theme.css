@@ -72,7 +72,7 @@ body.light-theme {
   --report-hover: #FFF0F0;
   --report-text: #e53935;
   --danger-primary: #e53935;
-  --danger-hover: #c62828;
+  --danger-hover: #c6282842;
 
   --icon-filter: brightness(1) sepia(0) saturate(1);
   --selection-bg: rgba(22, 113, 254, 0.2);
