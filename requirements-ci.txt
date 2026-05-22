@@ -1,8 +1,17 @@
 Django==5.2.7
 channels==4.3.2
 daphne==4.2.1
-django-environ==0.13.0
 
+django-environ==0.13.0
+python-dotenv==1.1.1
+
+coverage==7.11.0
 flake8==7.3.0
 pylint==4.0.5
-coverage
+
+asgiref==3.11.1
+sqlparse==0.5.5
+
+pillow
+requests
+aiohttp
