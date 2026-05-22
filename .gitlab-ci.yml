@@ -19,21 +19,23 @@ cache:
 
 before_script:
   - python3 --version
-  - pip3 install --upgrade pip
-  - pip3 install -r requirements.txt
+  - python3 -m venv .venv
+  - source .venv/bin/activate
+  - python -m pip install --upgrade pip
+  - python -m pip install -r requirements.txt
 
 lint:
   stage: lint
   script:
-    - python3 -m flake8 .
-    - python3 -m pylint ai main questions users notifications complaints private_messages --ignore=migrations --fail-under=8.0
+    - python -m flake8 .
+    - python -m pylint ai main questions users notifications complaints private_messages --ignore=migrations --fail-under=8.0
 
 test:
   stage: test
   script:
-    - python3 -m coverage run --source='.' manage.py test
-    - python3 -m coverage report
-    - python3 -m coverage xml
+    - python -m coverage run --source='.' manage.py test
+    - python -m coverage report
+    - python -m coverage xml
   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
   artifacts:
     when: always
@@ -47,7 +49,7 @@ test:
 docs:
   stage: docs
   script:
-    - python3 -m sphinx -W -b html docs/source docs/build/html
+    - python -m sphinx -W -b html docs/source docs/build/html
   artifacts:
     when: always
     paths:
