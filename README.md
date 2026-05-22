@@ -2,7 +2,7 @@
 
 > MindFlow — это социальная платформа для обмена знаниями и идеями, вдохновлённая концепцией Reddit, но с акцентом на интеллектуальные дискуссии и персонализированный контент. Платформа объединяет классические возможности форумов с современными технологиями искусственного интеллекта для создания уникального опыта взаимодействия
 
-![Django](https://img.shields.io/badge/django-4.2%2B-092E20?logo=django)
+![Django](https://img.shields.io/badge/django-5.2.7-092E20?logo=django)
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue?logo=python)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Coverage](https://img.shields.io/badge/coverage-78%25-brightgreen)
@@ -50,8 +50,8 @@ MindFlow — это веб-платформа для обмена знаниям
 
 ## 🛠 Технологии
 
-- **Backend**: Python 3.10+, Django 4.2
-- **API**: Django REST Framework, FastAPI (для AI-сервисов)
+- **Backend**: Python 3.10+, Django 5.2.7
+- **API**: Django views и JSON endpoints
 - **База данных**: SQLite
 - **Фронтенд**: HTML, CSS, JavaScript
 - **AI/ML**: OpenRouter
@@ -163,11 +163,20 @@ python manage.py runserver
 python manage.py test
 ```
 
+## ✅ Проверка качества кода
+
+### Проверка PEP8
+
+```bash
+python -m flake8 .
+```
+
 ### Запуск конкретного теста
 
 ```bash
 python manage.py test ai.tests.test_service
 ```
+
 
 ### Запуск с покрытием
 
@@ -241,7 +250,6 @@ MindFlow/
 ├── .env.example # Пример файла окружения
 ├── requirements.txt # Python-зависимости
 ├── .gitlab-ci.yml # CI/CD pipeline
-├── .coverage # Файл с данными о покрытии
 ├── .pylintrc # Файл конфигурации для Pylint
 ├── .gitignore # Исключения из репозитория
 ├── LICENSE # Лицензия
@@ -415,8 +423,8 @@ MindFlow/
 Если у вас возникли вопросы или проблемы:
 
 ### Баг-репорты и предложения
-- 🐛 [Создайте Issue](https://gitlab.informatics.ru/Drey_Sych/the-final-build/-/issues)
-- 💡 [Обсудите в Discussions](https://gitlab.informatics.ru/Drey_Sych/the-final-build/-/issues)
+- 🐛 [Создайте Issue](https://gitlab.informatics.ru/Drey_Sych/MindFlow/-/issues)
+- 💡 [Обсудите в Discussions](https://gitlab.informatics.ru/Drey_Sych/MindFlow/-/issues)
 
 ### Связь с командой
 - 📧 Email тимлида: [andreyakolesnikovg@gmail.com](mailto:andreyakolesnikovg@gmail.com)
