@@ -187,7 +187,7 @@ def create_question_from_form(form, request):
     else:
         embeddings = []
     images = request.FILES.getlist('images')
-    
+
     if len(images) > 10:
         images = images[:10]
 
@@ -239,7 +239,6 @@ def question_make_page(request):
         return redirect('/account/login')
     if not request.user.active:
         return redirect('/')
-
     context = {}
     if request.method == "POST":
         form = QuestionForm(request.POST, request.FILES)
