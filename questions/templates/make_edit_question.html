@@ -85,7 +85,7 @@
 							<button type="button" id="openTagOverlayBtn" class="suggest-tag-btn">Выбрать тег</button>
 							<button type="button" id="suggestTagBtn" class="suggest-tag-btn">Предложить тег</button>
 						</div>
-						<div id="tagWarning" class="tag-warning" style="display: none;">Выберите тег для поста</div>
+						<div id="tagWarning" class="tag-warning" style="display: none;"></div>
 						<input type="hidden" id="selectedTag" name="tag" value="{{ question.tag|default:'' }}">
 					</div>
 
@@ -234,6 +234,7 @@
 			selectBtn.innerHTML = `${tag}`;
 			selectBtn.classList.add('selected');
 			hiddenInput.value = tag;
+			tagWarning.style.display = 'none';
 			if (tagWarning) tagWarning.style.display = 'none';
 		} else {
 			selectBtn.innerHTML = `Выбрать тег`;
@@ -285,7 +286,8 @@
 
 			btn.disabled = true;
 			btn.textContent = 'Подбираю...';
-
+			selectBtn.innerHTML = 'Подбираю тег...';
+			selectBtn.classList.add('selected');
 			try {
 				let response = await fetch('/suggest_tag/', {
 					method: 'POST',
@@ -305,6 +307,8 @@
 				}
 			} catch (error) {
 				console.error('AI tag error:', error);
+				tagWarning.style.display = 'block';
+				tagWarning.innerHTML = 'Не удалось подобрать тег';
 				updateSelectedDisplay('Другое');
 			}
 

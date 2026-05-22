@@ -469,3 +469,159 @@ footer {
 }
 
 .sidebar-filter-clear:hover { background: var(--report-hover); color: var(--danger-primary); }
+
+@media (max-width: 1100px) {
+  header {
+    height: auto;
+    min-height: 90px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  .logo-img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .header-search {
+    order: 3;
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .header-right {
+    gap: 6px;
+  }
+
+  .create-button {
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  .body-sidebar {
+    width: 190px;
+    min-width: 190px;
+    top: 110px;
+    height: calc(100vh - 110px);
+  }
+
+  .content-wrapper {
+    margin-left: 190px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    position: sticky;
+    top: 0;
+  }
+
+  .body-sidebar {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--accent-secondary);
+    margin-top: 0;
+  }
+
+  .friends-list {
+    max-height: none;
+  }
+
+  .content-wrapper {
+    margin-left: 0 !important;
+    padding-top: 30px !important;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .feed {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  .post-detail-card,
+  .question-card-content,
+  .comments-section,
+  .comment-create-section {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .question-text,
+  .post-detail-card .question-text {
+    font-size: 19px;
+  }
+
+  .post-detail-card .actions,
+  .actions,
+  .tag-buttons,
+  .form-actions {
+    flex-wrap: wrap;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo-text {
+    font-size: 22px;
+  }
+
+  .logo-img {
+    width: 56px;
+    height: 56px;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+  }
+
+  .create-button {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .create-button span:not(.icon-plus) {
+    display: none;
+  }
+
+  .icon-button,
+  .theme-toggle,
+  .ii-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .search-wrapper {
+    height: 40px;
+  }
+
+  .post-detail-card {
+    padding: 14px;
+  }
+
+  .user-name-link,
+  .post-detail-card .user-name-link {
+    font-size: 18px;
+  }
+}
+
+.loading-text {
+    opacity: 0.7;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
