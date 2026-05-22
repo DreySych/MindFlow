@@ -480,6 +480,7 @@ def delete_question(request, question_id):
     question.delete()
     return JsonResponse({'ok': True})
 
+
 def suggest_tag(request):
     if request.method != 'POST':
         return JsonResponse({'tag': 'Другое'})

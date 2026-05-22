@@ -11,6 +11,7 @@ logger = logging.getLogger('project')
 
 # Create your models here.
 
+
 class Question(models.Model):
     """Модель вопроса с заголовком, описанием, автором, рейтингом и эмбеддингом."""
 

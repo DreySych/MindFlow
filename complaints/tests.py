@@ -4,7 +4,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from users.models import User
 from .models import Complaint
-from questions.models import *
+from questions.models import Question, Comment
 
 
 class MessagesTest(TestCase):
@@ -189,7 +189,7 @@ class ComplaintActionTests(TestCase):
         complaint = Complaint.objects.create(
             author=self.user2, user=self.user1, description="Test")
 
-        response = self.client.post(
+        self.client.post(
             f"{self.accept_url}?complaint_id={complaint.id}")
 
         self.user1.refresh_from_db()
@@ -211,7 +211,7 @@ class ComplaintActionTests(TestCase):
         complaint = Complaint.objects.create(
             author=self.user2, question=self.question, description="Test")
 
-        response = self.client.post(
+        self.client.post(
             f"{self.accept_url}?complaint_id={complaint.id}")
 
         self.assertFalse(Question.objects.filter(id=self.question.id).exists())

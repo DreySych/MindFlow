@@ -1,5 +1,4 @@
 from django.test import TestCase, Client
-from django.utils import timezone
 from users.models import User
 from notifications.models import Notification
 from django.utils import timezone

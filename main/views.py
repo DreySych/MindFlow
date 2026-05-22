@@ -9,10 +9,11 @@ from users.models import User, Subscription
 from django.http import JsonResponse
 from django.utils import timezone
 from django.template.loader import render_to_string
-from .forms import *
+from .forms import TagFilterForm
 import logging
 
 logger = logging.getLogger('project')
+
 
 def can_act(user):
     """Проверяет, авторизован ли пользователь и не заблокирован."""
@@ -60,6 +61,10 @@ def perform_search(search_text):
 
 def get_default_questions(request, tag=None):
     """Возвращает ленту вопросов для главной: свежие от друзей, затем популярные."""
+    fresh_friends = []
+    popular_all = []
+    popular_friends = []
+
     if not can_act(request.user):
         if tag and tag != 'Другое':
             return Question.objects.filter(tag=tag).order_by('-rating', '-creation_date')
@@ -129,6 +134,7 @@ def index_page(request):
     tag = request.GET.get('tag')
 
     search_text = request.GET.get('q', '').strip()
+    results = []
     if tag:
         results = perform_search(
             search_text) if search_text else get_default_questions(request, tag=tag)

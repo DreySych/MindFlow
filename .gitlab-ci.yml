@@ -1,0 +1,67 @@
+image: python:3.12
+
+stages:
+  - lint
+  - test
+  - docs
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  DJANGO_SETTINGS_MODULE: "The_Final_Build.settings"
+  SECRET_KEY: "ci-secret-key"
+  DEBUG: "False"
+  ALLOWED_HOSTS: "localhost,127.0.0.1"
+  OPENROUTER_API_KEY: ""
+
+cache:
+  paths:
+    - .cache/pip/
+
+before_script:
+  - python --version
+  - pip install --upgrade pip
+  - pip install -r requirements.txt
+
+lint:
+  stage: lint
+  script:
+    - python -m py_compile manage.py
+    - flake8 . --exclude=.venv,venv,migrations,docs/build,media,logs,__pycache__ --max-line-length=120
+    - pylint ai main questions users notifications complaints private_messages --ignore=migrations --fail-under=8.0
+  allow_failure: true
+
+test:
+  stage: test
+  script:
+    - coverage run --source='.' manage.py test
+    - coverage report
+    - coverage xml
+  coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
+  artifacts:
+    when: always
+    paths:
+      - coverage.xml
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+docs:
+  stage: docs
+  script:
+    - sphinx-build -W -b html docs/source docs/build/html
+  artifacts:
+    when: always
+    paths:
+      - docs/build/html
+
+pages:
+  stage: deploy
+  script:
+    - sphinx-build -b html docs/source public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'

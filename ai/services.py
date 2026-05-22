@@ -119,22 +119,22 @@ class OpenRouterClient:
 
             choices = data.get("choices")
             if not choices:
-                raise Exception(f"Некорректный ответ AI-сервиса: {data}")
+                raise RuntimeError(f"Некорректный ответ AI-сервиса: {data}")
 
             message = choices[0].get("message") if isinstance(choices, list) else None
             if not message:
-                raise Exception(f"Некорректная структура choices: {choices}")
+                raise RuntimeError(f"Некорректная структура choices: {choices}")
 
             content = message.get("content")
             if not content:
-                raise Exception(f"В ответе нет content: {message}")
+                raise RuntimeError(f"В ответе нет content: {message}")
 
             return content.strip()
 
         except requests.exceptions.Timeout:
-            raise Exception("AI-сервис не ответил вовремя (timeout)")
+            raise RuntimeError("AI-сервис не ответил вовремя (timeout)")
         except requests.exceptions.RequestException as e:
-            raise Exception(f"Ошибка запроса к AI-сервису: {e}")
+            raise RuntimeError(f"Ошибка запроса к AI-сервису: {e}")
 
 
 class AiSearchService:

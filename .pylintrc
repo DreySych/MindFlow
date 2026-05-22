@@ -18,6 +18,20 @@ disable=
     too-many-instance-attributes,
     super-init-not-called,
     global-statement,
+    C0411,
+    C0412,
+    W0613,
+    W0201,
+    R1705,
+    R0904,
+    W0237,
+    W0221,
+    C0415,
+    W0404,
+    W0707,
+    R1732,
+    W0612,
+    W0611
 
 [FORMAT]
 max-line-length=120

@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 
 from .services import AiSearchService
 from .strategies import AllQuestionsStrategy, LastNQuestionsStrategy
-from questions.models import Question
 from main.views import perform_search, build_post_context
 
 service = AiSearchService(strategy=LastNQuestionsStrategy(30))
@@ -16,7 +15,6 @@ service = AiSearchService(strategy=LastNQuestionsStrategy(30))
 def ai_search_page(request):
     query = (request.GET.get("q") or "").strip()
     return render(request, "ai.html", {"query": query})
-
 
 
 @require_POST
