@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from questions.views import suggest_tag
+from questions.tag_suggestion import suggest_tag
 from ai import views as ai_views
 from complaints import views as complaint_views
 from main import views as main_views

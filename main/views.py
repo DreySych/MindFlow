@@ -59,6 +59,29 @@ def perform_search(search_text):
     return [q for q, _ in sorted_results]
 
 
+def merge_questions(fresh_friends, popular_all, popular_friends):
+    """Объединяет свежие посты друзей и популярные посты без дублей."""
+    result = list(fresh_friends)
+    all_list = list(popular_all)
+    friends_list = list(popular_friends)
+
+    for i in range(max(len(all_list), len(friends_list))):
+        if i < len(friends_list):
+            result.append(friends_list[i])
+        if i < len(all_list):
+            result.append(all_list[i])
+
+    seen = set()
+    unique = []
+
+    for post in result:
+        if post.id not in seen:
+            unique.append(post)
+            seen.add(post.id)
+
+    return unique
+
+
 def get_default_questions(request, tag=None):
     """Возвращает ленту вопросов для главной: свежие от друзей, затем популярные."""
     fresh_friends = []
@@ -97,22 +120,7 @@ def get_default_questions(request, tag=None):
             '-rating',
             '-creation_date')
 
-    result = list(fresh_friends)
-    all_list = list(popular_all)
-    friends_list = list(popular_friends)
-    for i in range(max(len(all_list), len(friends_list))):
-        if i < len(friends_list):
-            result.append(friends_list[i])
-        if i < len(all_list):
-            result.append(all_list[i])
-
-    seen = set()
-    unique = []
-    for p in result:
-        if p.id not in seen:
-            unique.append(p)
-            seen.add(p.id)
-    return unique
+    return merge_questions(fresh_friends, popular_all, popular_friends)
 
 
 def index_page(request):
@@ -242,7 +250,7 @@ def vote_question(request, vote):
     question_id = request.GET.get('id')
     question = get_object_or_404(Question, id=question_id)
 
-    like_obj, created = Like.objects.get_or_create(
+    like_obj, _ = Like.objects.get_or_create(
         user=request.user,
         question=question,
         defaults={'rating': 0}

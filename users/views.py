@@ -28,13 +28,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from questions.views import get_question_context
 import traceback
+from users.access import can_act
 
 logger = logging.getLogger('project')
-
-
-def can_act(user):
-    """Проверяет, авторизован ли пользователь и не заблокирован."""
-    return user.is_authenticated and user.active
 
 
 def logout_page(request):

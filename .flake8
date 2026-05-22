@@ -12,5 +12,5 @@ exclude =
 
 per-file-ignores =
     ai/services.py:E501
-    questions/views.py:F4011
+    questions/views.py:F401
     
