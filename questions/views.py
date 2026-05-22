@@ -174,18 +174,22 @@ def save_uploaded_images(images):
 
 def create_question_from_form(form, request):
     """Создаёт новый вопрос из формы, генерирует эмбеддинги и сохраняет изображения."""
-    model = get_model()
     title = form.cleaned_data['title']
     description = form.cleaned_data['description']
     tag = form.cleaned_data['tag']
-    images = request.FILES.getlist('images')
-    if len(images) > 10:
-        images = images[:10]
-    logger.debug('Uploaded files for question: %s', request.FILES)
-    logger.info('Question images count: %s', len(images))
 
     text = f"{title}\n{description}"
-    embeddings = model.encode([text])[0]
+
+    model = get_model()
+
+    if model is not None:
+        embeddings = model.encode([text])[0]
+    else:
+        embeddings = []
+    images = request.FILES.getlist('images')
+    
+    if len(images) > 10:
+        images = images[:10]
 
     images_str = save_uploaded_images(images) if images else ''
 

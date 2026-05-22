@@ -36,6 +36,10 @@ def build_post_context(post, request):
 def perform_search(search_text):
     """Ищет вопросы по тексту через эмбеддинги и сортирует по релевантности и дате."""
     model = get_model()
+
+    if model is None:
+        return Question.objects.all().order_by('-creation_date')
+
     input_vec = model.encode([search_text])[0]
     questions = Question.objects.all()
     results = []
