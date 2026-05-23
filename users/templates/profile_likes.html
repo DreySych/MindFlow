@@ -4,13 +4,6 @@
     <meta charset="UTF-8">
     <title>Профиль</title>
     {% load static %}
-    <script>
-        const savedTheme = localStorage.getItem('theme');
-
-        if (savedTheme === 'light') {
-            document.documentElement.classList.add('light-theme');
-        }
-    </script>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/basic.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">

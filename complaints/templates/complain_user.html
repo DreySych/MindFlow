@@ -1,11 +1,4 @@
 {% load static %}
-<script>
-    const savedTheme = localStorage.getItem('theme');
-
-    if (savedTheme === 'light') {
-        document.documentElement.classList.add('light-theme');
-    }
-</script>
 <div class="complain-overlay" id="complainUserOverlay" style="display: none;">
   <input type="hidden" id="complainUserId" value="{{ user.id }}">
   <div class="complain-backdrop" onclick="closeComplainUserOverlay()"></div>

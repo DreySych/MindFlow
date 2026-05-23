@@ -134,13 +134,46 @@ python manage.py createsuperuser
 
 ```bash
 python manage.py runserver
+
 ```
+
+Только для локальной разработки.
+Production использует Daphne + nginx.
+
 
 Приложение будет доступно по адресу: `http://127.0.0.1:8000/`
 
 **Админ-панель**: `http://127.0.0.1:8000/admin/`
 
 ---
+
+# Production deployment
+
+Проект развёрнут на VPS Ubuntu.
+
+Production stack:
+
+* nginx
+* Daphne
+* Django ASGI
+* Channels/WebSocket
+
+Публичная ссылка:
+
+http://mindflow-2026.duckdns.org:8082
+
+Backup:
+
+http://188.127.251.228:8082
+
+Проект запускается через Daphne, так как используется Django Channels и WebSocket.
+
+Production-команда запуска:
+
+```bash
+nohup env DJANGO_SETTINGS_MODULE=The_Final_Build.settings /home/site2/app/venv/bin/daphne -b 127.0.0.1 -p 8002 The_Final_Build.asgi:application > logs/server.log 2>&1 &
+```
+
 
 ## ⚙️ Конфигурация
 
@@ -162,6 +195,33 @@ python manage.py runserver
 ```bash
 python manage.py test
 ```
+# Code quality
+
+## Flake8
+
+```bash
+flake8 .
+```
+
+## Pylint
+
+```bash
+pylint ai main questions users notifications complaints private_messages --ignore=migrations --fail-under=8.0
+```
+
+## Coverage
+
+```bash
+coverage run --source='.' manage.py test
+coverage report
+```
+
+## Documentation build
+
+```bash
+sphinx-build -W -b html docs/source docs/build/html
+```
+
 
 ## ✅ Проверка качества кода
 
